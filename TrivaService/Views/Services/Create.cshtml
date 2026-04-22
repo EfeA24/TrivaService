@@ -1,0 +1,65 @@
+@model Service
+@{
+    ViewData["Title"] = "Create service";
+}
+<h1>Create service</h1>
+<form asp-action="Create" method="post">
+    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+    <div class="mb-3">
+        <label asp-for="CustomerId" class="form-label"></label>
+        <input asp-for="CustomerId" class="form-control" />
+    </div>
+    <div class="mb-3">
+        <label asp-for="ServiceCode" class="form-label"></label>
+        <input asp-for="ServiceCode" class="form-control" />
+    </div>
+    <div class="mb-3">
+        <label asp-for="FaultDescription" class="form-label"></label>
+        <textarea asp-for="FaultDescription" class="form-control"></textarea>
+    </div>
+    <div class="mb-3">
+        <label asp-for="ServiceDescription" class="form-label"></label>
+        <textarea asp-for="ServiceDescription" class="form-control"></textarea>
+    </div>
+    <div class="mb-3">
+        <label asp-for="ServiceNotes" class="form-label"></label>
+        <textarea asp-for="ServiceNotes" class="form-control"></textarea>
+    </div>
+    <div class="mb-3">
+        <label asp-for="ServiceAddress" class="form-label"></label>
+        <input asp-for="ServiceAddress" class="form-control" />
+    </div>
+    <div class="mb-3">
+        <label asp-for="ReceivedDate" class="form-label"></label>
+        <input asp-for="ReceivedDate" class="form-control" />
+    </div>
+    <div class="mb-3">
+        <label asp-for="CompletedDate" class="form-label"></label>
+        <input asp-for="CompletedDate" class="form-control" />
+    </div>
+    <div class="mb-3">
+        <label asp-for="DeliveredDate" class="form-label"></label>
+        <input asp-for="DeliveredDate" class="form-control" />
+    </div>
+    <div class="mb-3">
+        <label asp-for="Status" class="form-label"></label>
+        <input asp-for="Status" class="form-control" />
+    </div>
+    <div class="mb-3">
+        <label asp-for="EstimatedCost" class="form-label"></label>
+        <input asp-for="EstimatedCost" class="form-control" />
+    </div>
+    <div class="mb-3">
+        <label asp-for="FinalCost" class="form-label"></label>
+        <input asp-for="FinalCost" class="form-control" />
+    </div>
+    <div class="form-check mb-3">
+        <input asp-for="IsActive" class="form-check-input" />
+        <label asp-for="IsActive" class="form-check-label"></label>
+    </div>
+    <button type="submit" class="btn btn-primary">Save</button>
+    <a asp-action="Index" class="btn btn-outline-secondary">Cancel</a>
+</form>
+@section Scripts {
+    @{ await Html.RenderPartialAsync("_ValidationScriptsPartial"); }
+}

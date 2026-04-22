@@ -1,0 +1,21 @@
+@model Customer
+@{
+    ViewData["Title"] = "Customer details";
+}
+<h1>Customer</h1>
+<dl class="row">
+    <dt class="col-sm-2">@Html.DisplayNameFor(m => m.Id)</dt><dd class="col-sm-10">@Model.Id</dd>
+    <dt class="col-sm-2">@Html.DisplayNameFor(m => m.CustomerName)</dt><dd class="col-sm-10">@Model.CustomerName</dd>
+    <dt class="col-sm-2">@Html.DisplayNameFor(m => m.CustomerPhone)</dt><dd class="col-sm-10">@Model.CustomerPhone</dd>
+    <dt class="col-sm-2">@Html.DisplayNameFor(m => m.CustomerAddress)</dt><dd class="col-sm-10">@Model.CustomerAddress</dd>
+    <dt class="col-sm-2">@Html.DisplayNameFor(m => m.Notes)</dt><dd class="col-sm-10">@Model.Notes</dd>
+    <dt class="col-sm-2">@Html.DisplayNameFor(m => m.LastServiceDate)</dt><dd class="col-sm-10">@Model.LastServiceDate</dd>
+    <dt class="col-sm-2">@Html.DisplayNameFor(m => m.TotalServiceCount)</dt><dd class="col-sm-10">@Model.TotalServiceCount</dd>
+    <dt class="col-sm-2">@Html.DisplayNameFor(m => m.CreateDate)</dt><dd class="col-sm-10">@Model.CreateDate</dd>
+    <dt class="col-sm-2">@Html.DisplayNameFor(m => m.UpdateDate)</dt><dd class="col-sm-10">@Model.UpdateDate</dd>
+    <dt class="col-sm-2">@Html.DisplayNameFor(m => m.IsActive)</dt><dd class="col-sm-10">@Model.IsActive</dd>
+</dl>
+<p>
+    <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-secondary">Edit</a>
+    <a asp-action="Index" class="btn btn-outline-secondary">Back</a>
+</p>

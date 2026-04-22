@@ -60,6 +60,30 @@ namespace TrivaService.Data
                 .WithMany(s => s.ServiceVisuals)
                 .HasForeignKey("ServiceId")
                 .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<Service>()
+                .Property(s => s.EstimatedCost)
+                .HasPrecision(18, 2);
+
+            modelBuilder.Entity<Service>()
+                .Property(s => s.FinalCost)
+                .HasPrecision(18, 2);
+
+            modelBuilder.Entity<ServiceItem>()
+                .Property(si => si.UnitPrice)
+                .HasPrecision(18, 2);
+
+            modelBuilder.Entity<ServiceItem>()
+                .Property(si => si.UnitCost)
+                .HasPrecision(18, 2);
+
+            modelBuilder.Entity<ServiceItem>()
+                .Property(si => si.TotalPrice)
+                .HasPrecision(18, 2);
+
+            modelBuilder.Entity<Item>()
+                .Property(i => i.ItemPrice)
+                .HasPrecision(18, 2);
         }
     }
 }

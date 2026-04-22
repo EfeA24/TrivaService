@@ -1,0 +1,35 @@
+@model IEnumerable<Service>
+@{
+    ViewData["Title"] = "Services";
+}
+<h1>Services</h1>
+<p><a asp-action="Create" class="btn btn-primary">Create</a></p>
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>Id</th>
+            <th>Code</th>
+            <th>Status</th>
+            <th>Customer</th>
+            <th>Active</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+    @foreach (var item in Model)
+    {
+        <tr>
+            <td>@item.Id</td>
+            <td>@item.ServiceCode</td>
+            <td>@item.Status</td>
+            <td>@item.CustomerId</td>
+            <td>@item.IsActive</td>
+            <td>
+                <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
+                <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
+                <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+            </td>
+        </tr>
+    }
+    </tbody>
+</table>

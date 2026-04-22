@@ -1,0 +1,27 @@
+@model Service
+@{
+    ViewData["Title"] = "Service details";
+}
+<h1>Service</h1>
+<dl class="row">
+    <dt class="col-sm-2">Id</dt><dd class="col-sm-10">@Model.Id</dd>
+    <dt class="col-sm-2">Customer</dt><dd class="col-sm-10">@Model.CustomerId</dd>
+    <dt class="col-sm-2">Code</dt><dd class="col-sm-10">@Model.ServiceCode</dd>
+    <dt class="col-sm-2">Fault</dt><dd class="col-sm-10">@Model.FaultDescription</dd>
+    <dt class="col-sm-2">Description</dt><dd class="col-sm-10">@Model.ServiceDescription</dd>
+    <dt class="col-sm-2">Notes</dt><dd class="col-sm-10">@Model.ServiceNotes</dd>
+    <dt class="col-sm-2">Address</dt><dd class="col-sm-10">@Model.ServiceAddress</dd>
+    <dt class="col-sm-2">Received</dt><dd class="col-sm-10">@Model.ReceivedDate</dd>
+    <dt class="col-sm-2">Completed</dt><dd class="col-sm-10">@Model.CompletedDate</dd>
+    <dt class="col-sm-2">Delivered</dt><dd class="col-sm-10">@Model.DeliveredDate</dd>
+    <dt class="col-sm-2">Status</dt><dd class="col-sm-10">@Model.Status</dd>
+    <dt class="col-sm-2">Est. cost</dt><dd class="col-sm-10">@Model.EstimatedCost</dd>
+    <dt class="col-sm-2">Final cost</dt><dd class="col-sm-10">@Model.FinalCost</dd>
+    <dt class="col-sm-2">Create</dt><dd class="col-sm-10">@Model.CreateDate</dd>
+    <dt class="col-sm-2">Update</dt><dd class="col-sm-10">@Model.UpdateDate</dd>
+    <dt class="col-sm-2">Active</dt><dd class="col-sm-10">@Model.IsActive</dd>
+</dl>
+<p>
+    <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-secondary">Edit</a>
+    <a asp-action="Index" class="btn btn-outline-secondary">Back</a>
+</p>

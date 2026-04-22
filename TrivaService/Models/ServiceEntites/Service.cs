@@ -5,6 +5,9 @@ namespace TrivaService.Models.ServiceEntites
 {
     public class Service : BaseEntity
     {
+        public int? CustomerId { get; set; }
+        public Customer? Customer { get; set; }
+
         public string ServiceCode { get; set; } = null!;
         public string FaultDescription { get; set; } = null!;
         public string? ServiceDescription { get; set; }
@@ -21,7 +24,7 @@ namespace TrivaService.Models.ServiceEntites
         public decimal? EstimatedCost { get; set; }
         public decimal? FinalCost { get; set; }
 
-        public List<ServiceItem> ServiceItems { get; set; }
-        public List<ServiceVisuals> ServiceVisuals { get; set; }
+        public List<ServiceItem> ServiceItems { get; set; } = new();
+        public List<ServiceVisuals> ServiceVisuals { get; set; } = new();
     }
 }

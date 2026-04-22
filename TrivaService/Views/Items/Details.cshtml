@@ -1,0 +1,25 @@
+@model Item
+@{
+    ViewData["Title"] = "Item";
+}
+<h1>Item</h1>
+<dl class="row">
+    <dt class="col-sm-2">Id</dt><dd class="col-sm-10">@Model.Id</dd>
+    <dt class="col-sm-2">SupplierId</dt><dd class="col-sm-10">@Model.SupplierId</dd>
+    <dt class="col-sm-2">Name</dt><dd class="col-sm-10">@Model.ItemName</dd>
+    <dt class="col-sm-2">Code</dt><dd class="col-sm-10">@Model.ItemCode</dd>
+    <dt class="col-sm-2">Brand</dt><dd class="col-sm-10">@Model.ItemBrand</dd>
+    <dt class="col-sm-2">Model</dt><dd class="col-sm-10">@Model.ItemModel</dd>
+    <dt class="col-sm-2">Barcode</dt><dd class="col-sm-10">@Model.ItemBarcode</dd>
+    <dt class="col-sm-2">Description</dt><dd class="col-sm-10">@Model.ItemDescription</dd>
+    <dt class="col-sm-2">Type</dt><dd class="col-sm-10">@Model.ItemType</dd>
+    <dt class="col-sm-2">Quantity</dt><dd class="col-sm-10">@Model.ItemQuantity</dd>
+    <dt class="col-sm-2">Price</dt><dd class="col-sm-10">@Model.ItemPrice</dd>
+    <dt class="col-sm-2">Create</dt><dd class="col-sm-10">@Model.CreateDate</dd>
+    <dt class="col-sm-2">Update</dt><dd class="col-sm-10">@Model.UpdateDate</dd>
+    <dt class="col-sm-2">Active</dt><dd class="col-sm-10">@Model.IsActive</dd>
+</dl>
+<p>
+    <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-secondary">Edit</a>
+    <a asp-action="Index" class="btn btn-outline-secondary">Back</a>
+</p>
