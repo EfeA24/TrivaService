@@ -1,0 +1,27 @@
+﻿using TrivaService.Models.StockEntities;
+using TrivaService.Models.TechnicalEntities;
+
+namespace TrivaService.Models.ServiceEntites
+{
+    public class Service : BaseEntity
+    {
+        public string ServiceCode { get; set; } = null!;
+        public string FaultDescription { get; set; } = null!;
+        public string? ServiceDescription { get; set; }
+        public string? ServiceNotes { get; set; }
+
+        public string? ServiceAddress { get; set; }
+
+        public DateTime ReceivedDate { get; set; }
+        public DateTime? CompletedDate { get; set; }
+        public DateTime? DeliveredDate { get; set; }
+
+        public string Status { get; set; } = null!;
+
+        public decimal? EstimatedCost { get; set; }
+        public decimal? FinalCost { get; set; }
+
+        public List<ServiceItem> ServiceItems { get; set; }
+        public List<ServiceVisuals> ServiceVisuals { get; set; }
+    }
+}
