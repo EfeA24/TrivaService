@@ -1,0 +1,18 @@
+@model DashboardRangeSelectViewModel
+<select name="@Model.ParamName"
+        class="form-select form-select-sm dash-chart-range-select"
+        form="dashHomeFilters"
+        aria-label="Dönem"
+        onchange="document.getElementById('dashHomeFilters').submit();">
+    @foreach (var opt in DashboardTimeRange.Options)
+    {
+        if (Model.SelectedKey == opt.Key)
+        {
+            <option value="@opt.Key" selected>@opt.Label</option>
+        }
+        else
+        {
+            <option value="@opt.Key">@opt.Label</option>
+        }
+    }
+</select>

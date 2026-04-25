@@ -8,6 +8,7 @@ namespace TrivaService.Models
 
     public class DashboardViewModel
     {
+        /// <summary>Tüm zamanlar — özet kartlar.</summary>
         public int CompletedServices { get; set; }
         public int IncompleteServices { get; set; }
         public int ActiveCustomers { get; set; }
@@ -19,30 +20,35 @@ namespace TrivaService.Models
         public int TotalItems { get; set; }
         public int TotalServiceItemLines { get; set; }
 
+        /// <summary>Tüm zamanlar — özet kart.</summary>
         public int PaymentCompleteCount { get; set; }
+        /// <summary>Tüm zamanlar — özet kart.</summary>
         public int PaymentIncompleteCount { get; set; }
 
-        /// <summary>Servis kalemlerinde tedarikçiye göre kullanılan parça adedi.</summary>
-        public List<DashboardChartPoint> SupplierUsageInServices { get; set; } = new();
+        /// <summary>Ödeme grafiği için seçilen dönem.</summary>
+        public int PaymentCompleteInRange { get; set; }
+        public int PaymentIncompleteInRange { get; set; }
 
-        /// <summary>Tedarikçiye göre stokta bulunan ürün miktarı toplamı.</summary>
+        public List<DashboardChartPoint> SupplierUsageInServices { get; set; } = new();
+        public string RangeUsageKey { get; set; } = DashboardTimeRange.ThreeMonths;
+        public string RangeUsageLabel { get; set; } = "3 ay";
+
         public List<DashboardChartPoint> SupplierStockQuantities { get; set; } = new();
 
-        /// <summary>Müşteri başına servis kayıt sayısı.</summary>
         public List<DashboardChartPoint> ServicesPerCustomer { get; set; } = new();
+        public string RangeCustomerKey { get; set; } = DashboardTimeRange.ThreeMonths;
+        public string RangeCustomerLabel { get; set; } = "3 ay";
 
         public List<DashboardChartPoint> ServicesByStatus { get; set; } = new();
+        public string RangeStatusKey { get; set; } = DashboardTimeRange.ThreeMonths;
+        public string RangeStatusLabel { get; set; } = "3 ay";
 
-        /// <summary>Zaman çizelgesi (ReceivedDate); aralığa göre saat/gün/ay gruplu.</summary>
+        public string RangePaymentKey { get; set; } = DashboardTimeRange.ThreeMonths;
+        public string RangePaymentLabel { get; set; } = "3 ay";
+
         public List<DashboardChartPoint> ServicesReceivedTimeline { get; set; } = new();
-
-        /// <summary>Grafikler ve servisle ilgili özetler için seçilen aralık (örn. <c>3m</c>).</summary>
-        public string SelectedRangeKey { get; set; } = DashboardTimeRange.ThreeMonths;
-
-        /// <summary>Seçilen aralığın Türkçe etiketi.</summary>
-        public string SelectedRangeLabel { get; set; } = "3 ay";
-
-        /// <summary>Zaman çizelgesi kartı başlığı altı açıklama.</summary>
+        public string RangeTimelineKey { get; set; } = DashboardTimeRange.ThreeMonths;
+        public string RangeTimelineLabel { get; set; } = "3 ay";
         public string TimelineChartDescription { get; set; } = string.Empty;
     }
 }

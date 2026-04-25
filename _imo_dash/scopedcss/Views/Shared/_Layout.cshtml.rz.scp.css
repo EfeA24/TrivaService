@@ -1,0 +1,6 @@
+/* Scoped layout styles — premium overrides live in wwwroot/css/site.css */
+/* This file is intentionally minimal to avoid conflicts with the design system. */
+
+a[b-c9e1sa3a04] {
+    color: var(--primary, #00a19b);
+}

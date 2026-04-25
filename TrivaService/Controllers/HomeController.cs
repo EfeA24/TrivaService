@@ -16,61 +16,98 @@ namespace TrivaService.Controllers
             _db = db;
         }
 
-        public async Task<IActionResult> Index([FromQuery(Name = "range")] string? range)
+        public async Task<IActionResult> Index(
+            [FromQuery(Name = "ru")] string? rangeUsage,
+            [FromQuery(Name = "rp")] string? rangePayment,
+            [FromQuery(Name = "rc")] string? rangeCustomer,
+            [FromQuery(Name = "rs")] string? rangeStatus,
+            [FromQuery(Name = "rt")] string? rangeTimeline)
         {
-            var key = DashboardTimeRange.Normalize(range);
-            var vm = await BuildDashboardAsync(key);
+            var ku = DashboardTimeRange.Normalize(rangeUsage);
+            var kp = DashboardTimeRange.Normalize(rangePayment);
+            var kc = DashboardTimeRange.Normalize(rangeCustomer);
+            var ks = DashboardTimeRange.Normalize(rangeStatus);
+            var kt = DashboardTimeRange.Normalize(rangeTimeline);
+
+            var vm = await BuildDashboardAsync(ku, kp, kc, ks, kt);
             return View(vm);
         }
 
-        private IQueryable<ServiceEntity> ServicesInRange(DateTime? fromUtc, bool allTime)
+        private static IQueryable<ServiceEntity> ServicesInRange(
+            IQueryable<ServiceEntity> source,
+            DateTime? fromUtc,
+            bool allTime)
         {
-            var q = _db.Services.AsQueryable();
             if (!allTime && fromUtc.HasValue)
-                q = q.Where(s => s.ReceivedDate >= fromUtc.Value);
-            return q;
+                return source.Where(s => s.ReceivedDate >= fromUtc.Value);
+            return source;
         }
 
-        private async Task<DashboardViewModel> BuildDashboardAsync(string rangeKey)
+        private static string TimelineDescription(string rangeKey) =>
+            rangeKey switch
+            {
+                DashboardTimeRange.OneDay => "Son 24 saat (saatlik)",
+                DashboardTimeRange.OneWeek => "Son 7 gün (günlük)",
+                DashboardTimeRange.OneMonth or DashboardTimeRange.ThreeMonths or DashboardTimeRange.SixMonths => "Günlük alınan servis sayısı",
+                DashboardTimeRange.OneYear or DashboardTimeRange.FiveYears => "Aylık alınan servis sayısı",
+                DashboardTimeRange.All => "Tüm kayıtlar (aylık)",
+                _ => "Zaman çizelgesi"
+            };
+
+        private async Task<DashboardViewModel> BuildDashboardAsync(
+            string rangeUsage,
+            string rangePayment,
+            string rangeCustomer,
+            string rangeStatus,
+            string rangeTimeline)
         {
             var utcNow = DateTime.UtcNow;
-            var fromUtc = DashboardTimeRange.GetStartUtc(rangeKey, utcNow, out var allTime);
+
+            var fromU = DashboardTimeRange.GetStartUtc(rangeUsage, utcNow, out var allU);
+            var fromP = DashboardTimeRange.GetStartUtc(rangePayment, utcNow, out var allP);
+            var fromC = DashboardTimeRange.GetStartUtc(rangeCustomer, utcNow, out var allC);
+            var fromS = DashboardTimeRange.GetStartUtc(rangeStatus, utcNow, out var allS);
+            var fromT = DashboardTimeRange.GetStartUtc(rangeTimeline, utcNow, out var allT);
 
             var vm = new DashboardViewModel
             {
-                SelectedRangeKey = rangeKey,
-                SelectedRangeLabel = DashboardTimeRange.LabelFor(rangeKey)
+                RangeUsageKey = rangeUsage,
+                RangeUsageLabel = DashboardTimeRange.LabelFor(rangeUsage),
+                RangePaymentKey = rangePayment,
+                RangePaymentLabel = DashboardTimeRange.LabelFor(rangePayment),
+                RangeCustomerKey = rangeCustomer,
+                RangeCustomerLabel = DashboardTimeRange.LabelFor(rangeCustomer),
+                RangeStatusKey = rangeStatus,
+                RangeStatusLabel = DashboardTimeRange.LabelFor(rangeStatus),
+                RangeTimelineKey = rangeTimeline,
+                RangeTimelineLabel = DashboardTimeRange.LabelFor(rangeTimeline),
+                TimelineChartDescription = TimelineDescription(rangeTimeline)
             };
 
-            var svc = ServicesInRange(fromUtc, allTime);
+            var allSvc = _db.Services.AsQueryable();
 
-            vm.CompletedServices = await svc.CountAsync(s => s.Status == "Completed");
-            vm.IncompleteServices = await svc.CountAsync(s =>
+            vm.CompletedServices = await allSvc.CountAsync(s => s.Status == "Completed");
+            vm.IncompleteServices = await allSvc.CountAsync(s =>
                 s.Status != "Completed" && s.Status != "Cancelled");
-            vm.CancelledServices = await svc.CountAsync(s => s.Status == "Cancelled");
-            vm.TotalServices = await svc.CountAsync();
+            vm.CancelledServices = await allSvc.CountAsync(s => s.Status == "Cancelled");
+            vm.TotalServices = await allSvc.CountAsync();
 
             vm.ActiveCustomers = await _db.Customers.CountAsync(c => c.IsActive);
             vm.InactiveCustomers = await _db.Customers.CountAsync(c => !c.IsActive);
             vm.TotalCustomers = await _db.Customers.CountAsync();
 
             vm.TotalItems = await _db.Items.CountAsync();
+            vm.TotalServiceItemLines = await _db.ServiceItems.CountAsync();
 
-            vm.TotalServiceItemLines = await (
-                from si in _db.ServiceItems
-                join s in _db.Services on si.ServiceId equals s.Id
-                where allTime || (fromUtc.HasValue && s.ReceivedDate >= fromUtc.Value)
-                select si).CountAsync();
+            vm.PaymentCompleteCount = await allSvc.CountAsync(s => s.IsPaymentComplete);
+            vm.PaymentIncompleteCount = await allSvc.CountAsync(s => !s.IsPaymentComplete);
 
-            vm.PaymentCompleteCount = await svc.CountAsync(s => s.IsPaymentComplete);
-            vm.PaymentIncompleteCount = await svc.CountAsync(s => !s.IsPaymentComplete);
-
+            var svcUsage = ServicesInRange(allSvc, fromU, allU);
             vm.SupplierUsageInServices = await (
                 from si in _db.ServiceItems
-                join s in _db.Services on si.ServiceId equals s.Id
+                join s in svcUsage on si.ServiceId equals s.Id
                 join i in _db.Items on si.ItemId equals i.Id
                 join sup in _db.Suppliers on i.SupplierId equals sup.Id
-                where allTime || (fromUtc.HasValue && s.ReceivedDate >= fromUtc.Value)
                 group si by sup.SupplierName into g
                 orderby g.Sum(x => x.Quantity) descending
                 select new DashboardChartPoint
@@ -90,7 +127,12 @@ namespace TrivaService.Controllers
                     Value = g.Sum(x => x.ItemQuantity)
                 }).Take(20).ToListAsync();
 
-            var perCustomer = await svc
+            var svcPay = ServicesInRange(allSvc, fromP, allP);
+            vm.PaymentCompleteInRange = await svcPay.CountAsync(s => s.IsPaymentComplete);
+            vm.PaymentIncompleteInRange = await svcPay.CountAsync(s => !s.IsPaymentComplete);
+
+            var svcCust = ServicesInRange(allSvc, fromC, allC);
+            var perCustomer = await svcCust
                 .Where(s => s.CustomerId != null)
                 .GroupBy(s => s.CustomerId!.Value)
                 .Select(g => new { CustomerId = g.Key, Count = g.Count() })
@@ -111,7 +153,7 @@ namespace TrivaService.Controllers
                 })
                 .ToList();
 
-            var unassigned = await svc.CountAsync(s => s.CustomerId == null);
+            var unassigned = await svcCust.CountAsync(s => s.CustomerId == null);
             if (unassigned > 0)
             {
                 vm.ServicesPerCustomer.Add(new DashboardChartPoint
@@ -121,22 +163,14 @@ namespace TrivaService.Controllers
                 });
             }
 
-            vm.ServicesByStatus = await svc
+            var svcStatus = ServicesInRange(allSvc, fromS, allS);
+            vm.ServicesByStatus = await svcStatus
                 .GroupBy(s => s.Status)
                 .Select(g => new DashboardChartPoint { Label = g.Key, Value = g.Count() })
                 .OrderByDescending(x => x.Value)
                 .ToListAsync();
 
-            vm.ServicesReceivedTimeline = await BuildTimelineAsync(rangeKey, fromUtc, allTime, utcNow);
-            vm.TimelineChartDescription = rangeKey switch
-            {
-                DashboardTimeRange.OneDay => "Son 24 saat (saatlik)",
-                DashboardTimeRange.OneWeek => "Son 7 gün (günlük)",
-                DashboardTimeRange.OneMonth or DashboardTimeRange.ThreeMonths or DashboardTimeRange.SixMonths => "Günlük alınan servis sayısı",
-                DashboardTimeRange.OneYear or DashboardTimeRange.FiveYears => "Aylık alınan servis sayısı",
-                DashboardTimeRange.All => "Tüm kayıtlar (aylık)",
-                _ => "Zaman çizelgesi"
-            };
+            vm.ServicesReceivedTimeline = await BuildTimelineAsync(rangeTimeline, fromT, allT, utcNow);
 
             return vm;
         }
@@ -147,10 +181,12 @@ namespace TrivaService.Controllers
             bool allTime,
             DateTime utcNow)
         {
+            var allSvc = _db.Services.AsQueryable();
+
             if (rangeKey == DashboardTimeRange.OneDay)
             {
                 var windowStart = utcNow.AddDays(-1);
-                var dates = await ServicesInRange(windowStart, false)
+                var dates = await ServicesInRange(allSvc, windowStart, false)
                     .Select(s => s.ReceivedDate)
                     .ToListAsync();
 
@@ -173,7 +209,7 @@ namespace TrivaService.Controllers
             if (rangeKey == DashboardTimeRange.OneWeek)
             {
                 var startDay = utcNow.Date.AddDays(-6);
-                var rows = await ServicesInRange(startDay, false)
+                var rows = await ServicesInRange(allSvc, startDay, false)
                     .GroupBy(s => s.ReceivedDate.Date)
                     .Select(g => new { Day = g.Key, Count = g.Count() })
                     .ToListAsync();
@@ -197,8 +233,9 @@ namespace TrivaService.Controllers
                 or DashboardTimeRange.ThreeMonths
                 or DashboardTimeRange.SixMonths)
             {
+                var svc = ServicesInRange(allSvc, fromUtc, allTime);
                 var endDay = utcNow.Date;
-                var rows = await ServicesInRange(fromUtc, false)
+                var rows = await svc
                     .GroupBy(s => s.ReceivedDate.Date)
                     .Select(g => new { Day = g.Key, Count = g.Count() })
                     .ToListAsync();
@@ -219,7 +256,8 @@ namespace TrivaService.Controllers
 
             if (rangeKey is DashboardTimeRange.OneYear or DashboardTimeRange.FiveYears)
             {
-                var rows = await ServicesInRange(fromUtc, false)
+                var svc = ServicesInRange(allSvc, fromUtc, allTime);
+                var rows = await svc
                     .GroupBy(s => new { s.ReceivedDate.Year, s.ReceivedDate.Month })
                     .Select(g => new { g.Key.Year, g.Key.Month, Count = g.Count() })
                     .OrderBy(x => x.Year).ThenBy(x => x.Month)
