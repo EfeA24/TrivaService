@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="tr">
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>@ViewData["Title"] - TrivaService</title>
+    <title>@ViewData["Title"] - Triva Servis</title>
     <script type="importmap"></script>
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
@@ -11,85 +11,294 @@
 </head>
 <body>
     <div class="app-wrapper">
-        <nav class="sidebar" id="sidebar">
-            <a class="sidebar-brand" asp-controller="Home" asp-action="Index">
-                <span class="brand-icon">T</span>
-                TrivaService
-            </a>
-            <div class="sidebar-menu">
-                <div class="menu-item">
-                    <a class="menu-link" asp-controller="Home" asp-action="Index">Dashboard</a>
-                </div>
-                <div class="menu-section">Service</div>
-                <div class="menu-item">
-                    <a class="menu-link" asp-controller="Customers" asp-action="Index">Customers</a>
-                </div>
-                <div class="menu-item">
-                    <a class="menu-link" asp-controller="Services" asp-action="Index">Services</a>
-                </div>
-                <div class="menu-item">
-                    <a class="menu-link" asp-controller="ServiceItems" asp-action="Index">Service Items</a>
-                </div>
-                <div class="menu-item">
-                    <a class="menu-link" asp-controller="ServiceVisuals" asp-action="Index">Service Visuals</a>
-                </div>
-                <div class="menu-section">Stock</div>
-                <div class="menu-item">
-                    <a class="menu-link" asp-controller="Items" asp-action="Index">Items</a>
-                </div>
-                <div class="menu-item">
-                    <a class="menu-link" asp-controller="Suppliers" asp-action="Index">Suppliers</a>
-                </div>
-                <div class="menu-section">Admin</div>
-                <div class="menu-item">
-                    <a class="menu-link" asp-controller="Roles" asp-action="Index">Roles</a>
-                </div>
-                <div class="menu-item">
-                    <a class="menu-link" asp-controller="Users" asp-action="Index">Users</a>
-                </div>
-            </div>
-            <div class="sidebar-footer">
-                &copy; 2026 TrivaService
-            </div>
-        </nav>
 
+        <!-- ═══════════════ SIDEBAR ═══════════════ -->
+        <nav class="sidebar" id="sidebar">
+
+            <a class="sidebar-brand" asp-controller="Home" asp-action="Index">
+                <img src="~/images/triva-logo.png" alt="Triva" class="brand-logo" />
+                <span class="brand-text">Servis</span>
+            </a>
+
+            <div class="sidebar-menu">
+
+                <!-- Gösterge paneli -->
+                <div class="menu-item">
+                    <a class="menu-link" asp-controller="Home" asp-action="Index"
+                       data-controller="Home">
+                        <svg class="menu-icon" viewBox="0 0 20 20" fill="currentColor">
+                            <path d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h4a1 1 0 001-1v-3h2v3a1 1 0 001 1h4a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z"/>
+                        </svg>
+                        Gösterge Paneli
+                    </a>
+                </div>
+
+                <!-- Servis bölümü -->
+                <div class="menu-section">Servis</div>
+
+                <div class="menu-item">
+                    <a class="menu-link" asp-controller="Customers" asp-action="Index"
+                       data-controller="Customers">
+                        <svg class="menu-icon" viewBox="0 0 20 20" fill="currentColor">
+                            <path d="M9 6a3 3 0 11-6 0 3 3 0 016 0zM17 6a3 3 0 11-6 0 3 3 0 016 0zM12.93 17c.046-.327.07-.66.07-1a6.97 6.97 0 00-1.5-4.33A5 5 0 0119 16v1h-6.07zM6 11a5 5 0 015 5v1H1v-1a5 5 0 015-5z"/>
+                        </svg>
+                        Müşteriler
+                    </a>
+                </div>
+
+                <div class="menu-item">
+                    <a class="menu-link" asp-controller="Services" asp-action="Index"
+                       data-controller="Services">
+                        <svg class="menu-icon" viewBox="0 0 20 20" fill="currentColor">
+                            <path fill-rule="evenodd" d="M11.49 3.17c-.38-1.56-2.6-1.56-2.98 0a1.532 1.532 0 01-2.286.948c-1.372-.836-2.942.734-2.106 2.106.54.886.061 2.042-.947 2.287-1.561.379-1.561 2.6 0 2.978a1.532 1.532 0 01.947 2.287c-.836 1.372.734 2.942 2.106 2.106a1.532 1.532 0 012.287.947c.379 1.561 2.6 1.561 2.978 0a1.533 1.533 0 012.287-.947c1.372.836 2.942-.734 2.106-2.106a1.533 1.533 0 01.947-2.287c1.561-.379 1.561-2.6 0-2.978a1.532 1.532 0 01-.947-2.287c.836-1.372-.734-2.942-2.106-2.106a1.532 1.532 0 01-2.287-.947zM10 13a3 3 0 100-6 3 3 0 000 6z" clip-rule="evenodd"/>
+                        </svg>
+                        Hizmetler
+                    </a>
+                </div>
+
+                <div class="menu-item">
+                    <a class="menu-link" asp-controller="ServiceItems" asp-action="Index"
+                       data-controller="ServiceItems">
+                        <svg class="menu-icon" viewBox="0 0 20 20" fill="currentColor">
+                            <path d="M7 3a1 1 0 000 2h6a1 1 0 100-2H7zM4 7a1 1 0 011-1h10a1 1 0 110 2H5a1 1 0 01-1-1zM2 11a2 2 0 012-2h12a2 2 0 012 2v4a2 2 0 01-2 2H4a2 2 0 01-2-2v-4z"/>
+                        </svg>
+                        Hizmet Kalemleri
+                    </a>
+                </div>
+
+                <div class="menu-item">
+                    <a class="menu-link" asp-controller="ServiceVisuals" asp-action="Index"
+                       data-controller="ServiceVisuals">
+                        <svg class="menu-icon" viewBox="0 0 20 20" fill="currentColor">
+                            <path fill-rule="evenodd" d="M4 3a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V5a2 2 0 00-2-2H4zm12 12H4l4-8 3 6 2-4 3 6z" clip-rule="evenodd"/>
+                        </svg>
+                        Hizmet Görselleri
+                    </a>
+                </div>
+
+                <!-- Stok bölümü -->
+                <div class="menu-section">Stok</div>
+
+                <div class="menu-item">
+                    <a class="menu-link" asp-controller="Items" asp-action="Index"
+                       data-controller="Items">
+                        <svg class="menu-icon" viewBox="0 0 20 20" fill="currentColor">
+                            <path d="M4 3a2 2 0 100 4h12a2 2 0 100-4H4z"/>
+                            <path fill-rule="evenodd" d="M3 8h14v7a2 2 0 01-2 2H5a2 2 0 01-2-2V8zm5 3a1 1 0 011-1h2a1 1 0 110 2H9a1 1 0 01-1-1z" clip-rule="evenodd"/>
+                        </svg>
+                        Ürünler
+                    </a>
+                </div>
+
+                <div class="menu-item">
+                    <a class="menu-link" asp-controller="Suppliers" asp-action="Index"
+                       data-controller="Suppliers">
+                        <svg class="menu-icon" viewBox="0 0 20 20" fill="currentColor">
+                            <path d="M8 16.5a1.5 1.5 0 11-3 0 1.5 1.5 0 013 0zM15 16.5a1.5 1.5 0 11-3 0 1.5 1.5 0 013 0z"/>
+                            <path d="M3 4a1 1 0 00-1 1v10a1 1 0 001 1h1.05a2.5 2.5 0 014.9 0H10a1 1 0 001-1v-1h2.05a2.5 2.5 0 014.9 0H19a1 1 0 001-1v-6a1 1 0 00-.293-.707l-4-4A1 1 0 0015 3H3z"/>
+                        </svg>
+                        Tedarikçiler
+                    </a>
+                </div>
+
+                <!-- Yönetim bölümü -->
+                <div class="menu-section">Yönetim</div>
+
+                <div class="menu-item">
+                    <a class="menu-link" asp-controller="Roles" asp-action="Index"
+                       data-controller="Roles">
+                        <svg class="menu-icon" viewBox="0 0 20 20" fill="currentColor">
+                            <path fill-rule="evenodd" d="M2.166 4.999A11.954 11.954 0 0010 1.944 11.954 11.954 0 0017.834 5c.11.65.166 1.32.166 2.001 0 5.225-3.34 9.67-8 11.317C5.34 16.67 2 12.225 2 7c0-.682.057-1.35.166-2.001zm11.541 3.708a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+                        </svg>
+                        Roller
+                    </a>
+                </div>
+
+                <div class="menu-item">
+                    <a class="menu-link" asp-controller="Users" asp-action="Index"
+                       data-controller="Users">
+                        <svg class="menu-icon" viewBox="0 0 20 20" fill="currentColor">
+                            <path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd"/>
+                        </svg>
+                        Kullanıcılar
+                    </a>
+                </div>
+
+            </div><!-- /.sidebar-menu -->
+
+            <div class="sidebar-footer">
+                &copy; 2026 Triva Servis
+            </div>
+
+        </nav><!-- /.sidebar -->
+
+        <!-- ═══════════════ MAIN AREA ═══════════════ -->
         <div class="main-area">
+
             <header class="topbar">
-                <button class="topbar-toggle" id="sidebarToggle" type="button">&#9776;</button>
+                <button class="topbar-toggle" id="sidebarToggle" type="button" aria-label="Yan menüyü aç veya kapat">
+                    <svg width="18" height="18" viewBox="0 0 18 18" fill="currentColor">
+                        <rect y="2" width="18" height="2" rx="1"/>
+                        <rect y="8" width="18" height="2" rx="1"/>
+                        <rect y="14" width="18" height="2" rx="1"/>
+                    </svg>
+                </button>
                 <span class="topbar-title">@ViewData["Title"]</span>
             </header>
+
             <main class="page-content">
                 @RenderBody()
             </main>
+
             <footer class="page-footer">
-                &copy; 2026 TrivaService &mdash;
-                <a asp-controller="Home" asp-action="Privacy">Privacy</a>
+                &copy; 2026 Triva Servis &mdash;
+                <a asp-controller="Home" asp-action="Privacy">Gizlilik</a>
             </footer>
+
+        </div><!-- /.main-area -->
+
+    </div><!-- /.app-wrapper -->
+
+    <!-- Sidebar overlay (mobile) -->
+    <div class="sidebar-overlay d-md-none" id="sidebarOverlay"></div>
+
+    <!-- CRUD Modal -->
+    <div class="modal fade modal-effect" id="crudModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-lg modal-dialog-scrollable">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Form</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Kapat"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="text-muted">Yükleniyor…</div>
+                </div>
+            </div>
         </div>
     </div>
-
-    <div class="sidebar-overlay d-md-none" id="sidebarOverlay"></div>
 
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
+
     <script>
-        (function () {
-            var btn = document.getElementById('sidebarToggle');
-            var sidebar = document.getElementById('sidebar');
-            var overlay = document.getElementById('sidebarOverlay');
-            if (btn && sidebar) {
-                btn.addEventListener('click', function () {
-                    sidebar.classList.toggle('show');
-                    overlay.classList.toggle('show');
-                });
-                overlay.addEventListener('click', function () {
-                    sidebar.classList.remove('show');
-                    overlay.classList.remove('show');
-                });
-            }
+    (function () {
+        /* ── Active sidebar link ──────────────────────────── */
+        (function markActiveLink() {
+            var path = window.location.pathname;
+            var links = document.querySelectorAll('.menu-link[data-controller]');
+            links.forEach(function (link) {
+                var ctrl = link.getAttribute('data-controller');
+                // match /ControllerName or /ControllerName/...
+                var pattern = new RegExp('^\\/' + ctrl + '(\\/|$)', 'i');
+                if (pattern.test(path) || (ctrl === 'Home' && path === '/')) {
+                    link.classList.add('active');
+                }
+            });
         })();
+
+        /* ── Sidebar toggle (mobile) ─────────────────────── */
+        var btn     = document.getElementById('sidebarToggle');
+        var sidebar = document.getElementById('sidebar');
+        var overlay = document.getElementById('sidebarOverlay');
+
+        if (btn && sidebar) {
+            btn.addEventListener('click', function () {
+                sidebar.classList.toggle('show');
+                if (overlay) overlay.classList.toggle('show');
+            });
+        }
+        if (overlay) {
+            overlay.addEventListener('click', function () {
+                sidebar.classList.remove('show');
+                overlay.classList.remove('show');
+            });
+        }
+
+        /* ── CRUD modal helpers ──────────────────────────── */
+        var crudModalEl = document.getElementById('crudModal');
+        if (!crudModalEl) return;
+
+        var crudModalTitle = crudModalEl.querySelector('.modal-title');
+        var crudModalBody  = crudModalEl.querySelector('.modal-body');
+        var crudModal      = new bootstrap.Modal(crudModalEl);
+
+        function parseHtml(html) {
+            return new DOMParser().parseFromString(html, 'text/html');
+        }
+
+        function setCrudContent(html) {
+            var doc     = parseHtml(html);
+            var title   = doc.querySelector('.page-header h1');
+            var content = doc.querySelector('.card');
+            crudModalTitle.textContent = title ? title.textContent.trim() : 'Form';
+            crudModalBody.innerHTML    = content
+                ? content.outerHTML
+                : '<div class="alert alert-danger mb-0">Form yüklenemedi.</div>';
+        }
+
+        async function openCrudModal(url) {
+            crudModalBody.innerHTML    = '<div class="text-muted small">Yükleniyor…</div>';
+            crudModalTitle.textContent = 'Form';
+            crudModal.show();
+
+            var response = await fetch(url, { headers: { 'X-Requested-With': 'XMLHttpRequest' } });
+            if (!response.ok) {
+                crudModalBody.innerHTML = '<div class="alert alert-danger mb-0">Form yükleme işlemi başarısız oldu.</div>';
+                return;
+            }
+            setCrudContent(await response.text());
+        }
+
+        function isCrudUrl(url) {
+            return /\/Create(?:$|\?)|\/Edit(?:\/|$|\?)/i.test(url);
+        }
+
+        document.addEventListener('click', function (e) {
+            var btnTrigger = e.target.closest('button[data-modal-url]');
+            if (btnTrigger) {
+                e.preventDefault();
+                var url = btnTrigger.getAttribute('data-modal-url');
+                if (url) openCrudModal(url);
+                return;
+            }
+
+            var linkTrigger = e.target.closest('a[href]');
+            if (!linkTrigger) return;
+            if (e.ctrlKey || e.metaKey || e.shiftKey || e.altKey) return;
+            if (linkTrigger.target || linkTrigger.hasAttribute('download')) return;
+            if (!isCrudUrl(linkTrigger.href)) return;
+
+            e.preventDefault();
+            openCrudModal(linkTrigger.href);
+        });
+
+        crudModalEl.addEventListener('submit', async function (e) {
+            var form = e.target.closest('form');
+            if (!form) return;
+            e.preventDefault();
+
+            var response = await fetch(form.action, {
+                method:  form.method || 'post',
+                body:    new FormData(form),
+                headers: { 'X-Requested-With': 'XMLHttpRequest' }
+            });
+
+            var html = await response.text();
+            if (response.redirected) { window.location.href = response.url; return; }
+
+            var doc = parseHtml(html);
+            if (doc.querySelector('.validation-summary-errors, .field-validation-error')) {
+                setCrudContent(html);
+                return;
+            }
+
+            crudModal.hide();
+            window.location.reload();
+        });
+    })();
     </script>
+
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>
