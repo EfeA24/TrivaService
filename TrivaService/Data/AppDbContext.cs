@@ -25,65 +25,7 @@ namespace TrivaService.Data
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
-
-            modelBuilder.Entity<Roles>()
-                .HasMany(r => r.Users)
-                .WithOne(u => u.Roles)
-                .HasForeignKey(u => u.RolesId)
-                .OnDelete(DeleteBehavior.Restrict);
-
-            modelBuilder.Entity<Supplier>()
-                .HasMany(s => s.Items)
-                .WithOne(i => i.Supplier)
-                .HasForeignKey(i => i.SupplierId)
-                .OnDelete(DeleteBehavior.Restrict);
-
-            modelBuilder.Entity<ServiceItem>()
-                .HasOne(si => si.Service)
-                .WithMany(s => s.ServiceItems)
-                .HasForeignKey(si => si.ServiceId)
-                .OnDelete(DeleteBehavior.Cascade);
-
-            modelBuilder.Entity<ServiceItem>()
-                .HasOne(si => si.Item)
-                .WithMany(i => i.ServiceItems)
-                .HasForeignKey(si => si.ItemId)
-                .OnDelete(DeleteBehavior.Restrict);
-
-            modelBuilder.Entity<Customer>()
-                .HasMany(c => c.Services)
-                .WithOne()
-                .OnDelete(DeleteBehavior.Cascade);
-
-            modelBuilder.Entity<ServiceVisuals>()
-                .HasOne<Service>()
-                .WithMany(s => s.ServiceVisuals)
-                .HasForeignKey("ServiceId")
-                .OnDelete(DeleteBehavior.Cascade);
-
-            modelBuilder.Entity<Service>()
-                .Property(s => s.EstimatedCost)
-                .HasPrecision(18, 2);
-
-            modelBuilder.Entity<Service>()
-                .Property(s => s.FinalCost)
-                .HasPrecision(18, 2);
-
-            modelBuilder.Entity<ServiceItem>()
-                .Property(si => si.UnitPrice)
-                .HasPrecision(18, 2);
-
-            modelBuilder.Entity<ServiceItem>()
-                .Property(si => si.UnitCost)
-                .HasPrecision(18, 2);
-
-            modelBuilder.Entity<ServiceItem>()
-                .Property(si => si.TotalPrice)
-                .HasPrecision(18, 2);
-
-            modelBuilder.Entity<Item>()
-                .Property(i => i.ItemPrice)
-                .HasPrecision(18, 2);
+            modelBuilder.ApplyConfigurationsFromAssembly(typeof(AppDbContext).Assembly);
         }
     }
 }

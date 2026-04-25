@@ -61,7 +61,7 @@ namespace TrivaService.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Customers");
+                    b.ToTable("Customers", (string)null);
                 });
 
             modelBuilder.Entity("TrivaService.Models.ServiceEntites.Service", b =>
@@ -124,7 +124,7 @@ namespace TrivaService.Migrations
 
                     b.HasIndex("CustomerId");
 
-                    b.ToTable("Services");
+                    b.ToTable("Services", (string)null);
                 });
 
             modelBuilder.Entity("TrivaService.Models.ServiceEntites.ServiceItem", b =>
@@ -171,7 +171,7 @@ namespace TrivaService.Migrations
 
                     b.HasIndex("ServiceId");
 
-                    b.ToTable("ServiceItems");
+                    b.ToTable("ServiceItems", (string)null);
                 });
 
             modelBuilder.Entity("TrivaService.Models.ServiceEntites.ServiceVisuals", b =>
@@ -208,7 +208,7 @@ namespace TrivaService.Migrations
 
                     b.HasIndex("ServiceId");
 
-                    b.ToTable("ServiceVisuals");
+                    b.ToTable("ServiceVisuals", (string)null);
                 });
 
             modelBuilder.Entity("TrivaService.Models.StockEntities.Item", b =>
@@ -263,7 +263,7 @@ namespace TrivaService.Migrations
 
                     b.HasIndex("SupplierId");
 
-                    b.ToTable("Items");
+                    b.ToTable("Items", (string)null);
                 });
 
             modelBuilder.Entity("TrivaService.Models.StockEntities.Supplier", b =>
@@ -301,7 +301,7 @@ namespace TrivaService.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Suppliers");
+                    b.ToTable("Suppliers", (string)null);
                 });
 
             modelBuilder.Entity("TrivaService.Models.UserEntities.Roles", b =>
@@ -330,7 +330,7 @@ namespace TrivaService.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Roles");
+                    b.ToTable("Roles", (string)null);
                 });
 
             modelBuilder.Entity("TrivaService.Models.UserEntities.Users", b =>
@@ -371,7 +371,7 @@ namespace TrivaService.Migrations
 
                     b.HasIndex("RolesId");
 
-                    b.ToTable("Users");
+                    b.ToTable("Users", (string)null);
                 });
 
             modelBuilder.Entity("TrivaService.Models.ServiceEntites.Service", b =>
