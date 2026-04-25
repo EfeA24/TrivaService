@@ -32,6 +32,17 @@
             <dt class="col-sm-3">Delivered</dt><dd class="col-sm-9">@(Model.DeliveredDate?.ToString("g") ?? "—")</dd>
             <dt class="col-sm-3">Est. Cost</dt><dd class="col-sm-9">@(Model.EstimatedCost?.ToString("C") ?? "—")</dd>
             <dt class="col-sm-3">Final Cost</dt><dd class="col-sm-9">@(Model.FinalCost?.ToString("C") ?? "—")</dd>
+            <dt class="col-sm-3">Payment</dt>
+            <dd class="col-sm-9">
+                @if (Model.IsPaymentComplete)
+                {
+                    <span class="badge bg-success">Paid</span>
+                }
+                else
+                {
+                    <span class="badge bg-warning text-dark">Unpaid</span>
+                }
+            </dd>
             <dt class="col-sm-3">Created</dt><dd class="col-sm-9">@Model.CreateDate.ToString("g")</dd>
             <dt class="col-sm-3">Updated</dt><dd class="col-sm-9">@Model.UpdateDate.ToString("g")</dd>
             <dt class="col-sm-3">Active</dt>

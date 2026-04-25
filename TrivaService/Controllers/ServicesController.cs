@@ -186,6 +186,7 @@ namespace TrivaService.Controllers
             existing.Status = service.Status;
             existing.EstimatedCost = service.EstimatedCost;
             existing.FinalCost = service.FinalCost;
+            existing.IsPaymentComplete = service.IsPaymentComplete;
             existing.IsActive = service.IsActive;
             existing.UpdateDate = DateTime.UtcNow;
 

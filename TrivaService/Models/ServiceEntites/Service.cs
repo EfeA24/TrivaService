@@ -1,4 +1,5 @@
-﻿using TrivaService.Models.StockEntities;
+﻿using System.ComponentModel.DataAnnotations;
+using TrivaService.Models.StockEntities;
 using TrivaService.Models.TechnicalEntities;
 
 namespace TrivaService.Models.ServiceEntites
@@ -23,6 +24,9 @@ namespace TrivaService.Models.ServiceEntites
 
         public decimal? EstimatedCost { get; set; }
         public decimal? FinalCost { get; set; }
+
+        [Display(Name = "Ödeme tamamlandı")]
+        public bool IsPaymentComplete { get; set; }
 
         public List<ServiceItem> ServiceItems { get; set; } = new();
         public List<ServiceVisuals> ServiceVisuals { get; set; } = new();

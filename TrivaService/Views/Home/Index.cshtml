@@ -1,11 +1,196 @@
+@model DashboardViewModel
+@using System.Text.Json
 @{
     ViewData["Title"] = "Ana Sayfa";
+    var jsonOptions = new JsonSerializerOptions { PropertyNamingPolicy = JsonNamingPolicy.CamelCase };
 }
 
 <div class="page-header">
     <h1>Ana Sayfa</h1>
 </div>
 
+<p class="text-muted small mb-3">Özet istatistikler ve grafikler. Tedarikçi grafikleri servis kalemlerindeki kullanım ve stok miktarını gösterir.</p>
+
+<div class="row g-3 mb-2">
+    <div class="col-6 col-lg-3">
+        <div class="card shadow-sm dash-stat-card h-100">
+            <div class="card-body">
+                <div class="stat-label">Tamamlanan servisler</div>
+                <div class="stat-value text-success">@Model.CompletedServices</div>
+            </div>
+        </div>
+    </div>
+    <div class="col-6 col-lg-3">
+        <div class="card shadow-sm dash-stat-card h-100">
+            <div class="card-body">
+                <div class="stat-label">Tamamlanmayan servisler</div>
+                <div class="stat-value text-warning">@Model.IncompleteServices</div>
+            </div>
+        </div>
+    </div>
+    <div class="col-6 col-lg-3">
+        <div class="card shadow-sm dash-stat-card h-100">
+            <div class="card-body">
+                <div class="stat-label">Aktif müşteriler</div>
+                <div class="stat-value text-primary">@Model.ActiveCustomers</div>
+            </div>
+        </div>
+    </div>
+    <div class="col-6 col-lg-3">
+        <div class="card shadow-sm dash-stat-card h-100">
+            <div class="card-body">
+                <div class="stat-label">Pasif müşteriler</div>
+                <div class="stat-value text-secondary">@Model.InactiveCustomers</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row g-3 mb-4">
+    <div class="col-6 col-md-4 col-lg-2">
+        <div class="card shadow-sm dash-stat-card h-100">
+            <div class="card-body py-3">
+                <div class="stat-label">Toplam servis</div>
+                <div class="stat-value" style="font-size:1.35rem">@Model.TotalServices</div>
+            </div>
+        </div>
+    </div>
+    <div class="col-6 col-md-4 col-lg-2">
+        <div class="card shadow-sm dash-stat-card h-100">
+            <div class="card-body py-3">
+                <div class="stat-label">İptal servis</div>
+                <div class="stat-value" style="font-size:1.35rem">@Model.CancelledServices</div>
+            </div>
+        </div>
+    </div>
+    <div class="col-6 col-md-4 col-lg-2">
+        <div class="card shadow-sm dash-stat-card h-100">
+            <div class="card-body py-3">
+                <div class="stat-label">Toplam müşteri</div>
+                <div class="stat-value" style="font-size:1.35rem">@Model.TotalCustomers</div>
+            </div>
+        </div>
+    </div>
+    <div class="col-6 col-md-4 col-lg-2">
+        <div class="card shadow-sm dash-stat-card h-100">
+            <div class="card-body py-3">
+                <div class="stat-label">Toplam ürün</div>
+                <div class="stat-value" style="font-size:1.35rem">@Model.TotalItems</div>
+            </div>
+        </div>
+    </div>
+    <div class="col-6 col-md-4 col-lg-2">
+        <div class="card shadow-sm dash-stat-card h-100">
+            <div class="card-body py-3">
+                <div class="stat-label">Servis kalemi satırı</div>
+                <div class="stat-value" style="font-size:1.35rem">@Model.TotalServiceItemLines</div>
+            </div>
+        </div>
+    </div>
+    <div class="col-6 col-md-4 col-lg-2">
+        <div class="card shadow-sm dash-stat-card h-100">
+            <div class="card-body py-3">
+                <div class="stat-label">Ödeme tamam / eksik</div>
+                <div class="stat-value" style="font-size:1.35rem">@Model.PaymentCompleteCount / @Model.PaymentIncompleteCount</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row g-3 mb-4">
+    <div class="col-lg-6">
+        <div class="card shadow-sm dash-chart-card h-100">
+            <div class="card-header bg-transparent fw-semibold py-3">Tedarikçiye göre servislerde kullanılan parça (adet)</div>
+            <div class="card-body">
+                @if (Model.SupplierUsageInServices.Count == 0)
+                {
+                    <p class="text-muted small mb-0">Henüz servis kalemi yok.</p>
+                }
+                else
+                {
+                    <div class="dash-chart-wrap">
+                        <canvas id="chartSupplierUsage"></canvas>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-6">
+        <div class="card shadow-sm dash-chart-card h-100">
+            <div class="card-header bg-transparent fw-semibold py-3">Tedarikçiye göre stok miktarı (ürün adedi)</div>
+            <div class="card-body">
+                @if (Model.SupplierStockQuantities.Count == 0)
+                {
+                    <p class="text-muted small mb-0">Ürün kaydı yok.</p>
+                }
+                else
+                {
+                    <div class="dash-chart-wrap">
+                        <canvas id="chartSupplierStock"></canvas>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-4">
+        <div class="card shadow-sm dash-chart-card h-100">
+            <div class="card-header bg-transparent fw-semibold py-3">Ödeme durumu (tüm servisler)</div>
+            <div class="card-body">
+                <div class="dash-chart-wrap">
+                    <canvas id="chartPayment"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-8">
+        <div class="card shadow-sm dash-chart-card h-100">
+            <div class="card-header bg-transparent fw-semibold py-3">Müşteri başına servis sayısı</div>
+            <div class="card-body">
+                @if (Model.ServicesPerCustomer.Count == 0)
+                {
+                    <p class="text-muted small mb-0">Henüz servis kaydı yok.</p>
+                }
+                else
+                {
+                    <div class="dash-chart-wrap">
+                        <canvas id="chartCustomerServices"></canvas>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-5">
+        <div class="card shadow-sm dash-chart-card h-100">
+            <div class="card-header bg-transparent fw-semibold py-3">Servis durum dağılımı</div>
+            <div class="card-body">
+                @if (Model.ServicesByStatus.Count == 0)
+                {
+                    <p class="text-muted small mb-0">Henüz servis yok.</p>
+                }
+                else
+                {
+                    <div class="dash-chart-wrap">
+                        <canvas id="chartStatus"></canvas>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-7">
+        <div class="card shadow-sm dash-chart-card h-100">
+            <div class="card-header bg-transparent fw-semibold py-3">Son 12 ayda alınan servisler</div>
+            <div class="card-body">
+                <div class="dash-chart-wrap">
+                    <canvas id="chartMonthly"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="page-header border-top pt-4 mt-2">
+    <h2 class="h5 mb-3">Hızlı erişim</h2>
+</div>
 <div class="row g-3">
     <div class="col-sm-6 col-lg-3">
         <a asp-controller="Customers" asp-action="Index" class="card shadow-sm dash-card">
@@ -80,3 +265,134 @@
         </a>
     </div>
 </div>
+
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js" crossorigin="anonymous"></script>
+    <script>
+        (function () {
+            var palette = ['#0d6efd', '#198754', '#ffc107', '#dc3545', '#6f42c1', '#fd7e14', '#20c997', '#6c757d'];
+            function mapLabels(arr) { return arr.map(function (x) { return x.label; }); }
+            function mapData(arr) { return arr.map(function (x) { return Number(x.value); }); }
+
+            var supplierUsage = @Html.Raw(JsonSerializer.Serialize(Model.SupplierUsageInServices, jsonOptions));
+            var supplierStock = @Html.Raw(JsonSerializer.Serialize(Model.SupplierStockQuantities, jsonOptions));
+            var perCustomer = @Html.Raw(JsonSerializer.Serialize(Model.ServicesPerCustomer, jsonOptions));
+            var byStatus = @Html.Raw(JsonSerializer.Serialize(Model.ServicesByStatus, jsonOptions));
+            var monthly = @Html.Raw(JsonSerializer.Serialize(Model.ServicesReceivedByMonth, jsonOptions));
+            var payComplete = @Model.PaymentCompleteCount;
+            var payIncomplete = @Model.PaymentIncompleteCount;
+
+            var commonOpts = {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: { legend: { display: true, position: 'bottom' } }
+            };
+
+            var elUsage = document.getElementById('chartSupplierUsage');
+            if (elUsage && supplierUsage.length) {
+                new Chart(elUsage, {
+                    type: 'bar',
+                    data: {
+                        labels: mapLabels(supplierUsage),
+                        datasets: [{
+                            label: 'Adet',
+                            data: mapData(supplierUsage),
+                            backgroundColor: palette.map(function (c, i) { return c; })
+                        }]
+                    },
+                    options: { ...commonOpts, indexAxis: 'y', plugins: { legend: { display: false } } }
+                });
+            }
+
+            var elStock = document.getElementById('chartSupplierStock');
+            if (elStock && supplierStock.length) {
+                new Chart(elStock, {
+                    type: 'bar',
+                    data: {
+                        labels: mapLabels(supplierStock),
+                        datasets: [{
+                            label: 'Stok adedi',
+                            data: mapData(supplierStock),
+                            backgroundColor: '#20c997'
+                        }]
+                    },
+                    options: { ...commonOpts, indexAxis: 'y', plugins: { legend: { display: false } } }
+                });
+            }
+
+            new Chart(document.getElementById('chartPayment'), {
+                type: 'doughnut',
+                data: {
+                    labels: ['Ödeme tamam', 'Ödeme eksik'],
+                    datasets: [{
+                        data: [payComplete, payIncomplete],
+                        backgroundColor: ['#198754', '#ffc107'],
+                        borderWidth: 1
+                    }]
+                },
+                options: commonOpts
+            });
+
+            var elCust = document.getElementById('chartCustomerServices');
+            if (elCust && perCustomer.length) {
+                new Chart(elCust, {
+                    type: 'bar',
+                    data: {
+                        labels: mapLabels(perCustomer),
+                        datasets: [{
+                            label: 'Servis sayısı',
+                            data: mapData(perCustomer),
+                            backgroundColor: '#0d6efd'
+                        }]
+                    },
+                    options: {
+                        ...commonOpts,
+                        plugins: { legend: { display: false } },
+                        scales: {
+                            x: { ticks: { maxRotation: 45, minRotation: 0, autoSkip: true, maxTicksLimit: 12 } }
+                        }
+                    }
+                });
+            }
+
+            var elStatus = document.getElementById('chartStatus');
+            if (elStatus && byStatus.length) {
+                new Chart(elStatus, {
+                    type: 'pie',
+                    data: {
+                        labels: mapLabels(byStatus),
+                        datasets: [{
+                            data: mapData(byStatus),
+                            backgroundColor: byStatus.map(function (_, i) { return palette[i % palette.length]; }),
+                            borderWidth: 1
+                        }]
+                    },
+                    options: commonOpts
+                });
+            }
+
+            var elMonth = document.getElementById('chartMonthly');
+            if (elMonth && monthly.length) {
+                new Chart(elMonth, {
+                    type: 'line',
+                    data: {
+                        labels: mapLabels(monthly),
+                        datasets: [{
+                            label: 'Servis',
+                            data: mapData(monthly),
+                            borderColor: '#0d6efd',
+                            backgroundColor: 'rgba(13, 110, 253, 0.12)',
+                            fill: true,
+                            tension: 0.25
+                        }]
+                    },
+                    options: {
+                        ...commonOpts,
+                        plugins: { legend: { display: false } },
+                        scales: { y: { beginAtZero: true, ticks: { stepSize: 1 } } }
+                    }
+                });
+            }
+        })();
+    </script>
+}

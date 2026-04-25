@@ -493,6 +493,37 @@ a:hover {
     margin-top: 0.125rem;
 }
 
+.dash-stat-card {
+    background: var(--surface-card) !important;
+    border: 1px solid var(--border) !important;
+    border-radius: var(--radius-lg) !important;
+    box-shadow: var(--shadow-card) !important;
+}
+
+.dash-stat-card .stat-value {
+    font-size: 1.75rem;
+    font-weight: 700;
+    line-height: 1.2;
+    color: var(--text-main);
+    letter-spacing: -0.02em;
+}
+
+.dash-stat-card .stat-label {
+    font-size: 0.8125rem;
+    color: var(--text-muted);
+    margin-top: 0.25rem;
+}
+
+.dash-chart-card .card-body {
+    min-height: 0;
+}
+
+.dash-chart-wrap {
+    position: relative;
+    height: 280px;
+    width: 100%;
+}
+
 /* ─── Tables ─────────────────────────────────────────────────────────────── */
 .table-responsive {
     border-radius: var(--radius-lg);

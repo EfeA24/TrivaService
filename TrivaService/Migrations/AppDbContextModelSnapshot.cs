@@ -97,6 +97,9 @@ namespace TrivaService.Migrations
                     b.Property<bool>("IsActive")
                         .HasColumnType("bit");
 
+                    b.Property<bool>("IsPaymentComplete")
+                        .HasColumnType("bit");
+
                     b.Property<DateTime>("ReceivedDate")
                         .HasColumnType("datetime2");
 
