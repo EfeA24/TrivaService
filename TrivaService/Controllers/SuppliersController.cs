@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using TrivaService.Abstractions.CommonAbstractions;
+using TrivaService.Infrastructure;
 using TrivaService.Models.StockEntities;
 
 namespace TrivaService.Controllers
@@ -13,9 +14,71 @@ namespace TrivaService.Controllers
             _unitOfWork = unitOfWork;
         }
 
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index([FromQuery(Name = "$filter")] string? filter)
         {
-            return View(await _unitOfWork.supplierRepository.GetAllAsync());
+            var suppliers = await _unitOfWork.supplierRepository.GetAllAsync();
+            var term = ODataQueryHelpers.ExtractSearchTerm(filter).ToLowerInvariant();
+            if (!string.IsNullOrWhiteSpace(term))
+            {
+                suppliers = suppliers.Where(s =>
+                    (s.SupplierName?.ToLowerInvariant().Contains(term) ?? false) ||
+                    (s.SupplierPhone?.ToLowerInvariant().Contains(term) ?? false) ||
+                    (s.SupplierContactPerson?.ToLowerInvariant().Contains(term) ?? false));
+            }
+
+            return View(suppliers);
+        }
+
+        [HttpGet("/odata/suppliers")]
+        public async Task<IActionResult> ODataList(
+            [FromQuery(Name = "$filter")] string? filter,
+            [FromQuery(Name = "$top")] int? top,
+            [FromQuery(Name = "$skip")] int? skip)
+        {
+            var suppliers = await _unitOfWork.supplierRepository.GetAllAsync();
+            var term = ODataQueryHelpers.ExtractSearchTerm(filter).ToLowerInvariant();
+            if (!string.IsNullOrWhiteSpace(term))
+            {
+                suppliers = suppliers.Where(s =>
+                    (s.SupplierName?.ToLowerInvariant().Contains(term) ?? false) ||
+                    (s.SupplierPhone?.ToLowerInvariant().Contains(term) ?? false) ||
+                    (s.SupplierContactPerson?.ToLowerInvariant().Contains(term) ?? false));
+            }
+
+            var paged = ODataQueryHelpers.ApplyPagination(suppliers.OrderBy(s => s.SupplierName), skip, top);
+            return Json(new { value = paged });
+        }
+
+        [HttpGet("/odata/suppliers/lookup")]
+        public async Task<IActionResult> SupplierLookup([FromQuery] string? term, [FromQuery] int page = 1)
+        {
+            var suppliers = await _unitOfWork.supplierRepository.GetAllAsync();
+            var query = suppliers.AsEnumerable();
+            if (!string.IsNullOrWhiteSpace(term))
+            {
+                var search = term.Trim().ToLowerInvariant();
+                query = query.Where(s => (s.SupplierName?.ToLowerInvariant().Contains(search) ?? false));
+            }
+
+            var result = query
+                .OrderBy(s => s.SupplierName)
+                .Skip((Math.Max(page, 1) - 1) * 20)
+                .Take(20)
+                .Select(s => ODataQueryHelpers.ToLookupResult(s.Id, s.SupplierName));
+
+            return Json(new { value = result });
+        }
+
+        [HttpGet("/odata/suppliers/lookup/{id:int}")]
+        public async Task<IActionResult> SupplierLookupById(int id)
+        {
+            var supplier = await _unitOfWork.supplierRepository.GetByIdAsync(id);
+            if (supplier is null)
+            {
+                return NotFound();
+            }
+
+            return Json(ODataQueryHelpers.ToLookupResult(supplier.Id, supplier.SupplierName));
         }
 
         public async Task<IActionResult> Details(int? id)

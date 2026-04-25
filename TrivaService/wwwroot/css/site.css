@@ -34,8 +34,12 @@
 
     /* Layout */
     --sidebar-width:    240px;
-    --topbar-height:    56px;
-    --sidebar-brand-h:  72px;
+    --topbar-height:    64px;
+    --sidebar-brand-h:  84px;
+    --sidebar-icon-size: 1.3rem;
+    --sidebar-font-size: 1.04rem;
+    --brand-logo-size: 100px;
+    --brand-text-size: 1.59rem;
 
     /* Radii */
     --radius-sm:        8px;
@@ -155,15 +159,15 @@ a:hover {
 }
 
 .brand-logo {
-    width: 30px;
-    max-width: 30px;
+    width: var(--brand-logo-size);
+    max-width: var(--brand-logo-size);
     height: auto;
     display: block;
     border-radius: 8px;
 }
 
 .brand-text {
-    font-size: 1rem;
+    font-size: var(--brand-text-size);
     font-weight: 600;
     letter-spacing: 0.02em;
     color: #eef7f6;
@@ -176,7 +180,7 @@ a:hover {
 }
 
 .menu-section {
-    font-size: 0.6875rem;
+    font-size: 0.75rem;
     font-weight: 700;
     text-transform: uppercase;
     letter-spacing: 0.1em;
@@ -193,11 +197,11 @@ a:hover {
     display: flex;
     align-items: center;
     gap: 0.75rem;
-    padding: 0.625rem 0.875rem;
+    padding: 0.6875rem 0.95rem;
     color: rgba(232, 245, 244, 0.9);
     text-decoration: none;
     border-radius: 12px;
-    font-size: 0.875rem;
+    font-size: var(--sidebar-font-size);
     font-weight: 450;
     letter-spacing: 0.01em;
     transition: background var(--transition-fast), color var(--transition-fast),
@@ -207,8 +211,8 @@ a:hover {
 }
 
 .menu-link .menu-icon {
-    width: 1rem;
-    height: 1rem;
+    width: var(--sidebar-icon-size);
+    height: var(--sidebar-icon-size);
     opacity: 0.72;
     color: rgba(212, 237, 236, 0.95);
     flex-shrink: 0;
@@ -312,6 +316,51 @@ a:hover {
     font-weight: 600;
     color: var(--text-main);
     letter-spacing: 0.01em;
+}
+
+.topbar-search {
+    flex: 0 1 auto;
+    max-width: 260px;
+    min-width: 1060px;
+}
+
+.topbar-search .form-control {
+    height: 38px;
+}
+
+.topbar-account {
+    margin-left: auto;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.35rem 0.75rem;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    background: var(--surface-card);
+    color: var(--text-main);
+    font-size: 0.85rem;
+    white-space: nowrap;
+}
+
+.topbar-account .account-icon {
+    width: 1.125rem;
+    height: 1.125rem;
+    flex-shrink: 0;
+    color: var(--text-secondary);
+}
+
+.topbar-account .account-label {
+    font-weight: 600;
+    letter-spacing: 0.02em;
+}
+
+.list-search-bar {
+    padding: 1rem 1rem 0;
+}
+
+.list-search-bar .input-group-text {
+    background: var(--surface-input);
+    border-color: var(--border);
 }
 
 /* ─── Page Content ───────────────────────────────────────────────────────── */
@@ -912,6 +961,14 @@ hr {
 
     .topbar {
         padding: 0 1rem;
+    }
+
+    .topbar-search {
+        min-width: 0;
+    }
+
+    .topbar-account {
+        display: none;
     }
 
     .topbar-toggle {

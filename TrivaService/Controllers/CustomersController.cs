@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using TrivaService.Abstractions.CommonAbstractions;
+using TrivaService.Infrastructure;
 using TrivaService.Models.ServiceEntites;
 
 namespace TrivaService.Controllers
@@ -13,9 +14,71 @@ namespace TrivaService.Controllers
             _unitOfWork = unitOfWork;
         }
 
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index([FromQuery(Name = "$filter")] string? filter)
         {
-            return View(await _unitOfWork.customerRepository.GetAllAsync());
+            var customers = await _unitOfWork.customerRepository.GetAllAsync();
+            var term = ODataQueryHelpers.ExtractSearchTerm(filter).ToLowerInvariant();
+            if (!string.IsNullOrWhiteSpace(term))
+            {
+                customers = customers.Where(c =>
+                    (c.CustomerName?.ToLowerInvariant().Contains(term) ?? false) ||
+                    (c.CustomerPhone?.ToLowerInvariant().Contains(term) ?? false) ||
+                    (c.CustomerAddress?.ToLowerInvariant().Contains(term) ?? false));
+            }
+
+            return View(customers);
+        }
+
+        [HttpGet("/odata/customers")]
+        public async Task<IActionResult> ODataList(
+            [FromQuery(Name = "$filter")] string? filter,
+            [FromQuery(Name = "$top")] int? top,
+            [FromQuery(Name = "$skip")] int? skip)
+        {
+            var customers = await _unitOfWork.customerRepository.GetAllAsync();
+            var term = ODataQueryHelpers.ExtractSearchTerm(filter).ToLowerInvariant();
+            if (!string.IsNullOrWhiteSpace(term))
+            {
+                customers = customers.Where(c =>
+                    (c.CustomerName?.ToLowerInvariant().Contains(term) ?? false) ||
+                    (c.CustomerPhone?.ToLowerInvariant().Contains(term) ?? false) ||
+                    (c.CustomerAddress?.ToLowerInvariant().Contains(term) ?? false));
+            }
+
+            var paged = ODataQueryHelpers.ApplyPagination(customers.OrderBy(c => c.CustomerName), skip, top);
+            return Json(new { value = paged });
+        }
+
+        [HttpGet("/odata/customers/lookup")]
+        public async Task<IActionResult> CustomerLookup([FromQuery] string? term, [FromQuery] int page = 1)
+        {
+            var customers = await _unitOfWork.customerRepository.GetAllAsync();
+            var query = customers.AsEnumerable();
+            if (!string.IsNullOrWhiteSpace(term))
+            {
+                var search = term.Trim().ToLowerInvariant();
+                query = query.Where(c => (c.CustomerName?.ToLowerInvariant().Contains(search) ?? false));
+            }
+
+            var result = query
+                .OrderBy(c => c.CustomerName)
+                .Skip((Math.Max(page, 1) - 1) * 20)
+                .Take(20)
+                .Select(c => ODataQueryHelpers.ToLookupResult(c.Id, c.CustomerName));
+
+            return Json(new { value = result });
+        }
+
+        [HttpGet("/odata/customers/lookup/{id:int}")]
+        public async Task<IActionResult> CustomerLookupById(int id)
+        {
+            var customer = await _unitOfWork.customerRepository.GetByIdAsync(id);
+            if (customer is null)
+            {
+                return NotFound();
+            }
+
+            return Json(ODataQueryHelpers.ToLookupResult(customer.Id, customer.CustomerName));
         }
 
         public async Task<IActionResult> Details(int? id)

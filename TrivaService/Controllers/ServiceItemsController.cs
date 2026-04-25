@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using TrivaService.Abstractions.CommonAbstractions;
+using TrivaService.Infrastructure;
 using TrivaService.Models.ServiceEntites;
 
 namespace TrivaService.Controllers
@@ -13,9 +14,33 @@ namespace TrivaService.Controllers
             _unitOfWork = unitOfWork;
         }
 
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index([FromQuery(Name = "$filter")] string? filter)
         {
-            return View(await _unitOfWork.serviceItemRepository.GetAllAsync());
+            var serviceItems = await _unitOfWork.serviceItemRepository.GetAllAsync();
+            var term = ODataQueryHelpers.ExtractSearchTerm(filter).ToLowerInvariant();
+            if (!string.IsNullOrWhiteSpace(term))
+            {
+                serviceItems = serviceItems.Where(i => (i.Notes?.ToLowerInvariant().Contains(term) ?? false));
+            }
+
+            return View(serviceItems);
+        }
+
+        [HttpGet("/odata/serviceitems")]
+        public async Task<IActionResult> ODataList(
+            [FromQuery(Name = "$filter")] string? filter,
+            [FromQuery(Name = "$top")] int? top,
+            [FromQuery(Name = "$skip")] int? skip)
+        {
+            var serviceItems = await _unitOfWork.serviceItemRepository.GetAllAsync();
+            var term = ODataQueryHelpers.ExtractSearchTerm(filter).ToLowerInvariant();
+            if (!string.IsNullOrWhiteSpace(term))
+            {
+                serviceItems = serviceItems.Where(i => (i.Notes?.ToLowerInvariant().Contains(term) ?? false));
+            }
+
+            var paged = ODataQueryHelpers.ApplyPagination(serviceItems.OrderByDescending(i => i.Id), skip, top);
+            return Json(new { value = paged });
         }
 
         public async Task<IActionResult> Details(int? id)

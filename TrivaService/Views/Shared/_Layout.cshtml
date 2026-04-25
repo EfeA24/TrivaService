@@ -6,6 +6,7 @@
     <title>@ViewData["Title"] - Triva Servis</title>
     <script type="importmap"></script>
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/TrivaService.styles.css" asp-append-version="true" />
 </head>
@@ -29,7 +30,7 @@
                         <svg class="menu-icon" viewBox="0 0 20 20" fill="currentColor">
                             <path d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h4a1 1 0 001-1v-3h2v3a1 1 0 001 1h4a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z"/>
                         </svg>
-                        Gösterge Paneli
+                        Ana Sayfa
                     </a>
                 </div>
 
@@ -52,7 +53,7 @@
                         <svg class="menu-icon" viewBox="0 0 20 20" fill="currentColor">
                             <path fill-rule="evenodd" d="M11.49 3.17c-.38-1.56-2.6-1.56-2.98 0a1.532 1.532 0 01-2.286.948c-1.372-.836-2.942.734-2.106 2.106.54.886.061 2.042-.947 2.287-1.561.379-1.561 2.6 0 2.978a1.532 1.532 0 01.947 2.287c-.836 1.372.734 2.942 2.106 2.106a1.532 1.532 0 012.287.947c.379 1.561 2.6 1.561 2.978 0a1.533 1.533 0 012.287-.947c1.372.836 2.942-.734 2.106-2.106a1.533 1.533 0 01.947-2.287c1.561-.379 1.561-2.6 0-2.978a1.532 1.532 0 01-.947-2.287c.836-1.372-.734-2.942-2.106-2.106a1.532 1.532 0 01-2.287-.947zM10 13a3 3 0 100-6 3 3 0 000 6z" clip-rule="evenodd"/>
                         </svg>
-                        Hizmetler
+                        Servisler
                     </a>
                 </div>
 
@@ -62,7 +63,7 @@
                         <svg class="menu-icon" viewBox="0 0 20 20" fill="currentColor">
                             <path d="M7 3a1 1 0 000 2h6a1 1 0 100-2H7zM4 7a1 1 0 011-1h10a1 1 0 110 2H5a1 1 0 01-1-1zM2 11a2 2 0 012-2h12a2 2 0 012 2v4a2 2 0 01-2 2H4a2 2 0 01-2-2v-4z"/>
                         </svg>
-                        Hizmet Kalemleri
+                        Kullanılan Ürünler
                     </a>
                 </div>
 
@@ -72,7 +73,7 @@
                         <svg class="menu-icon" viewBox="0 0 20 20" fill="currentColor">
                             <path fill-rule="evenodd" d="M4 3a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V5a2 2 0 00-2-2H4zm12 12H4l4-8 3 6 2-4 3 6z" clip-rule="evenodd"/>
                         </svg>
-                        Hizmet Görselleri
+                        Servis Görselleri
                     </a>
                 </div>
 
@@ -102,7 +103,7 @@
                 </div>
 
                 <!-- Yönetim bölümü -->
-                <div class="menu-section">Yönetim</div>
+                <div class="menu-section">Kullanıcı İşlemleri</div>
 
                 <div class="menu-item">
                     <a class="menu-link" asp-controller="Roles" asp-action="Index"
@@ -143,7 +144,15 @@
                         <rect y="14" width="18" height="2" rx="1"/>
                     </svg>
                 </button>
-                <span class="topbar-title">@ViewData["Title"]</span>
+                <div class="topbar-search">
+                    <input type="search" id="globalPageSearch" class="form-control" placeholder="Sayfalarda ara..." aria-label="Sayfa arama" />
+                </div>
+                <div class="topbar-account">
+                    <svg class="account-icon" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                        <path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd"/>
+                    </svg>
+                    <span class="account-label">Admin</span>
+                </div>
             </header>
 
             <main class="page-content">
@@ -151,8 +160,7 @@
             </main>
 
             <footer class="page-footer">
-                &copy; 2026 Triva Servis &mdash;
-                <a asp-controller="Home" asp-action="Privacy">Gizlilik</a>
+                &copy; 2026 Triva Servis
             </footer>
 
         </div><!-- /.main-area -->
@@ -179,10 +187,90 @@
 
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
 
     <script>
     (function () {
+        var trMap = {
+            "Dashboard": "Ana Sayfa",
+            "Customers": "Müşteriler",
+            "Services": "Hizmetler",
+            "Service Items": "Hizmet Kalemleri",
+            "Service Visuals": "Hizmet Görselleri",
+            "Items": "Ürünler",
+            "Suppliers": "Tedarikçiler",
+            "Roles": "Roller",
+            "Users": "Kullanıcılar",
+            "Create": "Ekle",
+            "New": "Yeni",
+            "Edit": "Düzenle",
+            "Delete": "Sil",
+            "Details": "Detay",
+            "Save": "Kaydet",
+            "Cancel": "Vazgeç",
+            "Back to List": "Listeye Dön",
+            "Search": "Ara",
+            "Error": "Hata",
+            "New Customer": "Yeni Müşteri",
+            "Customer Details": "Müşteri Detayı",
+            "Edit Customer": "Müşteri Düzenle",
+            "Delete Customer": "Müşteri Sil",
+            "New Service": "Yeni Hizmet",
+            "Service Details": "Hizmet Detayı",
+            "Edit Service": "Hizmet Düzenle",
+            "Delete Service": "Hizmet Sil",
+            "New Service Item": "Yeni Hizmet Kalemi",
+            "Service Item Details": "Hizmet Kalemi Detayı",
+            "Edit Service Item": "Hizmet Kalemi Düzenle",
+            "Delete Service Item": "Hizmet Kalemi Sil",
+            "New Service Visual": "Yeni Hizmet Görseli",
+            "Service Visual Details": "Hizmet Görseli Detayı",
+            "Edit Service Visual": "Hizmet Görseli Düzenle",
+            "Delete Service Visual": "Hizmet Görseli Sil",
+            "New Item": "Yeni Ürün",
+            "Item Details": "Ürün Detayı",
+            "Edit Item": "Ürün Düzenle",
+            "Delete Item": "Ürün Sil",
+            "New Supplier": "Yeni Tedarikçi",
+            "Supplier Details": "Tedarikçi Detayı",
+            "Edit Supplier": "Tedarikçi Düzenle",
+            "Delete Supplier": "Tedarikçi Sil",
+            "New Role": "Yeni Rol",
+            "Role Details": "Rol Detayı",
+            "Edit Role": "Rol Düzenle",
+            "Delete Role": "Rol Sil",
+            "New User": "Yeni Kullanıcı",
+            "User Details": "Kullanıcı Detayı",
+            "Edit User": "Kullanıcı Düzenle",
+            "Delete User": "Kullanıcı Sil",
+            "Form": "Form",
+            "Back": "Geri",
+            "Save Service": "Servisi Kaydet",
+            "No customers found.": "Müşteri bulunamadı.",
+            "No services found.": "Servis bulunamadı."
+        };
+
+        function translateText(rawText) {
+            var text = (rawText || '').trim();
+            if (!text) return rawText;
+            return trMap[text] || rawText;
+        }
+
+        function applyTurkishTexts() {
+            var candidates = document.querySelectorAll('.topbar-title, .page-header h1, .page-header h2, .btn, a.btn, th, .card .fw-semibold, .text-muted.small');
+            candidates.forEach(function (el) {
+                if (!el || !el.firstChild || el.children.length > 0 && el.querySelector('svg')) return;
+                var source = el.textContent;
+                var translated = translateText(source);
+                if (translated !== source) {
+                    el.textContent = translated;
+                }
+            });
+        }
+
+        applyTurkishTexts();
+
         /* ── Active sidebar link ──────────────────────────── */
         (function markActiveLink() {
             var path = window.location.pathname;
@@ -231,7 +319,7 @@
             var doc     = parseHtml(html);
             var title   = doc.querySelector('.page-header h1');
             var content = doc.querySelector('.card');
-            crudModalTitle.textContent = title ? title.textContent.trim() : 'Form';
+            crudModalTitle.textContent = title ? translateText(title.textContent.trim()) : 'Form';
             crudModalBody.innerHTML    = content
                 ? content.outerHTML
                 : '<div class="alert alert-danger mb-0">Form yüklenemedi.</div>';
@@ -248,6 +336,9 @@
                 return;
             }
             setCrudContent(await response.text());
+            if (window.TrivaUi && typeof window.TrivaUi.initDynamicElements === 'function') {
+                window.TrivaUi.initDynamicElements(crudModalBody);
+            }
         }
 
         function isCrudUrl(url) {
@@ -290,6 +381,9 @@
             var doc = parseHtml(html);
             if (doc.querySelector('.validation-summary-errors, .field-validation-error')) {
                 setCrudContent(html);
+                if (window.TrivaUi && typeof window.TrivaUi.initDynamicElements === 'function') {
+                    window.TrivaUi.initDynamicElements(crudModalBody);
+                }
                 return;
             }
 

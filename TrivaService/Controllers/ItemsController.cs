@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using TrivaService.Abstractions.CommonAbstractions;
+using TrivaService.Infrastructure;
 using TrivaService.Models.StockEntities;
 
 namespace TrivaService.Controllers
@@ -13,9 +14,76 @@ namespace TrivaService.Controllers
             _unitOfWork = unitOfWork;
         }
 
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index([FromQuery(Name = "$filter")] string? filter)
         {
-            return View(await _unitOfWork.itemRepository.GetAllAsync());
+            var items = await _unitOfWork.itemRepository.GetAllAsync();
+            var term = ODataQueryHelpers.ExtractSearchTerm(filter).ToLowerInvariant();
+            if (!string.IsNullOrWhiteSpace(term))
+            {
+                items = items.Where(i =>
+                    (i.ItemName?.ToLowerInvariant().Contains(term) ?? false) ||
+                    (i.ItemCode?.ToLowerInvariant().Contains(term) ?? false) ||
+                    (i.ItemBrand?.ToLowerInvariant().Contains(term) ?? false) ||
+                    (i.ItemModel?.ToLowerInvariant().Contains(term) ?? false));
+            }
+
+            return View(items);
+        }
+
+        [HttpGet("/odata/items")]
+        public async Task<IActionResult> ODataList(
+            [FromQuery(Name = "$filter")] string? filter,
+            [FromQuery(Name = "$top")] int? top,
+            [FromQuery(Name = "$skip")] int? skip)
+        {
+            var items = await _unitOfWork.itemRepository.GetAllAsync();
+            var term = ODataQueryHelpers.ExtractSearchTerm(filter).ToLowerInvariant();
+            if (!string.IsNullOrWhiteSpace(term))
+            {
+                items = items.Where(i =>
+                    (i.ItemName?.ToLowerInvariant().Contains(term) ?? false) ||
+                    (i.ItemCode?.ToLowerInvariant().Contains(term) ?? false) ||
+                    (i.ItemBrand?.ToLowerInvariant().Contains(term) ?? false) ||
+                    (i.ItemModel?.ToLowerInvariant().Contains(term) ?? false));
+            }
+
+            var paged = ODataQueryHelpers.ApplyPagination(items.OrderBy(i => i.ItemName), skip, top);
+            return Json(new { value = paged });
+        }
+
+        [HttpGet("/odata/items/lookup")]
+        public async Task<IActionResult> ItemLookup([FromQuery] string? term, [FromQuery] int page = 1)
+        {
+            var items = await _unitOfWork.itemRepository.GetAllAsync();
+            var query = items.AsEnumerable();
+            if (!string.IsNullOrWhiteSpace(term))
+            {
+                var search = term.Trim().ToLowerInvariant();
+                query = query.Where(i =>
+                    (i.ItemName?.ToLowerInvariant().Contains(search) ?? false) ||
+                    (i.ItemCode?.ToLowerInvariant().Contains(search) ?? false));
+            }
+
+            var result = query
+                .OrderBy(i => i.ItemName)
+                .Skip((Math.Max(page, 1) - 1) * 20)
+                .Take(20)
+                .Select(i => ODataQueryHelpers.ToLookupResult(i.Id, string.IsNullOrWhiteSpace(i.ItemCode) ? i.ItemName : $"{i.ItemName} ({i.ItemCode})"));
+
+            return Json(new { value = result });
+        }
+
+        [HttpGet("/odata/items/lookup/{id:int}")]
+        public async Task<IActionResult> ItemLookupById(int id)
+        {
+            var item = await _unitOfWork.itemRepository.GetByIdAsync(id);
+            if (item is null)
+            {
+                return NotFound();
+            }
+
+            var text = string.IsNullOrWhiteSpace(item.ItemCode) ? item.ItemName : $"{item.ItemName} ({item.ItemCode})";
+            return Json(ODataQueryHelpers.ToLookupResult(item.Id, text));
         }
 
         public async Task<IActionResult> Details(int? id)

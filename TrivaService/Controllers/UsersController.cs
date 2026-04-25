@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using TrivaService.Abstractions.CommonAbstractions;
+using TrivaService.Infrastructure;
 using TrivaService.Models.UserEntities;
 
 namespace TrivaService.Controllers
@@ -13,9 +14,39 @@ namespace TrivaService.Controllers
             _unitOfWork = unitOfWork;
         }
 
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index([FromQuery(Name = "$filter")] string? filter)
         {
-            return View(await _unitOfWork.usersRepository.GetAllAsync());
+            var users = await _unitOfWork.usersRepository.GetAllAsync();
+            var term = ODataQueryHelpers.ExtractSearchTerm(filter).ToLowerInvariant();
+            if (!string.IsNullOrWhiteSpace(term))
+            {
+                users = users.Where(u =>
+                    (u.UserName?.ToLowerInvariant().Contains(term) ?? false) ||
+                    (u.UserPhone?.ToLowerInvariant().Contains(term) ?? false) ||
+                    (u.UserNotes?.ToLowerInvariant().Contains(term) ?? false));
+            }
+
+            return View(users);
+        }
+
+        [HttpGet("/odata/users")]
+        public async Task<IActionResult> ODataList(
+            [FromQuery(Name = "$filter")] string? filter,
+            [FromQuery(Name = "$top")] int? top,
+            [FromQuery(Name = "$skip")] int? skip)
+        {
+            var users = await _unitOfWork.usersRepository.GetAllAsync();
+            var term = ODataQueryHelpers.ExtractSearchTerm(filter).ToLowerInvariant();
+            if (!string.IsNullOrWhiteSpace(term))
+            {
+                users = users.Where(u =>
+                    (u.UserName?.ToLowerInvariant().Contains(term) ?? false) ||
+                    (u.UserPhone?.ToLowerInvariant().Contains(term) ?? false) ||
+                    (u.UserNotes?.ToLowerInvariant().Contains(term) ?? false));
+            }
+
+            var paged = ODataQueryHelpers.ApplyPagination(users.OrderBy(u => u.UserName), skip, top);
+            return Json(new { value = paged });
         }
 
         public async Task<IActionResult> Details(int? id)

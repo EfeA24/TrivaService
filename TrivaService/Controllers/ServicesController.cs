@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using TrivaService.Abstractions.CommonAbstractions;
+using TrivaService.Infrastructure;
 using ServiceEntity = TrivaService.Models.ServiceEntites.Service;
 
 namespace TrivaService.Controllers
@@ -13,9 +14,93 @@ namespace TrivaService.Controllers
             _unitOfWork = unitOfWork;
         }
 
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index([FromQuery(Name = "$filter")] string? filter)
         {
-            return View(await _unitOfWork.serviceRepository.GetAllAsync());
+            var services = await _unitOfWork.serviceRepository.GetAllAsync();
+            var term = ODataQueryHelpers.ExtractSearchTerm(filter).ToLowerInvariant();
+            if (!string.IsNullOrWhiteSpace(term))
+            {
+                services = services.Where(s =>
+                    (s.ServiceCode?.ToLowerInvariant().Contains(term) ?? false) ||
+                    (s.Status?.ToLowerInvariant().Contains(term) ?? false) ||
+                    (s.ServiceAddress?.ToLowerInvariant().Contains(term) ?? false) ||
+                    (s.FaultDescription?.ToLowerInvariant().Contains(term) ?? false));
+            }
+
+            return View(services);
+        }
+
+        [HttpGet("/odata/services")]
+        public async Task<IActionResult> ODataList(
+            [FromQuery(Name = "$filter")] string? filter,
+            [FromQuery(Name = "$top")] int? top,
+            [FromQuery(Name = "$skip")] int? skip)
+        {
+            var services = await _unitOfWork.serviceRepository.GetAllAsync();
+            var term = ODataQueryHelpers.ExtractSearchTerm(filter).ToLowerInvariant();
+            if (!string.IsNullOrWhiteSpace(term))
+            {
+                services = services.Where(s =>
+                    (s.ServiceCode?.ToLowerInvariant().Contains(term) ?? false) ||
+                    (s.Status?.ToLowerInvariant().Contains(term) ?? false) ||
+                    (s.ServiceAddress?.ToLowerInvariant().Contains(term) ?? false) ||
+                    (s.FaultDescription?.ToLowerInvariant().Contains(term) ?? false));
+            }
+
+            var paged = ODataQueryHelpers.ApplyPagination(services.OrderByDescending(s => s.Id), skip, top);
+            return Json(new { value = paged });
+        }
+
+        [HttpGet("/odata/services/lookup")]
+        public async Task<IActionResult> ServiceLookup([FromQuery] string? term, [FromQuery] int page = 1)
+        {
+            var services = await _unitOfWork.serviceRepository.GetAllAsync();
+            var customers = (await _unitOfWork.customerRepository.GetAllAsync()).ToDictionary(c => c.Id, c => c.CustomerName);
+            var query = services.AsEnumerable();
+            if (!string.IsNullOrWhiteSpace(term))
+            {
+                var search = term.Trim().ToLowerInvariant();
+                query = query.Where(s =>
+                {
+                    customers.TryGetValue(s.CustomerId ?? 0, out var customerName);
+                    var display = $"{s.ServiceCode} - {customerName ?? "Müşteri yok"}";
+                    return display.ToLowerInvariant().Contains(search);
+                });
+            }
+
+            var result = query
+                .OrderByDescending(s => s.Id)
+                .Skip((Math.Max(page, 1) - 1) * 20)
+                .Take(20)
+                .Select(s =>
+                {
+                    customers.TryGetValue(s.CustomerId ?? 0, out var customerName);
+                    return ODataQueryHelpers.ToLookupResult(s.Id, $"{s.ServiceCode} - {customerName ?? "Müşteri yok"}");
+                });
+
+            return Json(new { value = result });
+        }
+
+        [HttpGet("/odata/services/lookup/{id:int}")]
+        public async Task<IActionResult> ServiceLookupById(int id)
+        {
+            var service = await _unitOfWork.serviceRepository.GetByIdAsync(id);
+            if (service is null)
+            {
+                return NotFound();
+            }
+
+            var customerName = "Müşteri yok";
+            if (service.CustomerId.HasValue)
+            {
+                var customer = await _unitOfWork.customerRepository.GetByIdAsync(service.CustomerId.Value);
+                if (customer is not null)
+                {
+                    customerName = customer.CustomerName;
+                }
+            }
+
+            return Json(ODataQueryHelpers.ToLookupResult(service.Id, $"{service.ServiceCode} - {customerName}"));
         }
 
         public async Task<IActionResult> Details(int? id)
