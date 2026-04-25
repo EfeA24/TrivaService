@@ -1,4 +1,15 @@
 ﻿(function () {
+    function getListFilterSettings() {
+        var defaults = { enabled: true, autoApply: false };
+        var runtime = window.TrivaSettings && window.TrivaSettings.listFilter
+            ? window.TrivaSettings.listFilter
+            : {};
+        return {
+            enabled: runtime.enabled !== false,
+            autoApply: runtime.autoApply === true
+        };
+    }
+
     function debounce(fn, delay) {
         var timer;
         return function () {
@@ -14,6 +25,14 @@
         if (!rawFilter) return "";
         var match = rawFilter.match(/'([^']+)'/);
         return match && match[1] ? decodeURIComponent(match[1]).replace(/''/g, "'") : "";
+    }
+
+    function extractActiveStateFromFilter(rawFilter) {
+        if (!rawFilter) return "";
+        var normalized = rawFilter.toLowerCase();
+        if (normalized.indexOf("isactive eq true") >= 0) return "true";
+        if (normalized.indexOf("isactive eq false") >= 0) return "false";
+        return "";
     }
 
     function buildODataFilter(path, term) {
@@ -65,6 +84,9 @@
     }
 
     function initListSearch() {
+        var settings = getListFilterSettings();
+        if (!settings.enabled) return;
+
         var table = document.querySelector(".card .table");
         var card = document.querySelector(".card.shadow-sm");
         if (!table || !card) return;
@@ -78,31 +100,77 @@
         var queryParams = new URLSearchParams(window.location.search);
         var currentFilter = queryParams.get("$filter") || "";
         var currentSearch = extractSearchTermFromFilter(currentFilter);
+        var activeFilter = extractActiveStateFromFilter(currentFilter);
 
         var wrapper = document.createElement("div");
         wrapper.className = "list-search-bar";
-        wrapper.innerHTML = '<div class="input-group">' +
-            '<span class="input-group-text">Ara</span>' +
-            '<input type="search" class="form-control" id="listFilterInput" placeholder="Liste içinde ara..." value="' + currentSearch + '">' +
+        wrapper.innerHTML =
+            '<div class="list-search-controls">' +
+                '<div class="input-group list-search-group">' +
+                    '<span class="input-group-text">Ara</span>' +
+                    '<input type="search" class="form-control" id="listFilterInput" placeholder="Liste içinde ara..." value="' + currentSearch + '">' +
+                    '<button type="button" class="btn btn-primary list-search-btn ms-2" id="listFilterButton">Ara</button>' +
+                '</div>' +
+                '<select id="listActiveFilter" class="form-select list-active-filter">' +
+                    '<option value="">Durum: Tümü</option>' +
+                    '<option value="true">Durum: Aktif</option>' +
+                    '<option value="false">Durum: Pasif</option>' +
+                '</select>' +
             '</div>';
         card.insertBefore(wrapper, card.firstChild);
 
         var input = wrapper.querySelector("#listFilterInput");
-        var applyFilter = debounce(function (term) {
+        var searchBtn = wrapper.querySelector("#listFilterButton");
+        var activeSelect = wrapper.querySelector("#listActiveFilter");
+        if (activeSelect && activeFilter !== null) {
+            activeSelect.value = activeFilter;
+        }
+
+        function applyFilter(term) {
             var params = new URLSearchParams(window.location.search);
-            if (!term || !term.trim()) {
-                params.delete("$filter");
-            } else {
-                params.set("$filter", buildODataFilter(path.replace("/index", ""), term));
+            var selectedActive = activeSelect ? activeSelect.value : "";
+            var searchFilter = term && term.trim()
+                ? buildODataFilter(path.replace("/index", ""), term)
+                : "";
+            var clauses = [];
+            if (searchFilter) clauses.push("(" + searchFilter + ")");
+            if (selectedActive === "true" || selectedActive === "false") {
+                clauses.push("IsActive eq " + selectedActive);
             }
+            if (clauses.length) params.set("$filter", clauses.join(" and "));
+            else params.delete("$filter");
 
             var next = window.location.pathname + (params.toString() ? ("?" + params.toString()) : "");
             window.location.href = next;
+        }
+
+        var applyFilterDebounced = debounce(function (term) {
+            applyFilter(term);
         }, 400);
 
-        input.addEventListener("input", function () {
+        if (settings.autoApply) {
+            input.addEventListener("input", function () {
+                applyFilterDebounced(input.value);
+            });
+        }
+
+        if (searchBtn) {
+            searchBtn.addEventListener("click", function () {
+                applyFilter(input.value);
+            });
+        }
+
+        input.addEventListener("keydown", function (event) {
+            if (event.key !== "Enter") return;
+            event.preventDefault();
             applyFilter(input.value);
         });
+
+        if (activeSelect) {
+            activeSelect.addEventListener("change", function () {
+                applyFilter(input.value);
+            });
+        }
     }
 
     function initRemoteSelect($element, config) {

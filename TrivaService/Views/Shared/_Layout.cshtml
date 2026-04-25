@@ -151,7 +151,7 @@
                     <svg class="account-icon" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
                         <path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd"/>
                     </svg>
-                    <span class="account-label">Admin</span>
+                    <span class="account-label">admin</span>
                 </div>
             </header>
 
@@ -188,6 +188,14 @@
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+    <script>
+        window.TrivaSettings = window.TrivaSettings || {
+            listFilter: {
+                enabled: true,
+                autoApply: false
+            }
+        };
+    </script>
     <script src="~/js/site.js" asp-append-version="true"></script>
 
     <script>
@@ -195,7 +203,7 @@
         var trMap = {
             "Dashboard": "Ana Sayfa",
             "Customers": "Müşteriler",
-            "Services": "Hizmetler",
+            "Services": "Servisler",
             "Service Items": "Hizmet Kalemleri",
             "Service Visuals": "Hizmet Görselleri",
             "Items": "Ürünler",
@@ -248,7 +256,41 @@
             "Back": "Geri",
             "Save Service": "Servisi Kaydet",
             "No customers found.": "Müşteri bulunamadı.",
-            "No services found.": "Servis bulunamadı."
+            "No services found.": "Servis bulunamadı.",
+            "No items found.": "Ürün bulunamadı.",
+            "No suppliers found.": "Tedarikçi bulunamadı.",
+            "No users found.": "Kullanıcı bulunamadı.",
+            "No roles found.": "Rol bulunamadı.",
+            "No service items found.": "Servis kalemi bulunamadı.",
+            "No service visuals found.": "Servis görseli bulunamadı.",
+            "+ New Visual": "+ Yeni Görsel",
+            "Name": "Ad",
+            "Phone": "Telefon",
+            "Address": "Adres",
+            "Services Count": "Servis Sayısı",
+            "Services": "Servisler",
+            "Status": "Durum",
+            "Code": "Kod",
+            "Customer": "Müşteri",
+            "Received": "Teslim Alınma",
+            "Est. Cost": "Tahmini Tutar",
+            "Active": "Aktif",
+            "Inactive": "Pasif",
+            "Brand": "Marka",
+            "Type": "Tip",
+            "Qty": "Adet",
+            "Price": "Fiyat",
+            "Contact Person": "Yetkili Kişi",
+            "Email": "E-posta",
+            "Username": "Kullanıcı Adı",
+            "Role": "Rol",
+            "Description": "Açıklama",
+            "Service": "Servis",
+            "Item": "Ürün",
+            "Unit Price": "Birim Fiyat",
+            "Total": "Toplam",
+            "Document URL": "Belge URL",
+            "View": "Görüntüle"
         };
 
         function translateText(rawText) {
@@ -318,7 +360,14 @@
         function setCrudContent(html) {
             var doc     = parseHtml(html);
             var title   = doc.querySelector('.page-header h1');
-            var content = doc.querySelector('.card');
+            var content = doc.querySelector('form');
+            if (content) {
+                var cardBody = content.querySelector('.card-body');
+                var cardFooter = content.querySelector('.card-footer');
+                if (cardBody) {
+                    content.innerHTML = cardBody.innerHTML + (cardFooter ? cardFooter.outerHTML : '');
+                }
+            }
             crudModalTitle.textContent = title ? translateText(title.textContent.trim()) : 'Form';
             crudModalBody.innerHTML    = content
                 ? content.outerHTML
