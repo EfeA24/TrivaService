@@ -1,64 +1,151 @@
 @model IEnumerable<Item>
 @{
-    ViewData["Title"] = "Items";
+    ViewData["Title"] = "Ürünler";
 }
 
-<div class="page-header">
-    <h1>Items</h1>
-    <a asp-action="Create" class="btn btn-primary">+ New Item</a>
+<div class="index-layout">
+    <div class="index-main">
+        <div class="page-header">
+            <h1>Ürünler</h1>
+            <a asp-action="Create" class="btn btn-primary">+ Yeni Ürün</a>
+        </div>
+
+        <div class="card shadow-sm">
+            <div class="table-responsive">
+                <table class="table table-hover mb-0">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Ad</th>
+                            <th>Kod</th>
+                            <th>Marka</th>
+                            <th>Tür</th>
+                            <th>Adet</th>
+                            <th>Fiyat</th>
+                            <th>Durum</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model)
+                        {
+                            <tr>
+                                <td class="text-muted">@item.Id</td>
+                                <td class="fw-semibold">@item.ItemName</td>
+                                <td class="text-muted">@(item.ItemCode ?? "—")</td>
+                                <td>@(item.ItemBrand ?? "—")</td>
+                                <td>@(item.ItemType ?? "—")</td>
+                                <td>@item.ItemQuantity</td>
+                                <td>@(item.ItemPrice?.ToString("C") ?? "—")</td>
+                                <td>
+                                    @if (item.IsActive)
+                                    {
+                                        <span class="badge-active">Aktif</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge-inactive">Pasif</span>
+                                    }
+                                </td>
+                                <td class="action-btns text-end">
+                                    <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-sm btn-outline-secondary">Detaylar</a>
+                                    <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-sm btn-outline-primary">Düzenle</a>
+                                    <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-sm btn-outline-danger">Sil</a>
+                                </td>
+                            </tr>
+                        }
+                        @if (!Model.Any())
+                        {
+                            <tr>
+                                <td colspan="9" class="text-center text-muted py-4">Kayıt bulunamadı.</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <aside class="filter-panel" id="filterPanel">
+        <div class="fp-header">
+            <span class="fp-title">Filtrele</span>
+            <a asp-action="Index" class="fp-clear">Temizle</a>
+        </div>
+        <form id="filterForm" novalidate>
+            <div class="fp-field">
+                <label class="fp-label">Ürün Adı</label>
+                <input type="text" class="form-control form-control-sm" id="filter_ItemName" placeholder="Ara...">
+            </div>
+            <div class="fp-field">
+                <label class="fp-label">Ürün Kodu</label>
+                <input type="text" class="form-control form-control-sm" id="filter_ItemCode" placeholder="Ara...">
+            </div>
+            <div class="fp-field">
+                <label class="fp-label">Marka</label>
+                <input type="text" class="form-control form-control-sm" id="filter_ItemBrand" placeholder="Ara...">
+            </div>
+            <div class="fp-field">
+                <label class="fp-label">Model</label>
+                <input type="text" class="form-control form-control-sm" id="filter_ItemModel" placeholder="Ara...">
+            </div>
+            <div class="fp-field">
+                <label class="fp-label">Durum</label>
+                <select class="form-select form-select-sm" id="filter_IsActive">
+                    <option value="">Tümü</option>
+                    <option value="true">Aktif</option>
+                    <option value="false">Pasif</option>
+                </select>
+            </div>
+            <div class="fp-actions">
+                <button type="submit" class="btn btn-primary btn-sm flex-fill">Filtrele</button>
+            </div>
+        </form>
+    </aside>
 </div>
 
-<div class="card shadow-sm">
-    <div class="table-responsive">
-        <table class="table table-hover mb-0">
-            <thead>
-                <tr>
-                    <th>#</th>
-                    <th>Name</th>
-                    <th>Code</th>
-                    <th>Brand</th>
-                    <th>Type</th>
-                    <th>Qty</th>
-                    <th>Price</th>
-                    <th>Active</th>
-                    <th></th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach (var item in Model)
-                {
-                    <tr>
-                        <td class="text-muted">@item.Id</td>
-                        <td class="fw-semibold">@item.ItemName</td>
-                        <td class="text-muted">@(item.ItemCode ?? "—")</td>
-                        <td>@(item.ItemBrand ?? "—")</td>
-                        <td>@(item.ItemType ?? "—")</td>
-                        <td>@item.ItemQuantity</td>
-                        <td>@(item.ItemPrice?.ToString("C") ?? "—")</td>
-                        <td>
-                            @if (item.IsActive)
-                            {
-                                <span class="badge-active">Active</span>
-                            }
-                            else
-                            {
-                                <span class="badge-inactive">Inactive</span>
-                            }
-                        </td>
-                        <td class="action-btns text-end">
-                            <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-sm btn-outline-secondary">Details</a>
-                            <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-sm btn-outline-primary">Edit</a>
-                            <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-sm btn-outline-danger">Delete</a>
-                        </td>
-                    </tr>
-                }
-                @if (!Model.Any())
-                {
-                    <tr>
-                        <td colspan="9" class="text-center text-muted py-4">No items found.</td>
-                    </tr>
-                }
-            </tbody>
-        </table>
-    </div>
-</div>
+@section Scripts {
+<script>
+(function () {
+    var raw = @Json.Serialize((string)(ViewBag.CurrentFilter ?? ""));
+
+    function pc(f, n) {
+        if (!f) return '';
+        var re = new RegExp('contains\\(\\s*' + n.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + '\\s*,\\s*\'([^\']*)\'\\)', 'i');
+        var m = f.match(re);
+        return m ? m[1].replace(/''/g, "'") : '';
+    }
+
+    function pe(f, n) {
+        if (!f) return '';
+        var re = new RegExp('\\b' + n.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + '\\s+eq\\s+(?:\'([^\']*)\'|([^\\s)&|]+))', 'i');
+        var m = f.match(re);
+        if (!m) return '';
+        return (m[1] !== undefined ? m[1] : (m[2] || '')).trim();
+    }
+
+    document.getElementById('filter_ItemName').value  = pc(raw, 'ItemName');
+    document.getElementById('filter_ItemCode').value  = pc(raw, 'ItemCode');
+    document.getElementById('filter_ItemBrand').value = pc(raw, 'ItemBrand');
+    document.getElementById('filter_ItemModel').value = pc(raw, 'ItemModel');
+    document.getElementById('filter_IsActive').value  = pe(raw, 'IsActive');
+
+    document.getElementById('filterForm').addEventListener('submit', function (e) {
+        e.preventDefault();
+        var parts = [];
+        var v;
+        v = document.getElementById('filter_ItemName').value.trim();
+        if (v) parts.push("contains(ItemName,'" + v.replace(/'/g, "''") + "')");
+        v = document.getElementById('filter_ItemCode').value.trim();
+        if (v) parts.push("contains(ItemCode,'" + v.replace(/'/g, "''") + "')");
+        v = document.getElementById('filter_ItemBrand').value.trim();
+        if (v) parts.push("contains(ItemBrand,'" + v.replace(/'/g, "''") + "')");
+        v = document.getElementById('filter_ItemModel').value.trim();
+        if (v) parts.push("contains(ItemModel,'" + v.replace(/'/g, "''") + "')");
+        v = document.getElementById('filter_IsActive').value;
+        if (v) parts.push('IsActive eq ' + v);
+        var qs = parts.length ? '?$filter=' + encodeURIComponent(parts.join(' and ')) : '';
+        window.location.href = window.location.pathname + qs;
+    });
+})();
+</script>
+}

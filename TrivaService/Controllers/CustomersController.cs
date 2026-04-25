@@ -17,15 +17,22 @@ namespace TrivaService.Controllers
         public async Task<IActionResult> Index([FromQuery(Name = "$filter")] string? filter)
         {
             var customers = await _unitOfWork.customerRepository.GetAllAsync();
-            var term = ODataQueryHelpers.ExtractSearchTerm(filter).ToLowerInvariant();
-            if (!string.IsNullOrWhiteSpace(term))
-            {
-                customers = customers.Where(c =>
-                    (c.CustomerName?.ToLowerInvariant().Contains(term) ?? false) ||
-                    (c.CustomerPhone?.ToLowerInvariant().Contains(term) ?? false) ||
-                    (c.CustomerAddress?.ToLowerInvariant().Contains(term) ?? false));
-            }
 
+            var fName    = ODataQueryHelpers.ExtractFieldFilter(filter, "CustomerName");
+            var fPhone   = ODataQueryHelpers.ExtractFieldFilter(filter, "CustomerPhone");
+            var fAddress = ODataQueryHelpers.ExtractFieldFilter(filter, "CustomerAddress");
+            var fActive  = ODataQueryHelpers.ExtractEqFilter(filter, "IsActive");
+
+            if (!string.IsNullOrWhiteSpace(fName))
+                customers = customers.Where(c => c.CustomerName?.ToLowerInvariant().Contains(fName.ToLowerInvariant()) ?? false);
+            if (!string.IsNullOrWhiteSpace(fPhone))
+                customers = customers.Where(c => c.CustomerPhone?.ToLowerInvariant().Contains(fPhone.ToLowerInvariant()) ?? false);
+            if (!string.IsNullOrWhiteSpace(fAddress))
+                customers = customers.Where(c => c.CustomerAddress?.ToLowerInvariant().Contains(fAddress.ToLowerInvariant()) ?? false);
+            if (!string.IsNullOrWhiteSpace(fActive) && bool.TryParse(fActive, out var isActive))
+                customers = customers.Where(c => c.IsActive == isActive);
+
+            ViewBag.CurrentFilter = filter ?? string.Empty;
             return View(customers);
         }
 

@@ -17,14 +17,19 @@ namespace TrivaService.Controllers
         public async Task<IActionResult> Index([FromQuery(Name = "$filter")] string? filter)
         {
             var roles = await _unitOfWork.rolesRepository.GetAllAsync();
-            var term = ODataQueryHelpers.ExtractSearchTerm(filter).ToLowerInvariant();
-            if (!string.IsNullOrWhiteSpace(term))
-            {
-                roles = roles.Where(r =>
-                    (r.RoleName?.ToLowerInvariant().Contains(term) ?? false) ||
-                    (r.RoleDescription?.ToLowerInvariant().Contains(term) ?? false));
-            }
 
+            var fName   = ODataQueryHelpers.ExtractFieldFilter(filter, "RoleName");
+            var fDesc   = ODataQueryHelpers.ExtractFieldFilter(filter, "RoleDescription");
+            var fActive = ODataQueryHelpers.ExtractEqFilter(filter, "IsActive");
+
+            if (!string.IsNullOrWhiteSpace(fName))
+                roles = roles.Where(r => r.RoleName?.ToLowerInvariant().Contains(fName.ToLowerInvariant()) ?? false);
+            if (!string.IsNullOrWhiteSpace(fDesc))
+                roles = roles.Where(r => r.RoleDescription?.ToLowerInvariant().Contains(fDesc.ToLowerInvariant()) ?? false);
+            if (!string.IsNullOrWhiteSpace(fActive) && bool.TryParse(fActive, out var isActive))
+                roles = roles.Where(r => r.IsActive == isActive);
+
+            ViewBag.CurrentFilter = filter ?? string.Empty;
             return View(roles);
         }
 

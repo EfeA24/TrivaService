@@ -17,16 +17,25 @@ namespace TrivaService.Controllers
         public async Task<IActionResult> Index([FromQuery(Name = "$filter")] string? filter)
         {
             var items = await _unitOfWork.itemRepository.GetAllAsync();
-            var term = ODataQueryHelpers.ExtractSearchTerm(filter).ToLowerInvariant();
-            if (!string.IsNullOrWhiteSpace(term))
-            {
-                items = items.Where(i =>
-                    (i.ItemName?.ToLowerInvariant().Contains(term) ?? false) ||
-                    (i.ItemCode?.ToLowerInvariant().Contains(term) ?? false) ||
-                    (i.ItemBrand?.ToLowerInvariant().Contains(term) ?? false) ||
-                    (i.ItemModel?.ToLowerInvariant().Contains(term) ?? false));
-            }
 
+            var fName   = ODataQueryHelpers.ExtractFieldFilter(filter, "ItemName");
+            var fCode   = ODataQueryHelpers.ExtractFieldFilter(filter, "ItemCode");
+            var fBrand  = ODataQueryHelpers.ExtractFieldFilter(filter, "ItemBrand");
+            var fModel  = ODataQueryHelpers.ExtractFieldFilter(filter, "ItemModel");
+            var fActive = ODataQueryHelpers.ExtractEqFilter(filter, "IsActive");
+
+            if (!string.IsNullOrWhiteSpace(fName))
+                items = items.Where(i => i.ItemName?.ToLowerInvariant().Contains(fName.ToLowerInvariant()) ?? false);
+            if (!string.IsNullOrWhiteSpace(fCode))
+                items = items.Where(i => i.ItemCode?.ToLowerInvariant().Contains(fCode.ToLowerInvariant()) ?? false);
+            if (!string.IsNullOrWhiteSpace(fBrand))
+                items = items.Where(i => i.ItemBrand?.ToLowerInvariant().Contains(fBrand.ToLowerInvariant()) ?? false);
+            if (!string.IsNullOrWhiteSpace(fModel))
+                items = items.Where(i => i.ItemModel?.ToLowerInvariant().Contains(fModel.ToLowerInvariant()) ?? false);
+            if (!string.IsNullOrWhiteSpace(fActive) && bool.TryParse(fActive, out var isActive))
+                items = items.Where(i => i.IsActive == isActive);
+
+            ViewBag.CurrentFilter = filter ?? string.Empty;
             return View(items);
         }
 

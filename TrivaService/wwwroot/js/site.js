@@ -86,6 +86,7 @@
     function initListSearch() {
         var settings = getListFilterSettings();
         if (!settings.enabled) return;
+        if (document.querySelector(".filter-panel")) return;
 
         var table = document.querySelector(".card .table");
         var card = document.querySelector(".card.shadow-sm");

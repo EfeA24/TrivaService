@@ -17,16 +17,25 @@ namespace TrivaService.Controllers
         public async Task<IActionResult> Index([FromQuery(Name = "$filter")] string? filter)
         {
             var services = await _unitOfWork.serviceRepository.GetAllAsync();
-            var term = ODataQueryHelpers.ExtractSearchTerm(filter).ToLowerInvariant();
-            if (!string.IsNullOrWhiteSpace(term))
-            {
-                services = services.Where(s =>
-                    (s.ServiceCode?.ToLowerInvariant().Contains(term) ?? false) ||
-                    (s.Status?.ToLowerInvariant().Contains(term) ?? false) ||
-                    (s.ServiceAddress?.ToLowerInvariant().Contains(term) ?? false) ||
-                    (s.FaultDescription?.ToLowerInvariant().Contains(term) ?? false));
-            }
 
+            var fCode    = ODataQueryHelpers.ExtractFieldFilter(filter, "ServiceCode");
+            var fStatus  = ODataQueryHelpers.ExtractFieldFilter(filter, "Status");
+            var fFault   = ODataQueryHelpers.ExtractFieldFilter(filter, "FaultDescription");
+            var fAddress = ODataQueryHelpers.ExtractFieldFilter(filter, "ServiceAddress");
+            var fActive  = ODataQueryHelpers.ExtractEqFilter(filter, "IsActive");
+
+            if (!string.IsNullOrWhiteSpace(fCode))
+                services = services.Where(s => s.ServiceCode?.ToLowerInvariant().Contains(fCode.ToLowerInvariant()) ?? false);
+            if (!string.IsNullOrWhiteSpace(fStatus))
+                services = services.Where(s => s.Status?.ToLowerInvariant().Contains(fStatus.ToLowerInvariant()) ?? false);
+            if (!string.IsNullOrWhiteSpace(fFault))
+                services = services.Where(s => s.FaultDescription?.ToLowerInvariant().Contains(fFault.ToLowerInvariant()) ?? false);
+            if (!string.IsNullOrWhiteSpace(fAddress))
+                services = services.Where(s => s.ServiceAddress?.ToLowerInvariant().Contains(fAddress.ToLowerInvariant()) ?? false);
+            if (!string.IsNullOrWhiteSpace(fActive) && bool.TryParse(fActive, out var isActive))
+                services = services.Where(s => s.IsActive == isActive);
+
+            ViewBag.CurrentFilter = filter ?? string.Empty;
             return View(services);
         }
 

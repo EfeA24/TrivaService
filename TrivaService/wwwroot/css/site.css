@@ -1120,3 +1120,118 @@ hr {
         font-size: 1.125rem;
     }
 }
+
+/* ─── Index Filter Panel ────────────────────────────────────────────────── */
+.index-layout {
+    display: flex;
+    gap: 1.5rem;
+    align-items: flex-start;
+}
+
+.index-main {
+    flex: 1;
+    min-width: 0;
+}
+
+.filter-panel {
+    width: 256px;
+    min-width: 256px;
+    background: var(--surface-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding: 1.125rem 1.125rem 1.25rem;
+    position: sticky;
+    top: calc(var(--topbar-height) + 1rem);
+    box-shadow: var(--shadow-card);
+    flex-shrink: 0;
+}
+
+.fp-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 1rem;
+    padding-bottom: 0.625rem;
+    border-bottom: 1px solid var(--border-light);
+}
+
+.fp-title {
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.07em;
+    color: var(--text-secondary);
+}
+
+.fp-clear {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    text-decoration: none;
+    transition: color var(--transition-fast);
+}
+
+.fp-clear:hover {
+    color: var(--danger);
+}
+
+.fp-field {
+    margin-bottom: 0.75rem;
+}
+
+.fp-label {
+    display: block;
+    font-size: 0.7rem;
+    font-weight: 600;
+    color: var(--text-secondary);
+    margin-bottom: 0.3rem;
+    letter-spacing: 0.03em;
+    text-transform: uppercase;
+}
+
+.fp-field .form-control,
+.fp-field .form-select {
+    background: var(--surface-raised) !important;
+    border-color: var(--border) !important;
+    border-radius: var(--radius-sm) !important;
+    font-size: 0.875rem;
+    padding: 0.375rem 0.625rem;
+    color: var(--text-main) !important;
+}
+
+.fp-field .form-control:focus,
+.fp-field .form-select:focus {
+    border-color: var(--primary) !important;
+    box-shadow: 0 0 0 2px rgba(0, 161, 155, 0.15) !important;
+}
+
+.fp-actions {
+    margin-top: 1rem;
+    padding-top: 0.875rem;
+    border-top: 1px solid var(--border-light);
+    display: flex;
+    gap: 0.5rem;
+}
+
+.fp-active-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+    font-size: 0.7rem;
+    font-weight: 600;
+    color: var(--primary);
+    background: var(--primary-soft);
+    border-radius: 999px;
+    padding: 0.15rem 0.5rem;
+    margin-bottom: 0.625rem;
+}
+
+@media (max-width: 991.98px) {
+    .index-layout {
+        flex-direction: column-reverse;
+    }
+
+    .filter-panel {
+        width: 100%;
+        position: static;
+    }
+}

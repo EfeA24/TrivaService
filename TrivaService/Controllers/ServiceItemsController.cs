@@ -17,12 +17,16 @@ namespace TrivaService.Controllers
         public async Task<IActionResult> Index([FromQuery(Name = "$filter")] string? filter)
         {
             var serviceItems = await _unitOfWork.serviceItemRepository.GetAllAsync();
-            var term = ODataQueryHelpers.ExtractSearchTerm(filter).ToLowerInvariant();
-            if (!string.IsNullOrWhiteSpace(term))
-            {
-                serviceItems = serviceItems.Where(i => (i.Notes?.ToLowerInvariant().Contains(term) ?? false));
-            }
 
+            var fNotes  = ODataQueryHelpers.ExtractFieldFilter(filter, "Notes");
+            var fActive = ODataQueryHelpers.ExtractEqFilter(filter, "IsActive");
+
+            if (!string.IsNullOrWhiteSpace(fNotes))
+                serviceItems = serviceItems.Where(i => i.Notes?.ToLowerInvariant().Contains(fNotes.ToLowerInvariant()) ?? false);
+            if (!string.IsNullOrWhiteSpace(fActive) && bool.TryParse(fActive, out var isActive))
+                serviceItems = serviceItems.Where(i => i.IsActive == isActive);
+
+            ViewBag.CurrentFilter = filter ?? string.Empty;
             return View(serviceItems);
         }
 

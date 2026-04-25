@@ -17,15 +17,19 @@ namespace TrivaService.Controllers
         public async Task<IActionResult> Index([FromQuery(Name = "$filter")] string? filter)
         {
             var users = await _unitOfWork.usersRepository.GetAllAsync();
-            var term = ODataQueryHelpers.ExtractSearchTerm(filter).ToLowerInvariant();
-            if (!string.IsNullOrWhiteSpace(term))
-            {
-                users = users.Where(u =>
-                    (u.UserName?.ToLowerInvariant().Contains(term) ?? false) ||
-                    (u.UserPhone?.ToLowerInvariant().Contains(term) ?? false) ||
-                    (u.UserNotes?.ToLowerInvariant().Contains(term) ?? false));
-            }
 
+            var fName   = ODataQueryHelpers.ExtractFieldFilter(filter, "UserName");
+            var fPhone  = ODataQueryHelpers.ExtractFieldFilter(filter, "UserPhone");
+            var fActive = ODataQueryHelpers.ExtractEqFilter(filter, "IsActive");
+
+            if (!string.IsNullOrWhiteSpace(fName))
+                users = users.Where(u => u.UserName?.ToLowerInvariant().Contains(fName.ToLowerInvariant()) ?? false);
+            if (!string.IsNullOrWhiteSpace(fPhone))
+                users = users.Where(u => u.UserPhone?.ToLowerInvariant().Contains(fPhone.ToLowerInvariant()) ?? false);
+            if (!string.IsNullOrWhiteSpace(fActive) && bool.TryParse(fActive, out var isActive))
+                users = users.Where(u => u.IsActive == isActive);
+
+            ViewBag.CurrentFilter = filter ?? string.Empty;
             return View(users);
         }
 

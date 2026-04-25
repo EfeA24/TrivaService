@@ -17,15 +17,19 @@ namespace TrivaService.Controllers
         public async Task<IActionResult> Index([FromQuery(Name = "$filter")] string? filter)
         {
             var visuals = await _unitOfWork.serviceVisualsRepository.GetAllAsync();
-            var term = ODataQueryHelpers.ExtractSearchTerm(filter).ToLowerInvariant();
-            if (!string.IsNullOrWhiteSpace(term))
-            {
-                visuals = visuals.Where(v =>
-                    (v.ServiceVisualName?.ToLowerInvariant().Contains(term) ?? false) ||
-                    (v.Notes?.ToLowerInvariant().Contains(term) ?? false) ||
-                    (v.ServiceDocumentUrl?.ToLowerInvariant().Contains(term) ?? false));
-            }
 
+            var fVisualName = ODataQueryHelpers.ExtractFieldFilter(filter, "ServiceVisualName");
+            var fNotes      = ODataQueryHelpers.ExtractFieldFilter(filter, "Notes");
+            var fActive     = ODataQueryHelpers.ExtractEqFilter(filter, "IsActive");
+
+            if (!string.IsNullOrWhiteSpace(fVisualName))
+                visuals = visuals.Where(v => v.ServiceVisualName?.ToLowerInvariant().Contains(fVisualName.ToLowerInvariant()) ?? false);
+            if (!string.IsNullOrWhiteSpace(fNotes))
+                visuals = visuals.Where(v => v.Notes?.ToLowerInvariant().Contains(fNotes.ToLowerInvariant()) ?? false);
+            if (!string.IsNullOrWhiteSpace(fActive) && bool.TryParse(fActive, out var isActive))
+                visuals = visuals.Where(v => v.IsActive == isActive);
+
+            ViewBag.CurrentFilter = filter ?? string.Empty;
             return View(visuals);
         }
 

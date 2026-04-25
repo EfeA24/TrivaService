@@ -1,60 +1,140 @@
 @model IEnumerable<Customer>
 @{
-    ViewData["Title"] = "Customers";
+    ViewData["Title"] = "Müşteriler";
 }
 
-<div class="page-header">
-    <h1>Customers</h1>
-    <a asp-action="Create" class="btn btn-primary">+ New Customer</a>
+<div class="index-layout">
+    <div class="index-main">
+        <div class="page-header">
+            <h1>Müşteriler</h1>
+            <a asp-action="Create" class="btn btn-primary">+ Yeni Müşteri</a>
+        </div>
+
+        <div class="card shadow-sm">
+            <div class="table-responsive">
+                <table class="table table-hover mb-0">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Ad</th>
+                            <th>Telefon</th>
+                            <th>Adres</th>
+                            <th>Servisler</th>
+                            <th>Durum</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model)
+                        {
+                            <tr>
+                                <td class="text-muted">@item.Id</td>
+                                <td class="fw-semibold">@item.CustomerName</td>
+                                <td>@item.CustomerPhone</td>
+                                <td class="text-muted">@(item.CustomerAddress ?? "—")</td>
+                                <td>@item.TotalServiceCount</td>
+                                <td>
+                                    @if (item.IsActive)
+                                    {
+                                        <span class="badge-active">Aktif</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge-inactive">Pasif</span>
+                                    }
+                                </td>
+                                <td class="action-btns text-end">
+                                    <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-sm btn-outline-secondary">Detaylar</a>
+                                    <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-sm btn-outline-primary">Düzenle</a>
+                                    <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-sm btn-outline-danger">Sil</a>
+                                </td>
+                            </tr>
+                        }
+                        @if (!Model.Any())
+                        {
+                            <tr>
+                                <td colspan="7" class="text-center text-muted py-4">Kayıt bulunamadı.</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <aside class="filter-panel" id="filterPanel">
+        <div class="fp-header">
+            <span class="fp-title">Filtrele</span>
+            <a asp-action="Index" class="fp-clear">Temizle</a>
+        </div>
+        <form id="filterForm" novalidate>
+            <div class="fp-field">
+                <label class="fp-label">Müşteri Adı</label>
+                <input type="text" class="form-control form-control-sm" id="filter_CustomerName" placeholder="Ara...">
+            </div>
+            <div class="fp-field">
+                <label class="fp-label">Telefon</label>
+                <input type="text" class="form-control form-control-sm" id="filter_CustomerPhone" placeholder="Ara...">
+            </div>
+            <div class="fp-field">
+                <label class="fp-label">Adres</label>
+                <input type="text" class="form-control form-control-sm" id="filter_CustomerAddress" placeholder="Ara...">
+            </div>
+            <div class="fp-field">
+                <label class="fp-label">Durum</label>
+                <select class="form-select form-select-sm" id="filter_IsActive">
+                    <option value="">Tümü</option>
+                    <option value="true">Aktif</option>
+                    <option value="false">Pasif</option>
+                </select>
+            </div>
+            <div class="fp-actions">
+                <button type="submit" class="btn btn-primary btn-sm flex-fill">Filtrele</button>
+            </div>
+        </form>
+    </aside>
 </div>
 
-<div class="card shadow-sm">
-    <div class="table-responsive">
-        <table class="table table-hover mb-0">
-            <thead>
-                <tr>
-                    <th>#</th>
-                    <th>Name</th>
-                    <th>Phone</th>
-                    <th>Address</th>
-                    <th>Services</th>
-                    <th>Status</th>
-                    <th></th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach (var item in Model)
-                {
-                    <tr>
-                        <td class="text-muted">@item.Id</td>
-                        <td class="fw-semibold">@item.CustomerName</td>
-                        <td>@item.CustomerPhone</td>
-                        <td class="text-muted">@(item.CustomerAddress ?? "—")</td>
-                        <td>@item.TotalServiceCount</td>
-                        <td>
-                            @if (item.IsActive)
-                            {
-                                <span class="badge-active">Active</span>
-                            }
-                            else
-                            {
-                                <span class="badge-inactive">Inactive</span>
-                            }
-                        </td>
-                        <td class="action-btns text-end">
-                            <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-sm btn-outline-secondary">Details</a>
-                            <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-sm btn-outline-primary">Edit</a>
-                            <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-sm btn-outline-danger">Delete</a>
-                        </td>
-                    </tr>
-                }
-                @if (!Model.Any())
-                {
-                    <tr>
-                        <td colspan="7" class="text-center text-muted py-4">No customers found.</td>
-                    </tr>
-                }
-            </tbody>
-        </table>
-    </div>
-</div>
+@section Scripts {
+<script>
+(function () {
+    var raw = @Json.Serialize((string)(ViewBag.CurrentFilter ?? ""));
+
+    function pc(f, n) {
+        if (!f) return '';
+        var re = new RegExp('contains\\(\\s*' + n.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + '\\s*,\\s*\'([^\']*)\'\\)', 'i');
+        var m = f.match(re);
+        return m ? m[1].replace(/''/g, "'") : '';
+    }
+
+    function pe(f, n) {
+        if (!f) return '';
+        var re = new RegExp('\\b' + n.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + '\\s+eq\\s+(?:\'([^\']*)\'|([^\\s)&|]+))', 'i');
+        var m = f.match(re);
+        if (!m) return '';
+        return (m[1] !== undefined ? m[1] : (m[2] || '')).trim();
+    }
+
+    document.getElementById('filter_CustomerName').value  = pc(raw, 'CustomerName');
+    document.getElementById('filter_CustomerPhone').value = pc(raw, 'CustomerPhone');
+    document.getElementById('filter_CustomerAddress').value = pc(raw, 'CustomerAddress');
+    document.getElementById('filter_IsActive').value = pe(raw, 'IsActive');
+
+    document.getElementById('filterForm').addEventListener('submit', function (e) {
+        e.preventDefault();
+        var parts = [];
+        var v;
+        v = document.getElementById('filter_CustomerName').value.trim();
+        if (v) parts.push("contains(CustomerName,'" + v.replace(/'/g, "''") + "')");
+        v = document.getElementById('filter_CustomerPhone').value.trim();
+        if (v) parts.push("contains(CustomerPhone,'" + v.replace(/'/g, "''") + "')");
+        v = document.getElementById('filter_CustomerAddress').value.trim();
+        if (v) parts.push("contains(CustomerAddress,'" + v.replace(/'/g, "''") + "')");
+        v = document.getElementById('filter_IsActive').value;
+        if (v) parts.push('IsActive eq ' + v);
+        var qs = parts.length ? '?$filter=' + encodeURIComponent(parts.join(' and ')) : '';
+        window.location.href = window.location.pathname + qs;
+    });
+})();
+</script>
+}
