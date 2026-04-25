@@ -110,11 +110,6 @@
                     '<input type="search" class="form-control" id="listFilterInput" placeholder="Liste içinde ara..." value="' + currentSearch + '">' +
                     '<button type="button" class="btn btn-primary list-search-btn ms-2" id="listFilterButton">Ara</button>' +
                 '</div>' +
-                '<select id="listActiveFilter" class="form-select list-active-filter">' +
-                    '<option value="">Durum: Tümü</option>' +
-                    '<option value="true">Durum: Aktif</option>' +
-                    '<option value="false">Durum: Pasif</option>' +
-                '</select>' +
             '</div>';
         card.insertBefore(wrapper, card.firstChild);
 
