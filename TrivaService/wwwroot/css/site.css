@@ -327,13 +327,16 @@ a:hover {
 }
 
 .topbar-search {
-    flex: 0 1 auto;
-    max-width: 220px;
-    min-width: 170px;
+    flex: 1 1 auto;
+    min-width: 0;
+    /* Üst çubuğun yaklaşık ortasına kadar genişler (hamburger + boşluk payı) */
+    max-width: calc(50% - 2.25rem);
 }
 
 .topbar-search .form-control {
     height: 38px;
+    width: 100%;
+    max-width: none;
 }
 
 .topbar-account {
@@ -1157,6 +1160,7 @@ hr {
 
     .topbar-search {
         min-width: 0;
+        max-width: calc(100% - 3.25rem);
     }
 
     .topbar-account {
