@@ -365,24 +365,18 @@ a:hover {
 .list-search-controls {
     display: flex;
     align-items: center;
+    justify-content: flex-end;
     gap: 0.85rem;
     flex-wrap: wrap;
 }
 
 .list-search-group {
-    width: min(360px, 100%);
+    width: min(720px, 100%);
+    margin-left: auto;
 }
 
 .list-search-group .form-control {
-    max-width: 190px;
-}
-
-.list-search-btn {
-    border-radius: var(--radius-sm) !important;
-}
-
-.list-active-filter {
-    width: 170px;
+    max-width: none;
 }
 
 .list-search-bar .input-group-text {

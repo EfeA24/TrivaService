@@ -107,7 +107,6 @@
         wrapper.innerHTML =
             '<div class="list-search-controls">' +
                 '<div class="input-group list-search-group">' +
-                    '<span class="input-group-text">Ara</span>' +
                     '<input type="search" class="form-control" id="listFilterInput" placeholder="Liste içinde ara..." value="' + currentSearch + '">' +
                     '<button type="button" class="btn btn-primary list-search-btn ms-2" id="listFilterButton">Ara</button>' +
                 '</div>' +
