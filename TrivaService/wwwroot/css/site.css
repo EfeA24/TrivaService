@@ -1121,117 +1121,179 @@ hr {
     }
 }
 
-/* ─── Index Filter Panel ────────────────────────────────────────────────── */
-.index-layout {
-    display: flex;
-    gap: 1.5rem;
-    align-items: flex-start;
-}
-
-.index-main {
-    flex: 1;
-    min-width: 0;
-}
-
-.filter-panel {
-    width: 256px;
-    min-width: 256px;
+/* ─── Filter Toggle Button ───────────────────────────────────────────────── */
+.filter-toggle-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
     background: var(--surface-card);
     border: 1px solid var(--border);
-    border-radius: var(--radius-lg);
-    padding: 1.125rem 1.125rem 1.25rem;
-    position: sticky;
-    top: calc(var(--topbar-height) + 1rem);
-    box-shadow: var(--shadow-card);
-    flex-shrink: 0;
+    color: var(--text-main);
+    font-size: 0.875rem;
+    font-weight: 500;
+    padding: 0.42rem 0.875rem;
+    border-radius: var(--radius-md);
+    cursor: pointer;
+    transition: background var(--transition-fast), border-color var(--transition-fast),
+                color var(--transition-fast), box-shadow var(--transition-fast);
 }
 
-.fp-header {
+.filter-toggle-btn::after {
+    display: none !important;
+}
+
+.filter-toggle-btn:hover {
+    background: var(--surface-raised);
+    border-color: var(--primary);
+    color: var(--primary);
+    box-shadow: 0 2px 8px rgba(0, 161, 155, 0.14);
+}
+
+.filter-toggle-btn[aria-expanded="true"],
+.filter-toggle-btn.has-filters {
+    background: var(--primary-soft);
+    border-color: var(--primary);
+    color: var(--primary);
+}
+
+.filter-toggle-btn[aria-expanded="true"]:hover,
+.filter-toggle-btn.has-filters:hover {
+    background: rgba(0, 161, 155, 0.18);
+}
+
+.filter-toggle-btn svg {
+    flex-shrink: 0;
+    transition: transform var(--transition-fast);
+}
+
+.filter-toggle-btn[aria-expanded="true"] svg {
+    transform: rotate(180deg);
+}
+
+.filter-count-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 1.15rem;
+    height: 1.15rem;
+    background: var(--primary);
+    color: #fff;
+    border-radius: 999px;
+    font-size: 0.625rem;
+    font-weight: 700;
+    line-height: 1;
+    padding: 0 0.2rem;
+}
+
+/* ─── Filter Dropdown Panel ─────────────────────────────────────────────── */
+.filter-dropdown-menu {
+    min-width: 320px !important;
+    background: var(--surface-card) !important;
+    border: 1px solid var(--border) !important;
+    border-radius: var(--radius-lg) !important;
+    box-shadow: var(--shadow-modal) !important;
+    padding: 1rem 1.125rem 1.125rem !important;
+    margin-top: 0.375rem !important;
+}
+
+.filter-dropdown-menu .fp-header {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    margin-bottom: 1rem;
-    padding-bottom: 0.625rem;
+    margin-bottom: 0.875rem;
+    padding-bottom: 0.5rem;
     border-bottom: 1px solid var(--border-light);
 }
 
-.fp-title {
-    font-size: 0.75rem;
+.filter-dropdown-menu .fp-title {
+    font-size: 0.68rem;
     font-weight: 700;
     text-transform: uppercase;
-    letter-spacing: 0.07em;
+    letter-spacing: 0.08em;
     color: var(--text-secondary);
 }
 
-.fp-clear {
+.filter-dropdown-menu .fp-clear {
     font-size: 0.75rem;
     color: var(--text-muted);
     text-decoration: none;
+    cursor: pointer;
     transition: color var(--transition-fast);
 }
 
-.fp-clear:hover {
+.filter-dropdown-menu .fp-clear:hover {
     color: var(--danger);
 }
 
-.fp-field {
-    margin-bottom: 0.75rem;
+.filter-dropdown-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.5rem 0.75rem;
 }
 
-.fp-label {
-    display: block;
-    font-size: 0.7rem;
-    font-weight: 600;
+.filter-dropdown-grid.single-col {
+    grid-template-columns: 1fr;
+}
+
+.fp-dd-field {
+    display: flex;
+    flex-direction: column;
+    gap: 0.2rem;
+}
+
+.fp-dd-label {
+    font-size: 0.65rem;
+    font-weight: 700;
     color: var(--text-secondary);
-    margin-bottom: 0.3rem;
-    letter-spacing: 0.03em;
+    letter-spacing: 0.05em;
     text-transform: uppercase;
 }
 
-.fp-field .form-control,
-.fp-field .form-select {
+.fp-dd-field .form-control,
+.fp-dd-field .form-select {
     background: var(--surface-raised) !important;
-    border-color: var(--border) !important;
+    border: 1px solid var(--border) !important;
     border-radius: var(--radius-sm) !important;
-    font-size: 0.875rem;
-    padding: 0.375rem 0.625rem;
+    font-size: 0.8125rem;
+    padding: 0.3rem 0.55rem;
     color: var(--text-main) !important;
+    transition: border-color var(--transition-fast), box-shadow var(--transition-fast),
+                background var(--transition-fast);
 }
 
-.fp-field .form-control:focus,
-.fp-field .form-select:focus {
+.fp-dd-field .form-control:hover,
+.fp-dd-field .form-select:hover {
+    border-color: rgba(0, 161, 155, 0.5) !important;
+    background: var(--surface-input) !important;
+}
+
+.fp-dd-field .form-control:focus,
+.fp-dd-field .form-select:focus {
     border-color: var(--primary) !important;
     box-shadow: 0 0 0 2px rgba(0, 161, 155, 0.15) !important;
+    background: var(--surface-input) !important;
+    outline: none;
 }
 
-.fp-actions {
-    margin-top: 1rem;
-    padding-top: 0.875rem;
+.filter-dropdown-menu .fp-actions {
+    margin-top: 0.875rem;
+    padding-top: 0.75rem;
     border-top: 1px solid var(--border-light);
     display: flex;
     gap: 0.5rem;
 }
 
-.fp-active-badge {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.25rem;
-    font-size: 0.7rem;
-    font-weight: 600;
-    color: var(--primary);
-    background: var(--primary-soft);
-    border-radius: 999px;
-    padding: 0.15rem 0.5rem;
-    margin-bottom: 0.625rem;
+.filter-dropdown-menu .fp-actions .btn {
+    font-size: 0.8125rem;
+    padding: 0.35rem 0.875rem;
 }
 
-@media (max-width: 991.98px) {
-    .index-layout {
-        flex-direction: column-reverse;
+@media (max-width: 575.98px) {
+    .filter-dropdown-menu {
+        min-width: calc(100vw - 2rem) !important;
     }
 
-    .filter-panel {
-        width: 100%;
-        position: static;
+    .filter-dropdown-grid {
+        grid-template-columns: 1fr;
     }
 }
