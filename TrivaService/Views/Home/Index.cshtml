@@ -9,7 +9,10 @@
     <h1>Ana Sayfa</h1>
 </div>
 
-<p class="text-muted small mb-3">Özet istatistikler ve grafikler. Tedarikçi grafikleri servis kalemlerindeki kullanım ve stok miktarını gösterir.</p>
+<p class="text-muted small mb-3">
+    Servis sayıları ve çoğu grafik <strong>seçilen zaman aralığına</strong> göre filtrelenir (servis <strong>alınma tarihi</strong>).
+    Aktif/pasif müşteri ve toplam müşteri/ürün sayıları anlık kayıttır; <strong>tedarikçi stok</strong> grafiği dönemden bağımsızdır.
+</p>
 
 <div class="row g-3 mb-2">
     <div class="col-6 col-lg-3">
@@ -97,6 +100,26 @@
     </div>
 </div>
 
+<form method="get" asp-controller="Home" asp-action="Index" class="dash-range-bar card shadow-sm mb-4" id="dashRangeForm">
+    <div class="card-body py-3 d-flex flex-wrap align-items-center gap-2 gap-md-3">
+        <span class="fw-semibold small mb-0">Grafikler ve servis özetleri için dönem:</span>
+        <select name="range" class="form-select form-select-sm dash-range-select" aria-label="Zaman aralığı" onchange="document.getElementById('dashRangeForm').submit();">
+            @foreach (var opt in DashboardTimeRange.Options)
+            {
+                if (Model.SelectedRangeKey == opt.Key)
+                {
+                    <option value="@opt.Key" selected>@opt.Label</option>
+                }
+                else
+                {
+                    <option value="@opt.Key">@opt.Label</option>
+                }
+            }
+        </select>
+        <span class="text-muted small mb-0">Seçili: <strong>@Model.SelectedRangeLabel</strong></span>
+    </div>
+</form>
+
 <div class="row g-3 mb-4">
     <div class="col-lg-6">
         <div class="card shadow-sm dash-chart-card h-100">
@@ -134,7 +157,7 @@
     </div>
     <div class="col-lg-4">
         <div class="card shadow-sm dash-chart-card h-100">
-            <div class="card-header bg-transparent fw-semibold py-3">Ödeme durumu (tüm servisler)</div>
+            <div class="card-header bg-transparent fw-semibold py-3">Ödeme durumu (seçilen dönemdeki servisler)</div>
             <div class="card-body">
                 <div class="dash-chart-wrap">
                     <canvas id="chartPayment"></canvas>
@@ -178,7 +201,10 @@
     </div>
     <div class="col-lg-7">
         <div class="card shadow-sm dash-chart-card h-100">
-            <div class="card-header bg-transparent fw-semibold py-3">Son 12 ayda alınan servisler</div>
+            <div class="card-header bg-transparent fw-semibold py-3">
+                Alınan servisler
+                <span class="d-block small fw-normal text-muted mt-1">@Model.TimelineChartDescription</span>
+            </div>
             <div class="card-body">
                 <div class="dash-chart-wrap">
                     <canvas id="chartMonthly"></canvas>
@@ -278,7 +304,7 @@
             var supplierStock = @Html.Raw(JsonSerializer.Serialize(Model.SupplierStockQuantities, jsonOptions));
             var perCustomer = @Html.Raw(JsonSerializer.Serialize(Model.ServicesPerCustomer, jsonOptions));
             var byStatus = @Html.Raw(JsonSerializer.Serialize(Model.ServicesByStatus, jsonOptions));
-            var monthly = @Html.Raw(JsonSerializer.Serialize(Model.ServicesReceivedByMonth, jsonOptions));
+            var monthly = @Html.Raw(JsonSerializer.Serialize(Model.ServicesReceivedTimeline, jsonOptions));
             var payComplete = @Model.PaymentCompleteCount;
             var payIncomplete = @Model.PaymentIncompleteCount;
 
@@ -389,7 +415,7 @@
                     options: {
                         ...commonOpts,
                         plugins: { legend: { display: false } },
-                        scales: { y: { beginAtZero: true, ticks: { stepSize: 1 } } }
+                        scales: { y: { beginAtZero: true } }
                     }
                 });
             }

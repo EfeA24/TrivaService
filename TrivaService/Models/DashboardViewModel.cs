@@ -33,7 +33,16 @@ namespace TrivaService.Models
 
         public List<DashboardChartPoint> ServicesByStatus { get; set; } = new();
 
-        /// <summary>Son 12 ay, alınan servis sayısı (ReceivedDate).</summary>
-        public List<DashboardChartPoint> ServicesReceivedByMonth { get; set; } = new();
+        /// <summary>Zaman çizelgesi (ReceivedDate); aralığa göre saat/gün/ay gruplu.</summary>
+        public List<DashboardChartPoint> ServicesReceivedTimeline { get; set; } = new();
+
+        /// <summary>Grafikler ve servisle ilgili özetler için seçilen aralık (örn. <c>3m</c>).</summary>
+        public string SelectedRangeKey { get; set; } = DashboardTimeRange.ThreeMonths;
+
+        /// <summary>Seçilen aralığın Türkçe etiketi.</summary>
+        public string SelectedRangeLabel { get; set; } = "3 ay";
+
+        /// <summary>Zaman çizelgesi kartı başlığı altı açıklama.</summary>
+        public string TimelineChartDescription { get; set; } = string.Empty;
     }
 }
