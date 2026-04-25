@@ -1,39 +1,55 @@
 @model Users
 @{
-    ViewData["Title"] = "Edit user";
+    ViewData["Title"] = "Edit User";
 }
-<h1>Edit user</h1>
-<form asp-action="Edit" method="post">
-    <input type="hidden" asp-for="Id" />
-    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-    <div class="mb-3">
-        <label asp-for="UserName" class="form-label"></label>
-        <input asp-for="UserName" class="form-control" />
+
+<div class="page-header">
+    <h1>Edit User</h1>
+    <a asp-action="Index" class="btn btn-outline-secondary btn-sm">&#8592; Back</a>
+</div>
+
+<div class="card shadow-sm form-card">
+    <div class="card-body p-4">
+        <form asp-action="Edit" method="post">
+            <input type="hidden" asp-for="Id" />
+            <div asp-validation-summary="ModelOnly" class="alert alert-danger py-2"></div>
+            <div class="row g-3">
+                <div class="col-sm-6">
+                    <label asp-for="UserName" class="form-label fw-semibold"></label>
+                    <input asp-for="UserName" class="form-control" autocomplete="username" />
+                </div>
+                <div class="col-sm-6">
+                    <label asp-for="RolesId" class="form-label fw-semibold"></label>
+                    <input asp-for="RolesId" class="form-control" />
+                </div>
+                <div class="col-12">
+                    <label class="form-label fw-semibold" for="newPassword">New Password</label>
+                    <input type="password" name="newPassword" id="newPassword" class="form-control" autocomplete="new-password" />
+                    <div class="form-text text-muted">Leave blank to keep the current password.</div>
+                </div>
+                <div class="col-sm-6">
+                    <label asp-for="UserPhone" class="form-label fw-semibold"></label>
+                    <input asp-for="UserPhone" class="form-control" />
+                </div>
+                <div class="col-12">
+                    <label asp-for="UserNotes" class="form-label fw-semibold"></label>
+                    <textarea asp-for="UserNotes" class="form-control" rows="2"></textarea>
+                </div>
+                <div class="col-12">
+                    <div class="form-check">
+                        <input asp-for="IsActive" class="form-check-input" />
+                        <label asp-for="IsActive" class="form-check-label fw-semibold"></label>
+                    </div>
+                </div>
+            </div>
+            <div class="mt-4 d-flex gap-2">
+                <button type="submit" class="btn btn-primary">Save Changes</button>
+                <a asp-action="Index" class="btn btn-outline-secondary">Cancel</a>
+            </div>
+        </form>
     </div>
-    <div class="mb-3">
-        <label class="form-label" for="newPassword">New password hash (optional)</label>
-        <input type="text" name="newPassword" id="newPassword" class="form-control" autocomplete="off" />
-        <div class="form-text">Leave blank to keep the current value.</div>
-    </div>
-    <div class="mb-3">
-        <label asp-for="RolesId" class="form-label"></label>
-        <input asp-for="RolesId" class="form-control" />
-    </div>
-    <div class="mb-3">
-        <label asp-for="UserPhone" class="form-label"></label>
-        <input asp-for="UserPhone" class="form-control" />
-    </div>
-    <div class="mb-3">
-        <label asp-for="UserNotes" class="form-label"></label>
-        <textarea asp-for="UserNotes" class="form-control"></textarea>
-    </div>
-    <div class="form-check mb-3">
-        <input asp-for="IsActive" class="form-check-input" />
-        <label asp-for="IsActive" class="form-check-label"></label>
-    </div>
-    <button type="submit" class="btn btn-primary">Save</button>
-    <a asp-action="Index" class="btn btn-outline-secondary">Cancel</a>
-</form>
+</div>
+
 @section Scripts {
     @{ await Html.RenderPartialAsync("_ValidationScriptsPartial"); }
 }

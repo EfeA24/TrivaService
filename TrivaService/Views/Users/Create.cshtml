@@ -1,37 +1,56 @@
 @model Users
 @{
-    ViewData["Title"] = "Create user";
+    ViewData["Title"] = "New User";
 }
-<h1>Create user</h1>
-<form asp-action="Create" method="post">
-    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-    <div class="mb-3">
-        <label asp-for="UserName" class="form-label"></label>
-        <input asp-for="UserName" class="form-control" />
+
+<div class="page-header">
+    <h1>New User</h1>
+    <a asp-action="Index" class="btn btn-outline-secondary btn-sm">&#8592; Back</a>
+</div>
+
+<div class="card shadow-sm form-card">
+    <div class="card-body p-4">
+        <form asp-action="Create" method="post">
+            <div asp-validation-summary="ModelOnly" class="alert alert-danger py-2"></div>
+            <div class="row g-3">
+                <div class="col-sm-6">
+                    <label asp-for="UserName" class="form-label fw-semibold"></label>
+                    <input asp-for="UserName" class="form-control" autocomplete="username" />
+                    <span asp-validation-for="UserName" class="text-danger small"></span>
+                </div>
+                <div class="col-sm-6">
+                    <label asp-for="RolesId" class="form-label fw-semibold"></label>
+                    <input asp-for="RolesId" class="form-control" />
+                    <span asp-validation-for="RolesId" class="text-danger small"></span>
+                </div>
+                <div class="col-12">
+                    <label asp-for="UserPasswordHash" class="form-label fw-semibold">Password</label>
+                    <input asp-for="UserPasswordHash" class="form-control" type="password" autocomplete="new-password" />
+                    <span asp-validation-for="UserPasswordHash" class="text-danger small"></span>
+                </div>
+                <div class="col-sm-6">
+                    <label asp-for="UserPhone" class="form-label fw-semibold"></label>
+                    <input asp-for="UserPhone" class="form-control" />
+                </div>
+                <div class="col-12">
+                    <label asp-for="UserNotes" class="form-label fw-semibold"></label>
+                    <textarea asp-for="UserNotes" class="form-control" rows="2"></textarea>
+                </div>
+                <div class="col-12">
+                    <div class="form-check">
+                        <input asp-for="IsActive" class="form-check-input" />
+                        <label asp-for="IsActive" class="form-check-label fw-semibold"></label>
+                    </div>
+                </div>
+            </div>
+            <div class="mt-4 d-flex gap-2">
+                <button type="submit" class="btn btn-primary">Save User</button>
+                <a asp-action="Index" class="btn btn-outline-secondary">Cancel</a>
+            </div>
+        </form>
     </div>
-    <div class="mb-3">
-        <label asp-for="UserPasswordHash" class="form-label">Password hash</label>
-        <input asp-for="UserPasswordHash" class="form-control" autocomplete="off" />
-    </div>
-    <div class="mb-3">
-        <label asp-for="RolesId" class="form-label"></label>
-        <input asp-for="RolesId" class="form-control" />
-    </div>
-    <div class="mb-3">
-        <label asp-for="UserPhone" class="form-label"></label>
-        <input asp-for="UserPhone" class="form-control" />
-    </div>
-    <div class="mb-3">
-        <label asp-for="UserNotes" class="form-label"></label>
-        <textarea asp-for="UserNotes" class="form-control"></textarea>
-    </div>
-    <div class="form-check mb-3">
-        <input asp-for="IsActive" class="form-check-input" />
-        <label asp-for="IsActive" class="form-check-label"></label>
-    </div>
-    <button type="submit" class="btn btn-primary">Save</button>
-    <a asp-action="Index" class="btn btn-outline-secondary">Cancel</a>
-</form>
+</div>
+
 @section Scripts {
     @{ await Html.RenderPartialAsync("_ValidationScriptsPartial"); }
 }

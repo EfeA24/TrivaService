@@ -1,26 +1,42 @@
 @model Roles
 @{
-    ViewData["Title"] = "Edit role";
+    ViewData["Title"] = "Edit Role";
 }
-<h1>Edit role</h1>
-<form asp-action="Edit" method="post">
-    <input type="hidden" asp-for="Id" />
-    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-    <div class="mb-3">
-        <label asp-for="RoleName" class="form-label"></label>
-        <input asp-for="RoleName" class="form-control" />
+
+<div class="page-header">
+    <h1>Edit Role</h1>
+    <a asp-action="Index" class="btn btn-outline-secondary btn-sm">&#8592; Back</a>
+</div>
+
+<div class="card shadow-sm form-card">
+    <div class="card-body p-4">
+        <form asp-action="Edit" method="post">
+            <input type="hidden" asp-for="Id" />
+            <div asp-validation-summary="ModelOnly" class="alert alert-danger py-2"></div>
+            <div class="row g-3">
+                <div class="col-12">
+                    <label asp-for="RoleName" class="form-label fw-semibold"></label>
+                    <input asp-for="RoleName" class="form-control" />
+                </div>
+                <div class="col-12">
+                    <label asp-for="RoleDescription" class="form-label fw-semibold"></label>
+                    <textarea asp-for="RoleDescription" class="form-control" rows="3"></textarea>
+                </div>
+                <div class="col-12">
+                    <div class="form-check">
+                        <input asp-for="IsActive" class="form-check-input" />
+                        <label asp-for="IsActive" class="form-check-label fw-semibold"></label>
+                    </div>
+                </div>
+            </div>
+            <div class="mt-4 d-flex gap-2">
+                <button type="submit" class="btn btn-primary">Save Changes</button>
+                <a asp-action="Index" class="btn btn-outline-secondary">Cancel</a>
+            </div>
+        </form>
     </div>
-    <div class="mb-3">
-        <label asp-for="RoleDescription" class="form-label"></label>
-        <textarea asp-for="RoleDescription" class="form-control"></textarea>
-    </div>
-    <div class="form-check mb-3">
-        <input asp-for="IsActive" class="form-check-input" />
-        <label asp-for="IsActive" class="form-check-label"></label>
-    </div>
-    <button type="submit" class="btn btn-primary">Save</button>
-    <a asp-action="Index" class="btn btn-outline-secondary">Cancel</a>
-</form>
+</div>
+
 @section Scripts {
     @{ await Html.RenderPartialAsync("_ValidationScriptsPartial"); }
 }

@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="utf-8" />
@@ -10,54 +10,86 @@
     <link rel="stylesheet" href="~/TrivaService.styles.css" asp-append-version="true" />
 </head>
 <body>
-    <header>
-        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
-            <div class="container-fluid">
-                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">TrivaService</a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
-                        aria-expanded="false" aria-label="Toggle navigation">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
-                <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
-                    <ul class="navbar-nav flex-grow-1">
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
-                        </li>
-                        <li class="nav-item dropdown">
-                            <a class="nav-link dropdown-toggle text-dark" href="#" data-bs-toggle="dropdown">Data</a>
-                            <ul class="dropdown-menu">
-                                <li><a class="dropdown-item" asp-controller="Customers" asp-action="Index">Customers</a></li>
-                                <li><a class="dropdown-item" asp-controller="Services" asp-action="Index">Services</a></li>
-                                <li><a class="dropdown-item" asp-controller="ServiceItems" asp-action="Index">Service items</a></li>
-                                <li><a class="dropdown-item" asp-controller="ServiceVisuals" asp-action="Index">Service visuals</a></li>
-                                <li><a class="dropdown-item" asp-controller="Items" asp-action="Index">Items</a></li>
-                                <li><a class="dropdown-item" asp-controller="Suppliers" asp-action="Index">Suppliers</a></li>
-                                <li><a class="dropdown-item" asp-controller="Roles" asp-action="Index">Roles</a></li>
-                                <li><a class="dropdown-item" asp-controller="Users" asp-action="Index">Users</a></li>
-                            </ul>
-                        </li>
-                    </ul>
+    <div class="app-wrapper">
+        <nav class="sidebar" id="sidebar">
+            <a class="sidebar-brand" asp-controller="Home" asp-action="Index">
+                <span class="brand-icon">T</span>
+                TrivaService
+            </a>
+            <div class="sidebar-menu">
+                <div class="menu-item">
+                    <a class="menu-link" asp-controller="Home" asp-action="Index">Dashboard</a>
+                </div>
+                <div class="menu-section">Service</div>
+                <div class="menu-item">
+                    <a class="menu-link" asp-controller="Customers" asp-action="Index">Customers</a>
+                </div>
+                <div class="menu-item">
+                    <a class="menu-link" asp-controller="Services" asp-action="Index">Services</a>
+                </div>
+                <div class="menu-item">
+                    <a class="menu-link" asp-controller="ServiceItems" asp-action="Index">Service Items</a>
+                </div>
+                <div class="menu-item">
+                    <a class="menu-link" asp-controller="ServiceVisuals" asp-action="Index">Service Visuals</a>
+                </div>
+                <div class="menu-section">Stock</div>
+                <div class="menu-item">
+                    <a class="menu-link" asp-controller="Items" asp-action="Index">Items</a>
+                </div>
+                <div class="menu-item">
+                    <a class="menu-link" asp-controller="Suppliers" asp-action="Index">Suppliers</a>
+                </div>
+                <div class="menu-section">Admin</div>
+                <div class="menu-item">
+                    <a class="menu-link" asp-controller="Roles" asp-action="Index">Roles</a>
+                </div>
+                <div class="menu-item">
+                    <a class="menu-link" asp-controller="Users" asp-action="Index">Users</a>
                 </div>
             </div>
+            <div class="sidebar-footer">
+                &copy; 2026 TrivaService
+            </div>
         </nav>
-    </header>
-    <div class="container">
-        <main role="main" class="pb-3">
-            @RenderBody()
-        </main>
+
+        <div class="main-area">
+            <header class="topbar">
+                <button class="topbar-toggle" id="sidebarToggle" type="button">&#9776;</button>
+                <span class="topbar-title">@ViewData["Title"]</span>
+            </header>
+            <main class="page-content">
+                @RenderBody()
+            </main>
+            <footer class="page-footer">
+                &copy; 2026 TrivaService &mdash;
+                <a asp-controller="Home" asp-action="Privacy">Privacy</a>
+            </footer>
+        </div>
     </div>
 
-    <footer class="border-top footer text-muted">
-        <div class="container">
-            &copy; 2026 - TrivaService - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
-        </div>
-    </footer>
+    <div class="sidebar-overlay d-md-none" id="sidebarOverlay"></div>
+
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
+    <script>
+        (function () {
+            var btn = document.getElementById('sidebarToggle');
+            var sidebar = document.getElementById('sidebar');
+            var overlay = document.getElementById('sidebarOverlay');
+            if (btn && sidebar) {
+                btn.addEventListener('click', function () {
+                    sidebar.classList.toggle('show');
+                    overlay.classList.toggle('show');
+                });
+                overlay.addEventListener('click', function () {
+                    sidebar.classList.remove('show');
+                    overlay.classList.remove('show');
+                });
+            }
+        })();
+    </script>
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>

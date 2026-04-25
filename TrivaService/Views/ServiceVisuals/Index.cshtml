@@ -1,33 +1,67 @@
 @model IEnumerable<ServiceVisuals>
 @{
-    ViewData["Title"] = "Service visuals";
+    ViewData["Title"] = "Service Visuals";
 }
-<h1>Service visuals</h1>
-<p><a asp-action="Create" class="btn btn-primary">Create</a></p>
-<table class="table table-striped">
-    <thead>
-        <tr>
-            <th>Id</th>
-            <th>Service</th>
-            <th>Name</th>
-            <th>Active</th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-    @foreach (var item in Model)
-    {
-        <tr>
-            <td>@item.Id</td>
-            <td>@item.ServiceId</td>
-            <td>@item.ServiceVisualName</td>
-            <td>@item.IsActive</td>
-            <td>
-                <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
-                <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
-                <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
-            </td>
-        </tr>
-    }
-    </tbody>
-</table>
+
+<div class="page-header">
+    <h1>Service Visuals</h1>
+    <a asp-action="Create" class="btn btn-primary">+ New Visual</a>
+</div>
+
+<div class="card shadow-sm">
+    <div class="table-responsive">
+        <table class="table table-hover mb-0">
+            <thead>
+                <tr>
+                    <th>#</th>
+                    <th>Name</th>
+                    <th>Service</th>
+                    <th>Document URL</th>
+                    <th>Active</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+                {
+                    <tr>
+                        <td class="text-muted">@item.Id</td>
+                        <td class="fw-semibold">@item.ServiceVisualName</td>
+                        <td>@(item.ServiceId?.ToString() ?? "—")</td>
+                        <td class="text-muted text-truncate" style="max-width:200px;">
+                            @if (!string.IsNullOrEmpty(item.ServiceDocumentUrl))
+                            {
+                                <a href="@item.ServiceDocumentUrl" target="_blank" rel="noopener">View</a>
+                            }
+                            else
+                            {
+                                <span>—</span>
+                            }
+                        </td>
+                        <td>
+                            @if (item.IsActive)
+                            {
+                                <span class="badge-active">Active</span>
+                            }
+                            else
+                            {
+                                <span class="badge-inactive">Inactive</span>
+                            }
+                        </td>
+                        <td class="action-btns text-end">
+                            <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-sm btn-outline-secondary">Details</a>
+                            <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-sm btn-outline-primary">Edit</a>
+                            <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-sm btn-outline-danger">Delete</a>
+                        </td>
+                    </tr>
+                }
+                @if (!Model.Any())
+                {
+                    <tr>
+                        <td colspan="6" class="text-center text-muted py-4">No service visuals found.</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
