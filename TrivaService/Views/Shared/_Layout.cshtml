@@ -301,6 +301,11 @@
             "Form": "Form",
             "Back": "Geri",
             "Save Service": "Servisi Kaydet",
+            "Save Item": "Ürünü Kaydet",
+            "Save User": "Kullanıcıyı Kaydet",
+            "Save Role": "Rolü Kaydet",
+            "Save Supplier": "Tedarikçiyi Kaydet",
+            "Save Customer": "Müşteriyi Kaydet",
             "No customers found.": "Müşteri bulunamadı.",
             "No services found.": "Servis bulunamadı.",
             "No items found.": "Ürün bulunamadı.",
@@ -336,7 +341,44 @@
             "Unit Price": "Birim Fiyat",
             "Total": "Toplam",
             "Document URL": "Belge URL",
-            "View": "Görüntüle"
+            "View": "Görüntüle",
+            "Service Info": "Servis Bilgisi",
+            "Dates": "Tarihler",
+            "Costs": "Maliyetler",
+            "Identification": "Tanımlama",
+            "Stock": "Stok"
+        };
+
+        var modalFieldMap = {
+            "CustomerId": "Müşteri",
+            "ServiceId": "Servis",
+            "SupplierId": "Tedarikçi",
+            "ItemId": "Ürün",
+            "RolesId": "Rol",
+            "ServiceVisualName": "Görsel Adı",
+            "ServiceDocumentUrl": "Belge URL",
+            "Notes": "Notlar",
+            "ServiceCode": "Servis Kodu",
+            "ServiceAddress": "Servis Adresi",
+            "FaultDescription": "Arıza Açıklaması",
+            "ServiceDescription": "Servis Açıklaması",
+            "ServiceNotes": "Servis Notları",
+            "ReceivedDate": "Teslim Alınma Tarihi",
+            "CompletedDate": "Tamamlanma Tarihi",
+            "DeliveredDate": "Teslim Edilme Tarihi",
+            "EstimatedCost": "Tahmini Tutar",
+            "FinalCost": "Nihai Tutar",
+            "IsPaymentComplete": "Ödeme Tamam",
+            "IsActive": "Aktif",
+            "ItemName": "Ürün Adı",
+            "ItemCode": "Ürün Kodu",
+            "ItemBrand": "Marka",
+            "ItemModel": "Model",
+            "ItemType": "Tip",
+            "ItemBarcode": "Barkod",
+            "ItemDescription": "Ürün Açıklaması",
+            "ItemQuantity": "Stok Adedi",
+            "ItemPrice": "Birim Fiyat"
         };
 
         function translateText(rawText) {
@@ -353,6 +395,37 @@
                 var translated = translateText(source);
                 if (translated !== source) {
                     el.textContent = translated;
+                }
+            });
+        }
+
+        function getFieldKeyFromLabel(labelEl) {
+            if (!labelEl) return "";
+            var htmlFor = labelEl.getAttribute("for");
+            if (htmlFor) {
+                return htmlFor.split("_").pop();
+            }
+            return "";
+        }
+
+        function translateModalContent(root) {
+            if (!root) return;
+
+            var labelSelectors = "label[for], .form-label, .form-check-label, .form-section-title, .btn";
+            var nodes = root.querySelectorAll(labelSelectors);
+            nodes.forEach(function (node) {
+                if (!node || !node.firstChild || node.querySelector("svg")) return;
+
+                var source = (node.textContent || "").trim();
+                if (!source) return;
+
+                var fieldKey = getFieldKeyFromLabel(node);
+                var translated = fieldKey && modalFieldMap[fieldKey]
+                    ? modalFieldMap[fieldKey]
+                    : translateText(source);
+
+                if (translated && translated !== source) {
+                    node.textContent = translated;
                 }
             });
         }
@@ -441,6 +514,7 @@
             crudModalBody.innerHTML    = content
                 ? content.outerHTML
                 : '<div class="alert alert-danger mb-0">Form yüklenemedi.</div>';
+            translateModalContent(crudModalBody);
         }
 
         async function openCrudModal(url) {
