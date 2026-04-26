@@ -1,11 +1,11 @@
-@model Roles
+@model TrivaService.ViewModels.Permissions.RoleEditViewModel
 @{
-    ViewData["Title"] = "Edit Role";
+    ViewData["Title"] = "Rol Duzenle";
 }
 
 <div class="page-header">
-    <h1>Edit Role</h1>
-    <a asp-action="Index" class="btn btn-outline-secondary btn-sm">&#8592; Back</a>
+    <h1>Rol Duzenle</h1>
+    <a asp-action="Index" class="btn btn-outline-secondary btn-sm">&#8592; Geri</a>
 </div>
 
 <div class="card shadow-sm form-card">
@@ -29,9 +29,76 @@
                     </div>
                 </div>
             </div>
+            <hr class="my-4" />
+            <h5 class="mb-3">Entity ve Property Yetkileri</h5>
+            <div class="accordion" id="permissionAccordion">
+                @for (var i = 0; i < Model.Permissions.Count; i++)
+                {
+                    var entity = Model.Permissions[i];
+                    <div class="accordion-item mb-2 border rounded">
+                        <h2 class="accordion-header">
+                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#entity_@i">
+                                @entity.EntityName
+                            </button>
+                        </h2>
+                        <div id="entity_@i" class="accordion-collapse collapse">
+                            <div class="accordion-body">
+                                <input type="hidden" asp-for="Permissions[i].EntityName" />
+                                <div class="row g-3 mb-3">
+                                    <div class="col-md-3 form-check">
+                                        <input asp-for="Permissions[i].CanRead" class="form-check-input" />
+                                        <label asp-for="Permissions[i].CanRead" class="form-check-label">Okuyabilir</label>
+                                    </div>
+                                    <div class="col-md-3 form-check">
+                                        <input asp-for="Permissions[i].CanCreate" class="form-check-input" />
+                                        <label asp-for="Permissions[i].CanCreate" class="form-check-label">Olusturabilir</label>
+                                    </div>
+                                    <div class="col-md-3 form-check">
+                                        <input asp-for="Permissions[i].CanUpdate" class="form-check-input" />
+                                        <label asp-for="Permissions[i].CanUpdate" class="form-check-label">Guncelleyebilir</label>
+                                    </div>
+                                    <div class="col-md-3 form-check">
+                                        <input asp-for="Permissions[i].CanDelete" class="form-check-input" />
+                                        <label asp-for="Permissions[i].CanDelete" class="form-check-label">Silebilir</label>
+                                    </div>
+                                </div>
+
+                                <div class="table-responsive">
+                                    <table class="table table-sm align-middle">
+                                        <thead>
+                                            <tr>
+                                                <th>Property</th>
+                                                <th class="text-center">Goruntule</th>
+                                                <th class="text-center">Duzenle</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            @for (var j = 0; j < entity.Properties.Count; j++)
+                                            {
+                                                <tr>
+                                                    <td>
+                                                        @entity.Properties[j].PropertyName
+                                                        <input type="hidden" asp-for="Permissions[i].Properties[j].PropertyName" />
+                                                    </td>
+                                                    <td class="text-center">
+                                                        <input asp-for="Permissions[i].Properties[j].CanRead" class="form-check-input" />
+                                                    </td>
+                                                    <td class="text-center">
+                                                        <input asp-for="Permissions[i].Properties[j].CanWrite" class="form-check-input" />
+                                                    </td>
+                                                </tr>
+                                            }
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
             <div class="mt-4 d-flex gap-2">
-                <button type="submit" class="btn btn-primary">Save Changes</button>
-                <a asp-action="Index" class="btn btn-outline-secondary">Cancel</a>
+                <button type="submit" class="btn btn-primary">Degisiklikleri Kaydet</button>
+                <a asp-action="Index" class="btn btn-outline-secondary">Vazgec</a>
             </div>
         </form>
     </div>

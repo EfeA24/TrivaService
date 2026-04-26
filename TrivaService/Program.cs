@@ -8,6 +8,7 @@ using TrivaService.Repositories.CommonRepositories;
 using TrivaService.Repositories.RepositoryImplementations.ServiceRepositoryImplementations;
 using TrivaService.Repositories.RepositoryImplementations.StockRepositoryImplementations;
 using TrivaService.Repositories.RepositoryImplementations.UserRepositoryImplementations;
+using TrivaService.Services.Permissions;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -33,11 +34,15 @@ builder.Services.AddScoped<IItemRepository, ItemRepository>();
 builder.Services.AddScoped<ISupplierRepository, SupplierRepository>();
 builder.Services.AddScoped<IRolesRepository, RolesRepository>();
 builder.Services.AddScoped<IUsersRepository, UserRepository>();
+builder.Services.AddScoped<IPermissionService, PermissionService>();
+builder.Services.AddScoped<PermissionActionFilter>();
 
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 
-// Add services to the container.
-builder.Services.AddControllersWithViews();
+builder.Services.AddControllersWithViews(options =>
+{
+    options.Filters.AddService<PermissionActionFilter>();
+});
 
 var app = builder.Build();
 

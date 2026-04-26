@@ -1,3 +1,19 @@
+@using TrivaService.Services.Permissions
+@using System.Text.Json
+@inject IPermissionService PermissionService
+@{
+    var isAuthenticated = User.Identity?.IsAuthenticated == true;
+    var canReadCustomers = !isAuthenticated || await PermissionService.HasEntityPermissionAsync(User, "Customer", PermissionOperation.Read);
+    var canReadServices = !isAuthenticated || await PermissionService.HasEntityPermissionAsync(User, "Service", PermissionOperation.Read);
+    var canReadServiceItems = !isAuthenticated || await PermissionService.HasEntityPermissionAsync(User, "ServiceItem", PermissionOperation.Read);
+    var canReadServiceVisuals = !isAuthenticated || await PermissionService.HasEntityPermissionAsync(User, "ServiceVisuals", PermissionOperation.Read);
+    var canReadItems = !isAuthenticated || await PermissionService.HasEntityPermissionAsync(User, "Item", PermissionOperation.Read);
+    var canReadSuppliers = !isAuthenticated || await PermissionService.HasEntityPermissionAsync(User, "Supplier", PermissionOperation.Read);
+    var canReadRoles = !isAuthenticated || await PermissionService.HasEntityPermissionAsync(User, "Roles", PermissionOperation.Read);
+    var canReadUsers = !isAuthenticated || await PermissionService.HasEntityPermissionAsync(User, "Users", PermissionOperation.Read);
+    var readableProperties = ViewData["ReadableProperties"] as HashSet<string> ?? new HashSet<string>();
+    var writableProperties = ViewData["WritableProperties"] as HashSet<string> ?? new HashSet<string>();
+}
 <!DOCTYPE html>
 <html lang="tr">
 <head>
@@ -37,6 +53,8 @@
                 <!-- Servis bölümü -->
                 <div class="menu-section">Servis</div>
 
+                @if (canReadCustomers)
+                {
                 <div class="menu-item">
                     <a class="menu-link" asp-controller="Customers" asp-action="Index"
                        data-controller="Customers">
@@ -46,7 +64,10 @@
                         Müşteriler
                     </a>
                 </div>
+                }
 
+                @if (canReadServices)
+                {
                 <div class="menu-item">
                     <a class="menu-link" asp-controller="Services" asp-action="Index"
                        data-controller="Services">
@@ -56,7 +77,10 @@
                         Servisler
                     </a>
                 </div>
+                }
 
+                @if (canReadServiceItems)
+                {
                 <div class="menu-item">
                     <a class="menu-link" asp-controller="ServiceItems" asp-action="Index"
                        data-controller="ServiceItems">
@@ -66,7 +90,10 @@
                         Kullanılan Ürünler
                     </a>
                 </div>
+                }
 
+                @if (canReadServiceVisuals)
+                {
                 <div class="menu-item">
                     <a class="menu-link" asp-controller="ServiceVisuals" asp-action="Index"
                        data-controller="ServiceVisuals">
@@ -76,10 +103,13 @@
                         Servis Görselleri
                     </a>
                 </div>
+                }
 
                 <!-- Stok bölümü -->
                 <div class="menu-section">Stok</div>
 
+                @if (canReadItems)
+                {
                 <div class="menu-item">
                     <a class="menu-link" asp-controller="Items" asp-action="Index"
                        data-controller="Items">
@@ -90,7 +120,10 @@
                         Ürünler
                     </a>
                 </div>
+                }
 
+                @if (canReadSuppliers)
+                {
                 <div class="menu-item">
                     <a class="menu-link" asp-controller="Suppliers" asp-action="Index"
                        data-controller="Suppliers">
@@ -101,10 +134,13 @@
                         Tedarikçiler
                     </a>
                 </div>
+                }
 
                 <!-- Yönetim bölümü -->
                 <div class="menu-section">Kullanıcı İşlemleri</div>
 
+                @if (canReadRoles)
+                {
                 <div class="menu-item">
                     <a class="menu-link" asp-controller="Roles" asp-action="Index"
                        data-controller="Roles">
@@ -114,7 +150,10 @@
                         Roller
                     </a>
                 </div>
+                }
 
+                @if (canReadUsers)
+                {
                 <div class="menu-item">
                     <a class="menu-link" asp-controller="Users" asp-action="Index"
                        data-controller="Users">
@@ -124,6 +163,7 @@
                         Kullanıcılar
                     </a>
                 </div>
+                }
 
             </div><!-- /.sidebar-menu -->
 
@@ -194,6 +234,12 @@
                 enabled: true,
                 autoApply: false
             }
+        };
+    </script>
+    <script>
+        window.TrivaPermissions = {
+            readable: @Html.Raw(JsonSerializer.Serialize(readableProperties)),
+            writable: @Html.Raw(JsonSerializer.Serialize(writableProperties))
         };
     </script>
     <script src="~/js/site.js" asp-append-version="true"></script>
@@ -312,6 +358,29 @@
         }
 
         applyTurkishTexts();
+        (function applyFieldPermissions() {
+            if (!window.TrivaPermissions) return;
+            var readable = new Set((window.TrivaPermissions.readable || []).map(function (x) { return (x || '').toLowerCase(); }));
+            var writable = new Set((window.TrivaPermissions.writable || []).map(function (x) { return (x || '').toLowerCase(); }));
+            if (readable.size === 0 && writable.size === 0) return;
+
+            var fields = document.querySelectorAll('input[name], select[name], textarea[name]');
+            fields.forEach(function (field) {
+                var name = (field.getAttribute('name') || '').toLowerCase();
+                if (!name) return;
+
+                var simpleName = name.split('.').pop();
+                var container = field.closest('.col-12, .col-sm-6, .col-sm-4, .col-sm-3, .mb-3, .form-check, tr') || field.parentElement;
+                if (!readable.has(simpleName) && field.type !== 'hidden') {
+                    if (container) container.style.display = 'none';
+                    return;
+                }
+
+                if (!writable.has(simpleName) && field.type !== 'hidden') {
+                    field.setAttribute('disabled', 'disabled');
+                }
+            });
+        })();
 
         /* ── Active sidebar link ──────────────────────────── */
         (function markActiveLink() {

@@ -21,6 +21,8 @@ namespace TrivaService.Data
 
         public DbSet<Roles> Roles => Set<Roles>();
         public DbSet<Users> Users => Set<Users>();
+        public DbSet<RoleEntityPermission> RoleEntityPermissions => Set<RoleEntityPermission>();
+        public DbSet<RolePropertyPermission> RolePropertyPermissions => Set<RolePropertyPermission>();
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

@@ -2,16 +2,19 @@ using Microsoft.AspNetCore.Mvc;
 using TrivaService.Abstractions.CommonAbstractions;
 using TrivaService.Infrastructure;
 using TrivaService.Models.UserEntities;
+using TrivaService.Services.Permissions;
 
 namespace TrivaService.Controllers
 {
     public class UsersController : Controller
     {
         private readonly IUnitOfWork _unitOfWork;
+        private readonly IPermissionService _permissionService;
 
-        public UsersController(IUnitOfWork unitOfWork)
+        public UsersController(IUnitOfWork unitOfWork, IPermissionService permissionService)
         {
             _unitOfWork = unitOfWork;
+            _permissionService = permissionService;
         }
 
         public async Task<IActionResult> Index([FromQuery(Name = "$filter")] string? filter)
@@ -75,11 +78,16 @@ namespace TrivaService.Controllers
                 return View(user);
 
             var now = DateTime.UtcNow;
-            user.Id = 0;
-            user.CreateDate = now;
-            user.UpdateDate = now;
+            var newEntity = new Users
+            {
+                Id = 0,
+                CreateDate = now,
+                UpdateDate = now,
+                IsActive = true
+            };
+            await _permissionService.ApplyWritePermissionsAsync(User, nameof(Users), user, newEntity);
 
-            await _unitOfWork.usersRepository.CreateAsync(user);
+            await _unitOfWork.usersRepository.CreateAsync(newEntity);
             await _unitOfWork.SaveAsync();
             return RedirectToAction(nameof(Index));
         }
@@ -107,14 +115,11 @@ namespace TrivaService.Controllers
             if (existing is null)
                 return NotFound();
 
-            existing.UserName = user.UserName;
-            existing.UserPhone = user.UserPhone;
-            existing.UserNotes = user.UserNotes;
-            existing.RolesId = user.RolesId;
-            existing.IsActive = user.IsActive;
+            await _permissionService.ApplyWritePermissionsAsync(User, nameof(Users), user, existing);
             existing.UpdateDate = DateTime.UtcNow;
 
-            if (!string.IsNullOrWhiteSpace(newPassword))
+            if (!string.IsNullOrWhiteSpace(newPassword)
+                && await _permissionService.CanWritePropertyAsync(User, nameof(Users), nameof(Users.UserPasswordHash)))
                 existing.UserPasswordHash = newPassword;
 
             await _unitOfWork.usersRepository.UpdateAsync(existing);

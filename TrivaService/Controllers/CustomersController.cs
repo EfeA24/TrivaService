@@ -2,16 +2,19 @@ using Microsoft.AspNetCore.Mvc;
 using TrivaService.Abstractions.CommonAbstractions;
 using TrivaService.Infrastructure;
 using TrivaService.Models.ServiceEntites;
+using TrivaService.Services.Permissions;
 
 namespace TrivaService.Controllers
 {
     public class CustomersController : Controller
     {
         private readonly IUnitOfWork _unitOfWork;
+        private readonly IPermissionService _permissionService;
 
-        public CustomersController(IUnitOfWork unitOfWork)
+        public CustomersController(IUnitOfWork unitOfWork, IPermissionService permissionService)
         {
             _unitOfWork = unitOfWork;
+            _permissionService = permissionService;
         }
 
         public async Task<IActionResult> Index([FromQuery(Name = "$filter")] string? filter)
@@ -110,11 +113,16 @@ namespace TrivaService.Controllers
                 return View(customer);
 
             var now = DateTime.UtcNow;
-            customer.Id = 0;
-            customer.CreateDate = now;
-            customer.UpdateDate = now;
+            var newEntity = new Customer
+            {
+                Id = 0,
+                CreateDate = now,
+                UpdateDate = now,
+                IsActive = true
+            };
+            await _permissionService.ApplyWritePermissionsAsync(User, nameof(Customer), customer, newEntity);
 
-            await _unitOfWork.customerRepository.CreateAsync(customer);
+            await _unitOfWork.customerRepository.CreateAsync(newEntity);
             await _unitOfWork.SaveAsync();
             return RedirectToAction(nameof(Index));
         }
@@ -142,13 +150,7 @@ namespace TrivaService.Controllers
             if (existing is null)
                 return NotFound();
 
-            existing.CustomerName = customer.CustomerName;
-            existing.CustomerPhone = customer.CustomerPhone;
-            existing.CustomerAddress = customer.CustomerAddress;
-            existing.Notes = customer.Notes;
-            existing.LastServiceDate = customer.LastServiceDate;
-            existing.TotalServiceCount = customer.TotalServiceCount;
-            existing.IsActive = customer.IsActive;
+            await _permissionService.ApplyWritePermissionsAsync(User, nameof(Customer), customer, existing);
             existing.UpdateDate = DateTime.UtcNow;
 
             await _unitOfWork.customerRepository.UpdateAsync(existing);

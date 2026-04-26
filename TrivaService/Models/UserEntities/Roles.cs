@@ -8,5 +8,6 @@ namespace TrivaService.Models.UserEntities
         public string? RoleDescription { get; set; }
 
         public List<Users> Users { get; set; } = new List<Users>();
+        public List<RoleEntityPermission> EntityPermissions { get; set; } = new List<RoleEntityPermission>();
     }
 }

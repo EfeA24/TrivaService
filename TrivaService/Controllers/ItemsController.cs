@@ -2,16 +2,19 @@ using Microsoft.AspNetCore.Mvc;
 using TrivaService.Abstractions.CommonAbstractions;
 using TrivaService.Infrastructure;
 using TrivaService.Models.StockEntities;
+using TrivaService.Services.Permissions;
 
 namespace TrivaService.Controllers
 {
     public class ItemsController : Controller
     {
         private readonly IUnitOfWork _unitOfWork;
+        private readonly IPermissionService _permissionService;
 
-        public ItemsController(IUnitOfWork unitOfWork)
+        public ItemsController(IUnitOfWork unitOfWork, IPermissionService permissionService)
         {
             _unitOfWork = unitOfWork;
+            _permissionService = permissionService;
         }
 
         public async Task<IActionResult> Index([FromQuery(Name = "$filter")] string? filter)
@@ -117,11 +120,16 @@ namespace TrivaService.Controllers
                 return View(item);
 
             var now = DateTime.UtcNow;
-            item.Id = 0;
-            item.CreateDate = now;
-            item.UpdateDate = now;
+            var newEntity = new Item
+            {
+                Id = 0,
+                CreateDate = now,
+                UpdateDate = now,
+                IsActive = true
+            };
+            await _permissionService.ApplyWritePermissionsAsync(User, nameof(Item), item, newEntity);
 
-            await _unitOfWork.itemRepository.CreateAsync(item);
+            await _unitOfWork.itemRepository.CreateAsync(newEntity);
             await _unitOfWork.SaveAsync();
             return RedirectToAction(nameof(Index));
         }
@@ -149,17 +157,7 @@ namespace TrivaService.Controllers
             if (existing is null)
                 return NotFound();
 
-            existing.SupplierId = item.SupplierId;
-            existing.ItemName = item.ItemName;
-            existing.ItemCode = item.ItemCode;
-            existing.ItemBrand = item.ItemBrand;
-            existing.ItemModel = item.ItemModel;
-            existing.ItemBarcode = item.ItemBarcode;
-            existing.ItemDescription = item.ItemDescription;
-            existing.ItemType = item.ItemType;
-            existing.ItemQuantity = item.ItemQuantity;
-            existing.ItemPrice = item.ItemPrice;
-            existing.IsActive = item.IsActive;
+            await _permissionService.ApplyWritePermissionsAsync(User, nameof(Item), item, existing);
             existing.UpdateDate = DateTime.UtcNow;
 
             await _unitOfWork.itemRepository.UpdateAsync(existing);

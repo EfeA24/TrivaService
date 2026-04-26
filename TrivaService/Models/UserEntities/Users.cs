@@ -9,7 +9,7 @@ namespace TrivaService.Models.UserEntities
         public string? UserPhone { get; set; }
         public string? UserNotes{ get; set; }
 
-        public Roles Roles { get; set; }
+        public Roles Roles { get; set; } = null!;
         public int RolesId { get; set; }
     }
 }

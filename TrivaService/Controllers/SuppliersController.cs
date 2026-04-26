@@ -2,16 +2,19 @@ using Microsoft.AspNetCore.Mvc;
 using TrivaService.Abstractions.CommonAbstractions;
 using TrivaService.Infrastructure;
 using TrivaService.Models.StockEntities;
+using TrivaService.Services.Permissions;
 
 namespace TrivaService.Controllers
 {
     public class SuppliersController : Controller
     {
         private readonly IUnitOfWork _unitOfWork;
+        private readonly IPermissionService _permissionService;
 
-        public SuppliersController(IUnitOfWork unitOfWork)
+        public SuppliersController(IUnitOfWork unitOfWork, IPermissionService permissionService)
         {
             _unitOfWork = unitOfWork;
+            _permissionService = permissionService;
         }
 
         public async Task<IActionResult> Index([FromQuery(Name = "$filter")] string? filter)
@@ -110,11 +113,16 @@ namespace TrivaService.Controllers
                 return View(supplier);
 
             var now = DateTime.UtcNow;
-            supplier.Id = 0;
-            supplier.CreateDate = now;
-            supplier.UpdateDate = now;
+            var newEntity = new Supplier
+            {
+                Id = 0,
+                CreateDate = now,
+                UpdateDate = now,
+                IsActive = true
+            };
+            await _permissionService.ApplyWritePermissionsAsync(User, nameof(Supplier), supplier, newEntity);
 
-            await _unitOfWork.supplierRepository.CreateAsync(supplier);
+            await _unitOfWork.supplierRepository.CreateAsync(newEntity);
             await _unitOfWork.SaveAsync();
             return RedirectToAction(nameof(Index));
         }
@@ -142,12 +150,7 @@ namespace TrivaService.Controllers
             if (existing is null)
                 return NotFound();
 
-            existing.SupplierName = supplier.SupplierName;
-            existing.SupplierPhone = supplier.SupplierPhone;
-            existing.SupplierContactPerson = supplier.SupplierContactPerson;
-            existing.SupplierEmail = supplier.SupplierEmail;
-            existing.SupplierAddress = supplier.SupplierAddress;
-            existing.IsActive = supplier.IsActive;
+            await _permissionService.ApplyWritePermissionsAsync(User, nameof(Supplier), supplier, existing);
             existing.UpdateDate = DateTime.UtcNow;
 
             await _unitOfWork.supplierRepository.UpdateAsync(existing);

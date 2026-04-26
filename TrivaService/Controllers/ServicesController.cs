@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using TrivaService.Abstractions.CommonAbstractions;
 using TrivaService.Infrastructure;
+using TrivaService.Services.Permissions;
 using ServiceEntity = TrivaService.Models.ServiceEntites.Service;
 
 namespace TrivaService.Controllers
@@ -8,10 +9,12 @@ namespace TrivaService.Controllers
     public class ServicesController : Controller
     {
         private readonly IUnitOfWork _unitOfWork;
+        private readonly IPermissionService _permissionService;
 
-        public ServicesController(IUnitOfWork unitOfWork)
+        public ServicesController(IUnitOfWork unitOfWork, IPermissionService permissionService)
         {
             _unitOfWork = unitOfWork;
+            _permissionService = permissionService;
         }
 
         public async Task<IActionResult> Index([FromQuery(Name = "$filter")] string? filter)
@@ -138,15 +141,20 @@ namespace TrivaService.Controllers
                 return View(service);
 
             var now = DateTime.UtcNow;
-            service.Id = 0;
-            service.CreateDate = now;
-            service.UpdateDate = now;
-            if (service.ReceivedDate == default)
-                service.ReceivedDate = now;
-            if (string.IsNullOrWhiteSpace(service.Status))
-                service.Status = "Received";
+            var newEntity = new ServiceEntity
+            {
+                Id = 0,
+                CreateDate = now,
+                UpdateDate = now,
+                IsActive = true
+            };
+            await _permissionService.ApplyWritePermissionsAsync(User, nameof(ServiceEntity), service, newEntity);
+            if (newEntity.ReceivedDate == default)
+                newEntity.ReceivedDate = now;
+            if (string.IsNullOrWhiteSpace(newEntity.Status))
+                newEntity.Status = "Received";
 
-            await _unitOfWork.serviceRepository.CreateAsync(service);
+            await _unitOfWork.serviceRepository.CreateAsync(newEntity);
             await _unitOfWork.SaveAsync();
             return RedirectToAction(nameof(Index));
         }
@@ -174,20 +182,7 @@ namespace TrivaService.Controllers
             if (existing is null)
                 return NotFound();
 
-            existing.CustomerId = service.CustomerId;
-            existing.ServiceCode = service.ServiceCode;
-            existing.FaultDescription = service.FaultDescription;
-            existing.ServiceDescription = service.ServiceDescription;
-            existing.ServiceNotes = service.ServiceNotes;
-            existing.ServiceAddress = service.ServiceAddress;
-            existing.ReceivedDate = service.ReceivedDate;
-            existing.CompletedDate = service.CompletedDate;
-            existing.DeliveredDate = service.DeliveredDate;
-            existing.Status = service.Status;
-            existing.EstimatedCost = service.EstimatedCost;
-            existing.FinalCost = service.FinalCost;
-            existing.IsPaymentComplete = service.IsPaymentComplete;
-            existing.IsActive = service.IsActive;
+            await _permissionService.ApplyWritePermissionsAsync(User, nameof(ServiceEntity), service, existing);
             existing.UpdateDate = DateTime.UtcNow;
 
             await _unitOfWork.serviceRepository.UpdateAsync(existing);

@@ -1,17 +1,24 @@
 using Microsoft.AspNetCore.Mvc;
 using TrivaService.Abstractions.CommonAbstractions;
+using TrivaService.Data;
 using TrivaService.Infrastructure;
 using TrivaService.Models.UserEntities;
+using TrivaService.Services.Permissions;
+using TrivaService.ViewModels.Permissions;
 
 namespace TrivaService.Controllers
 {
     public class RolesController : Controller
     {
         private readonly IUnitOfWork _unitOfWork;
+        private readonly AppDbContext _dbContext;
+        private readonly IPermissionService _permissionService;
 
-        public RolesController(IUnitOfWork unitOfWork)
+        public RolesController(IUnitOfWork unitOfWork, AppDbContext dbContext, IPermissionService permissionService)
         {
             _unitOfWork = unitOfWork;
+            _dbContext = dbContext;
+            _permissionService = permissionService;
         }
 
         public async Task<IActionResult> Index([FromQuery(Name = "$filter")] string? filter)
@@ -93,25 +100,39 @@ namespace TrivaService.Controllers
             return role is null ? NotFound() : View(role);
         }
 
-        public IActionResult Create()
+        public async Task<IActionResult> Create()
         {
-            return View(new Roles());
+            var vm = new RoleEditViewModel
+            {
+                Permissions = await _permissionService.BuildPermissionMatrixAsync(null)
+            };
+            return View(vm);
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(Roles role)
+        public async Task<IActionResult> Create(RoleEditViewModel model)
         {
             if (!ModelState.IsValid)
-                return View(role);
+            {
+                model.Permissions = await _permissionService.BuildPermissionMatrixAsync(null);
+                return View(model);
+            }
 
             var now = DateTime.UtcNow;
-            role.Id = 0;
-            role.CreateDate = now;
-            role.UpdateDate = now;
+            var role = new Roles
+            {
+                Id = 0,
+                RoleName = model.RoleName,
+                RoleDescription = model.RoleDescription,
+                IsActive = model.IsActive,
+                CreateDate = now,
+                UpdateDate = now
+            };
 
             await _unitOfWork.rolesRepository.CreateAsync(role);
             await _unitOfWork.SaveAsync();
+            await _permissionService.SaveRolePermissionsAsync(role.Id, model.Permissions);
             return RedirectToAction(nameof(Index));
         }
 
@@ -121,30 +142,46 @@ namespace TrivaService.Controllers
                 return NotFound();
 
             var role = await _unitOfWork.rolesRepository.GetByIdAsync(id.Value);
-            return role is null ? NotFound() : View(role);
+            if (role is null)
+                return NotFound();
+
+            var vm = new RoleEditViewModel
+            {
+                Id = role.Id,
+                RoleName = role.RoleName,
+                RoleDescription = role.RoleDescription,
+                IsActive = role.IsActive,
+                Permissions = await _permissionService.BuildPermissionMatrixAsync(role.Id)
+            };
+
+            return View(vm);
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, Roles role)
+        public async Task<IActionResult> Edit(int id, RoleEditViewModel model)
         {
-            if (id != role.Id)
+            if (id != model.Id)
                 return NotFound();
 
             if (!ModelState.IsValid)
-                return View(role);
+            {
+                model.Permissions = await _permissionService.BuildPermissionMatrixAsync(model.Id);
+                return View(model);
+            }
 
             var existing = await _unitOfWork.rolesRepository.GetByIdAsync(id);
             if (existing is null)
                 return NotFound();
 
-            existing.RoleName = role.RoleName;
-            existing.RoleDescription = role.RoleDescription;
-            existing.IsActive = role.IsActive;
+            existing.RoleName = model.RoleName;
+            existing.RoleDescription = model.RoleDescription;
+            existing.IsActive = model.IsActive;
             existing.UpdateDate = DateTime.UtcNow;
 
             await _unitOfWork.rolesRepository.UpdateAsync(existing);
             await _unitOfWork.SaveAsync();
+            await _permissionService.SaveRolePermissionsAsync(existing.Id, model.Permissions);
             return RedirectToAction(nameof(Index));
         }
 
@@ -161,6 +198,10 @@ namespace TrivaService.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
+            var permissions = _dbContext.RoleEntityPermissions.Where(x => x.RoleId == id);
+            _dbContext.RoleEntityPermissions.RemoveRange(permissions);
+            await _dbContext.SaveChangesAsync();
+
             await _unitOfWork.rolesRepository.DeleteAsync(id);
             await _unitOfWork.SaveAsync();
             return RedirectToAction(nameof(Index));

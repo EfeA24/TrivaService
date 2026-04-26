@@ -2,16 +2,19 @@ using Microsoft.AspNetCore.Mvc;
 using TrivaService.Abstractions.CommonAbstractions;
 using TrivaService.Infrastructure;
 using TrivaService.Models.ServiceEntites;
+using TrivaService.Services.Permissions;
 
 namespace TrivaService.Controllers
 {
     public class ServiceVisualsController : Controller
     {
         private readonly IUnitOfWork _unitOfWork;
+        private readonly IPermissionService _permissionService;
 
-        public ServiceVisualsController(IUnitOfWork unitOfWork)
+        public ServiceVisualsController(IUnitOfWork unitOfWork, IPermissionService permissionService)
         {
             _unitOfWork = unitOfWork;
+            _permissionService = permissionService;
         }
 
         public async Task<IActionResult> Index([FromQuery(Name = "$filter")] string? filter)
@@ -75,11 +78,16 @@ namespace TrivaService.Controllers
                 return View(serviceVisuals);
 
             var now = DateTime.UtcNow;
-            serviceVisuals.Id = 0;
-            serviceVisuals.CreateDate = now;
-            serviceVisuals.UpdateDate = now;
+            var newEntity = new ServiceVisuals
+            {
+                Id = 0,
+                CreateDate = now,
+                UpdateDate = now,
+                IsActive = true
+            };
+            await _permissionService.ApplyWritePermissionsAsync(User, nameof(ServiceVisuals), serviceVisuals, newEntity);
 
-            await _unitOfWork.serviceVisualsRepository.CreateAsync(serviceVisuals);
+            await _unitOfWork.serviceVisualsRepository.CreateAsync(newEntity);
             await _unitOfWork.SaveAsync();
             return RedirectToAction(nameof(Index));
         }
@@ -107,11 +115,7 @@ namespace TrivaService.Controllers
             if (existing is null)
                 return NotFound();
 
-            existing.ServiceId = serviceVisuals.ServiceId;
-            existing.ServiceVisualName = serviceVisuals.ServiceVisualName;
-            existing.ServiceDocumentUrl = serviceVisuals.ServiceDocumentUrl;
-            existing.Notes = serviceVisuals.Notes;
-            existing.IsActive = serviceVisuals.IsActive;
+            await _permissionService.ApplyWritePermissionsAsync(User, nameof(ServiceVisuals), serviceVisuals, existing);
             existing.UpdateDate = DateTime.UtcNow;
 
             await _unitOfWork.serviceVisualsRepository.UpdateAsync(existing);

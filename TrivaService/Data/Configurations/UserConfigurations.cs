@@ -12,6 +12,11 @@ namespace TrivaService.Data.Configurations
                 .WithOne(u => u.Roles)
                 .HasForeignKey(u => u.RolesId)
                 .OnDelete(DeleteBehavior.Restrict);
+
+            builder.HasMany(r => r.EntityPermissions)
+                .WithOne(p => p.Role)
+                .HasForeignKey(p => p.RoleId)
+                .OnDelete(DeleteBehavior.Cascade);
         }
     }
 
@@ -24,6 +29,35 @@ namespace TrivaService.Data.Configurations
 
             builder.Property(u => u.UserPasswordHash)
                 .IsRequired();
+        }
+    }
+
+    public class RoleEntityPermissionConfiguration : IEntityTypeConfiguration<RoleEntityPermission>
+    {
+        public void Configure(EntityTypeBuilder<RoleEntityPermission> builder)
+        {
+            builder.Property(x => x.EntityName)
+                .IsRequired()
+                .HasMaxLength(128);
+
+            builder.HasIndex(x => new { x.RoleId, x.EntityName }).IsUnique();
+
+            builder.HasMany(x => x.PropertyPermissions)
+                .WithOne(p => p.RoleEntityPermission)
+                .HasForeignKey(p => p.RoleEntityPermissionId)
+                .OnDelete(DeleteBehavior.Cascade);
+        }
+    }
+
+    public class RolePropertyPermissionConfiguration : IEntityTypeConfiguration<RolePropertyPermission>
+    {
+        public void Configure(EntityTypeBuilder<RolePropertyPermission> builder)
+        {
+            builder.Property(x => x.PropertyName)
+                .IsRequired()
+                .HasMaxLength(128);
+
+            builder.HasIndex(x => new { x.RoleEntityPermissionId, x.PropertyName }).IsUnique();
         }
     }
 }

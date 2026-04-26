@@ -2,16 +2,19 @@ using Microsoft.AspNetCore.Mvc;
 using TrivaService.Abstractions.CommonAbstractions;
 using TrivaService.Infrastructure;
 using TrivaService.Models.ServiceEntites;
+using TrivaService.Services.Permissions;
 
 namespace TrivaService.Controllers
 {
     public class ServiceItemsController : Controller
     {
         private readonly IUnitOfWork _unitOfWork;
+        private readonly IPermissionService _permissionService;
 
-        public ServiceItemsController(IUnitOfWork unitOfWork)
+        public ServiceItemsController(IUnitOfWork unitOfWork, IPermissionService permissionService)
         {
             _unitOfWork = unitOfWork;
+            _permissionService = permissionService;
         }
 
         public async Task<IActionResult> Index([FromQuery(Name = "$filter")] string? filter)
@@ -69,11 +72,16 @@ namespace TrivaService.Controllers
                 return View(serviceItem);
 
             var now = DateTime.UtcNow;
-            serviceItem.Id = 0;
-            serviceItem.CreateDate = now;
-            serviceItem.UpdateDate = now;
+            var newEntity = new ServiceItem
+            {
+                Id = 0,
+                CreateDate = now,
+                UpdateDate = now,
+                IsActive = true
+            };
+            await _permissionService.ApplyWritePermissionsAsync(User, nameof(ServiceItem), serviceItem, newEntity);
 
-            await _unitOfWork.serviceItemRepository.CreateAsync(serviceItem);
+            await _unitOfWork.serviceItemRepository.CreateAsync(newEntity);
             await _unitOfWork.SaveAsync();
             return RedirectToAction(nameof(Index));
         }
@@ -101,14 +109,7 @@ namespace TrivaService.Controllers
             if (existing is null)
                 return NotFound();
 
-            existing.ServiceId = serviceItem.ServiceId;
-            existing.ItemId = serviceItem.ItemId;
-            existing.Quantity = serviceItem.Quantity;
-            existing.UnitPrice = serviceItem.UnitPrice;
-            existing.UnitCost = serviceItem.UnitCost;
-            existing.TotalPrice = serviceItem.TotalPrice;
-            existing.Notes = serviceItem.Notes;
-            existing.IsActive = serviceItem.IsActive;
+            await _permissionService.ApplyWritePermissionsAsync(User, nameof(ServiceItem), serviceItem, existing);
             existing.UpdateDate = DateTime.UtcNow;
 
             await _unitOfWork.serviceItemRepository.UpdateAsync(existing);
