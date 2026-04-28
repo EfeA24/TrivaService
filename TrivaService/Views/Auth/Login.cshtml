@@ -1,9 +1,15 @@
+@model TrivaService.ViewModels.Auth.LoginViewModel
+@{
+    ViewData["Title"] = "Giriş Yap";
+    var returnUrl = ViewData["ReturnUrl"] as string;
+}
+
 <!DOCTYPE html>
 <html lang="tr">
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Login Page</title>
+    <title>@ViewData["Title"] - Triva Service</title>
     <style>
             :root {
                 --primary: #00A19B;
@@ -73,34 +79,40 @@
                 justify-content: space-between;
             }
 
-                .brand-panel::before,
-                .brand-panel::after {
-                    content: "";
-                    position: absolute;
-                    border-radius: 50%;
-                    border: 1px solid var(--white-14);
-                    pointer-events: none;
-                }
+            .brand-panel::before,
+            .brand-panel::after {
+                content: "";
+                position: absolute;
+                border-radius: 50%;
+                border: 1px solid var(--white-14);
+                pointer-events: none;
+            }
 
-                .brand-panel::before {
-                    width: 260px;
-                    height: 260px;
-                    top: -80px;
-                    right: -70px;
-                    background: var(--white-07);
-                }
+            .brand-panel::before {
+                width: 260px;
+                height: 260px;
+                top: -80px;
+                right: -70px;
+                background: var(--white-07);
+            }
 
-                .brand-panel::after {
-                    width: 180px;
-                    height: 180px;
-                    bottom: 80px;
-                    left: -70px;
-                    background: var(--white-07);
-                }
+            .brand-panel::after {
+                width: 180px;
+                height: 180px;
+                bottom: 80px;
+                left: -70px;
+                background: var(--white-07);
+            }
 
             .brand-content {
                 position: relative;
                 z-index: 1;
+            }
+
+            .brand-home-link {
+                display: inline-flex;
+                color: inherit;
+                text-decoration: none;
             }
 
             .logo {
@@ -114,15 +126,20 @@
                 justify-content: center;
                 margin-bottom: 42px;
                 box-shadow: inset 0 1px 0 var(--white-25);
+                transition: transform 0.2s ease;
             }
 
-                .logo span {
-                    width: 24px;
-                    height: 24px;
-                    border-radius: 8px;
-                    background: var(--primary);
-                    box-shadow: 0 0 0 8px var(--white-14);
-                }
+            .brand-home-link:hover .logo {
+                transform: translateY(-1px);
+            }
+
+            .logo span {
+                width: 24px;
+                height: 24px;
+                border-radius: 8px;
+                background: var(--primary);
+                box-shadow: 0 0 0 8px var(--white-14);
+            }
 
             .brand-panel h1 {
                 font-size: 42px;
@@ -177,19 +194,19 @@
                 max-width: 390px;
             }
 
-                .form-card h2 {
-                    font-size: 32px;
-                    letter-spacing: -0.7px;
-                    margin-bottom: 10px;
-                    color: var(--text-primary);
-                }
+            .form-card h2 {
+                font-size: 32px;
+                letter-spacing: -0.7px;
+                margin-bottom: 10px;
+                color: var(--text-primary);
+            }
 
-                .form-card .subtitle {
-                    color: var(--text-secondary);
-                    font-size: 15px;
-                    line-height: 1.6;
-                    margin-bottom: 34px;
-                }
+            .form-card .subtitle {
+                color: var(--text-secondary);
+                font-size: 15px;
+                line-height: 1.6;
+                margin-bottom: 34px;
+            }
 
             .form-group {
                 margin-bottom: 20px;
@@ -207,7 +224,8 @@
                 position: relative;
             }
 
-            input {
+            input[type="text"],
+            input[type="password"] {
                 width: 100%;
                 height: 52px;
                 border: 1px solid var(--border-default);
@@ -220,39 +238,31 @@
                 transition: 0.2s ease;
             }
 
-                input::placeholder {
-                    color: var(--text-muted);
-                }
+            input::placeholder {
+                color: var(--text-muted);
+            }
 
-                input:focus {
-                    border-color: var(--primary);
-                    box-shadow: 0 0 0 4px rgba(0, 161, 155, 0.14);
-                    background: #F2EDE6;
-                }
+            input:focus {
+                border-color: var(--primary);
+                box-shadow: 0 0 0 4px rgba(0, 161, 155, 0.14);
+                background: #F2EDE6;
+            }
+
+            .field-error {
+                display: block;
+                margin-top: 8px;
+                font-size: 13px;
+                color: var(--danger-text);
+            }
 
             .options {
                 display: flex;
                 align-items: center;
-                justify-content: space-between;
-                margin: 8px 0 26px;
+                justify-content: flex-end;
+                margin: 8px 0 24px;
                 gap: 12px;
                 font-size: 14px;
             }
-
-            .remember {
-                display: flex;
-                align-items: center;
-                gap: 8px;
-                color: var(--text-secondary);
-                cursor: pointer;
-                user-select: none;
-            }
-
-                .remember input {
-                    width: 16px;
-                    height: 16px;
-                    accent-color: var(--primary);
-                }
 
             .forgot-link {
                 color: var(--primary-active);
@@ -260,10 +270,10 @@
                 font-weight: 650;
             }
 
-                .forgot-link:hover {
-                    color: var(--primary-hover);
-                    text-decoration: underline;
-                }
+            .forgot-link:hover {
+                color: var(--primary-hover);
+                text-decoration: underline;
+            }
 
             .login-button {
                 width: 100%;
@@ -279,25 +289,29 @@
                 box-shadow: 0 14px 30px rgba(0, 161, 155, 0.24);
             }
 
-                .login-button:hover {
-                    background: var(--primary-hover);
-                    transform: translateY(-1px);
-                }
+            .login-button:hover {
+                background: var(--primary-hover);
+                transform: translateY(-1px);
+            }
 
-                .login-button:active {
-                    background: var(--primary-active);
-                    transform: translateY(0);
-                }
+            .login-button:active {
+                background: var(--primary-active);
+                transform: translateY(0);
+            }
 
-            .danger-box {
-                display: none;
-                margin-top: 18px;
+            .validation-box {
+                margin-bottom: 16px;
                 padding: 12px 14px;
                 border-radius: 14px;
                 color: var(--danger-text);
                 background: var(--danger-bg);
                 border: 1px solid var(--danger-border);
                 font-size: 14px;
+                line-height: 1.5;
+            }
+
+            .validation-box:empty {
+                display: none;
             }
 
             .divider {
@@ -309,27 +323,31 @@
                 font-size: 13px;
             }
 
-                .divider::before,
-                .divider::after {
-                    content: "";
-                    flex: 1;
-                    height: 1px;
-                    background: var(--border-light);
-                }
-
-            .demo-info {
-                padding: 14px 16px;
-                border: 1px solid var(--border-light);
-                background: var(--input-bg);
-                border-radius: 16px;
-                color: var(--text-secondary);
-                font-size: 14px;
-                line-height: 1.7;
+            .divider::before,
+            .divider::after {
+                content: "";
+                flex: 1;
+                height: 1px;
+                background: var(--border-light);
             }
 
-                .demo-info strong {
-                    color: var(--text-primary);
-                }
+            .helper-links {
+                display: flex;
+                justify-content: space-between;
+                gap: 8px;
+                margin-top: 14px;
+                font-size: 13px;
+            }
+
+            .helper-links a {
+                color: var(--text-secondary);
+                text-decoration: none;
+            }
+
+            .helper-links a:hover {
+                color: var(--text-primary);
+                text-decoration: underline;
+            }
 
             @@media (max-width: 860px) {
                 .login-wrapper {
@@ -342,9 +360,9 @@
                     padding: 38px;
                 }
 
-                    .brand-panel h1 {
-                        font-size: 32px;
-                    }
+                .brand-panel h1 {
+                    font-size: 32px;
+                }
 
                 .brand-footer {
                     margin-top: 34px;
@@ -365,9 +383,9 @@
                     padding: 30px 22px;
                 }
 
-                .options {
-                    align-items: flex-start;
+                .helper-links {
                     flex-direction: column;
+                    align-items: center;
                 }
             }
     </style>
@@ -376,9 +394,11 @@
     <main class="login-wrapper">
         <section class="brand-panel">
             <div class="brand-content">
-                <div class="logo" aria-label="Logo">
-                    <span></span>
-                </div>
+                <a class="brand-home-link" asp-controller="Home" asp-action="Index" aria-label="Ana sayfaya git">
+                    <div class="logo" aria-hidden="true">
+                        <span></span>
+                    </div>
+                </a>
 
                 <h1>Yönetim paneline hoş geldiniz.</h1>
                 <p>
@@ -390,53 +410,55 @@
             <div class="brand-footer">
                 <div class="brand-footer-icon">✓</div>
                 <div>
-                    <strong style="color: var(--white-92); display:block; margin-bottom:3px;">Secure Access</strong>
+                    <strong style="color: var(--white-92); display:block; margin-bottom:3px;">Güvenli Erişim</strong>
                     <span>Yetkili kullanıcı girişi</span>
                 </div>
             </div>
         </section>
 
         <section class="form-panel">
-            <form class="form-card">
+            <form class="form-card" asp-action="Login" asp-controller="Auth" method="post">
+                @Html.AntiForgeryToken()
+                @if (!string.IsNullOrWhiteSpace(returnUrl))
+                {
+                    <input type="hidden" name="returnUrl" value="@returnUrl" />
+                }
+
                 <h2>Giriş Yap</h2>
-                <p class="subtitle">Hesabınıza erişmek için kullanıcı bilgilerinizi kontrol edin.</p>
+                <p class="subtitle">Hesabınıza erişmek için kullanıcı bilgilerinizi girin.</p>
+
+                <div asp-validation-summary="ModelOnly" class="validation-box"></div>
 
                 <div class="form-group">
-                    <label for="username">Kullanıcı Adı</label>
+                    <label asp-for="UserName"></label>
                     <div class="input-box">
-                        <input id="username" type="text" value="admin" autocomplete="username" />
+                        <input asp-for="UserName" type="text" autocomplete="username" placeholder="Kullanıcı adınızı girin" />
                     </div>
+                    <span asp-validation-for="UserName" class="field-error"></span>
                 </div>
 
                 <div class="form-group">
-                    <label for="password">Şifre</label>
+                    <label asp-for="Password"></label>
                     <div class="input-box">
-                        <input id="password" type="password" value="12345admin" autocomplete="current-password" />
+                        <input asp-for="Password" type="password" autocomplete="current-password" placeholder="Parolanızı girin" />
                     </div>
+                    <span asp-validation-for="Password" class="field-error"></span>
                 </div>
 
                 <div class="options">
-                    <label class="remember">
-                        <input type="checkbox" checked />
-                        Beni hatırla
-                    </label>
-                    <a class="forgot-link" href="#">Şifremi unuttum</a>
+                    <a class="forgot-link" href="mailto:destek@triva.local?subject=Parola%20S%C4%B1f%C4%B1rlama%20Talebi">Şifremi unuttum</a>
                 </div>
 
                 <button class="login-button" type="submit">Giriş Yap</button>
 
-                <div class="danger-box" id="errorBox">
-                    Kullanıcı adı veya şifre hatalı.
-                </div>
-
-                <div class="divider">Demo Bilgileri</div>
-
-                <div class="demo-info">
-                    Kullanıcı Adı: <strong>admin</strong><br />
-                    Şifre: <strong>12345admin</strong>
+                <div class="helper-links">
+                    <a asp-controller="Home" asp-action="Index">Ana sayfa</a>
+                    <a asp-controller="Home" asp-action="Privacy">Gizlilik</a>
                 </div>
             </form>
         </section>
     </main>
+
+    <partial name="_ValidationScriptsPartial" />
 </body>
 </html>
