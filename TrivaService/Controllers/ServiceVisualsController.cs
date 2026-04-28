@@ -10,11 +10,17 @@ namespace TrivaService.Controllers
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly IPermissionService _permissionService;
+        private readonly IWebHostEnvironment _environment;
+        private static readonly HashSet<string> AllowedExtensions = new(StringComparer.OrdinalIgnoreCase)
+        {
+            ".jpg", ".jpeg", ".png", ".gif", ".webp", ".bmp", ".mp4", ".mov", ".avi", ".mkv", ".webm"
+        };
 
-        public ServiceVisualsController(IUnitOfWork unitOfWork, IPermissionService permissionService)
+        public ServiceVisualsController(IUnitOfWork unitOfWork, IPermissionService permissionService, IWebHostEnvironment environment)
         {
             _unitOfWork = unitOfWork;
             _permissionService = permissionService;
+            _environment = environment;
         }
 
         public async Task<IActionResult> Index([FromQuery(Name = "$filter")] string? filter)
@@ -72,8 +78,12 @@ namespace TrivaService.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(ServiceVisuals serviceVisuals)
+        public async Task<IActionResult> Create(ServiceVisuals serviceVisuals, List<IFormFile>? mediaFiles)
         {
+            if (!ModelState.IsValid)
+                return View(serviceVisuals);
+
+            var uploadedPaths = await SaveMediaFilesAsync(mediaFiles);
             if (!ModelState.IsValid)
                 return View(serviceVisuals);
 
@@ -83,9 +93,12 @@ namespace TrivaService.Controllers
                 Id = 0,
                 CreateDate = now,
                 UpdateDate = now,
-                IsActive = true
+                IsActive = true,
+                ServiceDocumentUrl = string.Join(";", uploadedPaths)
             };
             await _permissionService.ApplyWritePermissionsAsync(User, nameof(ServiceVisuals), serviceVisuals, newEntity);
+            if (uploadedPaths.Count > 0)
+                newEntity.ServiceDocumentUrl = string.Join(";", uploadedPaths);
 
             await _unitOfWork.serviceVisualsRepository.CreateAsync(newEntity);
             await _unitOfWork.SaveAsync();
@@ -103,7 +116,7 @@ namespace TrivaService.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, ServiceVisuals serviceVisuals)
+        public async Task<IActionResult> Edit(int id, ServiceVisuals serviceVisuals, List<IFormFile>? mediaFiles)
         {
             if (id != serviceVisuals.Id)
                 return NotFound();
@@ -115,7 +128,13 @@ namespace TrivaService.Controllers
             if (existing is null)
                 return NotFound();
 
+            var uploadedPaths = await SaveMediaFilesAsync(mediaFiles);
+            if (!ModelState.IsValid)
+                return View(serviceVisuals);
+
             await _permissionService.ApplyWritePermissionsAsync(User, nameof(ServiceVisuals), serviceVisuals, existing);
+            if (uploadedPaths.Count > 0)
+                existing.ServiceDocumentUrl = string.Join(";", uploadedPaths);
             existing.UpdateDate = DateTime.UtcNow;
 
             await _unitOfWork.serviceVisualsRepository.UpdateAsync(existing);
@@ -139,6 +158,38 @@ namespace TrivaService.Controllers
             await _unitOfWork.serviceVisualsRepository.DeleteAsync(id);
             await _unitOfWork.SaveAsync();
             return RedirectToAction(nameof(Index));
+        }
+
+        private async Task<List<string>> SaveMediaFilesAsync(IEnumerable<IFormFile>? files)
+        {
+            var result = new List<string>();
+            if (files is null)
+                return result;
+
+            var uploadRoot = Path.Combine(_environment.WebRootPath, "uploads", "service-visuals");
+            Directory.CreateDirectory(uploadRoot);
+
+            foreach (var file in files)
+            {
+                if (file is null || file.Length == 0)
+                    continue;
+
+                var extension = Path.GetExtension(file.FileName);
+                if (string.IsNullOrWhiteSpace(extension) || !AllowedExtensions.Contains(extension))
+                {
+                    ModelState.AddModelError(string.Empty, $"Desteklenmeyen dosya tipi: {file.FileName}");
+                    continue;
+                }
+
+                var safeFileName = $"{Guid.NewGuid():N}{extension.ToLowerInvariant()}";
+                var physicalPath = Path.Combine(uploadRoot, safeFileName);
+                await using var stream = System.IO.File.Create(physicalPath);
+                await file.CopyToAsync(stream);
+
+                result.Add($"/uploads/service-visuals/{safeFileName}");
+            }
+
+            return result;
         }
     }
 }

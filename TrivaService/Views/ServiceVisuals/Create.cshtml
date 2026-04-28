@@ -10,7 +10,7 @@
 
 <div class="card shadow-sm form-card">
     <div class="card-body p-4">
-        <form asp-action="Create" method="post">
+        <form asp-action="Create" method="post" enctype="multipart/form-data">
             <div asp-validation-summary="ModelOnly" class="alert alert-danger py-2"></div>
             <div class="row g-3">
                 <div class="col-sm-6">
@@ -23,8 +23,9 @@
                     <span asp-validation-for="ServiceVisualName" class="text-danger small"></span>
                 </div>
                 <div class="col-12">
-                    <label asp-for="ServiceDocumentUrl" class="form-label fw-semibold"></label>
-                    <input asp-for="ServiceDocumentUrl" class="form-control" />
+                    <label class="form-label fw-semibold">Medya Dosyaları (Fotoğraf/Video)</label>
+                    <input type="file" name="mediaFiles" class="form-control" accept="image/*,video/*" multiple />
+                    <div class="form-text">Birden fazla dosya seçebilirsiniz.</div>
                 </div>
                 <div class="col-12">
                     <label asp-for="Notes" class="form-label fw-semibold"></label>

@@ -14,11 +14,20 @@
             <dt class="col-sm-3">ID</dt><dd class="col-sm-9">@Model.Id</dd>
             <dt class="col-sm-3">Name</dt><dd class="col-sm-9">@Model.ServiceVisualName</dd>
             <dt class="col-sm-3">Service</dt><dd class="col-sm-9">@(Model.ServiceId?.ToString() ?? "—")</dd>
-            <dt class="col-sm-3">Document URL</dt>
+            <dt class="col-sm-3">Medya Dosyaları</dt>
             <dd class="col-sm-9">
-                @if (!string.IsNullOrEmpty(Model.ServiceDocumentUrl))
+                @{
+                    var mediaLinks = (Model.ServiceDocumentUrl ?? string.Empty)
+                        .Split(';', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
+                }
+                @if (mediaLinks.Length > 0)
                 {
-                    <a href="@Model.ServiceDocumentUrl" target="_blank" rel="noopener">@Model.ServiceDocumentUrl</a>
+                    <ul class="mb-0 ps-3">
+                        @for (var i = 0; i < mediaLinks.Length; i++)
+                        {
+                            <li><a href="@mediaLinks[i]" target="_blank" rel="noopener">Dosya @(i + 1)</a></li>
+                        }
+                    </ul>
                 }
                 else
                 {

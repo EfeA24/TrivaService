@@ -59,7 +59,7 @@
                     <th>#</th>
                     <th>Ad</th>
                     <th>Servis</th>
-                    <th>Belge URL</th>
+                    <th>Medya</th>
                     <th>Durum</th>
                     <th></th>
                 </tr>
@@ -71,10 +71,19 @@
                         <td class="text-muted">@item.Id</td>
                         <td class="fw-semibold">@item.ServiceVisualName</td>
                         <td>@(item.ServiceId?.ToString() ?? "—")</td>
-                        <td class="text-muted text-truncate" style="max-width:200px;">
-                            @if (!string.IsNullOrEmpty(item.ServiceDocumentUrl))
+                        <td class="text-muted">
+                            @{
+                                var mediaLinks = (item.ServiceDocumentUrl ?? string.Empty)
+                                    .Split(';', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
+                            }
+                            @if (mediaLinks.Length > 0)
                             {
-                                <a href="@item.ServiceDocumentUrl" target="_blank" rel="noopener">Görüntüle</a>
+                                <div class="d-flex flex-column gap-1">
+                                    @for (var i = 0; i < mediaLinks.Length; i++)
+                                    {
+                                        <a href="@mediaLinks[i]" target="_blank" rel="noopener">Dosya @(i + 1)</a>
+                                    }
+                                </div>
                             }
                             else { <span>—</span> }
                         </td>

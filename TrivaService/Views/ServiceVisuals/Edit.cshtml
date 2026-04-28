@@ -10,7 +10,7 @@
 
 <div class="card shadow-sm form-card">
     <div class="card-body p-4">
-        <form asp-action="Edit" method="post">
+        <form asp-action="Edit" method="post" enctype="multipart/form-data">
             <input type="hidden" asp-for="Id" />
             <div asp-validation-summary="ModelOnly" class="alert alert-danger py-2"></div>
             <div class="row g-3">
@@ -23,9 +23,22 @@
                     <input asp-for="ServiceVisualName" class="form-control" />
                 </div>
                 <div class="col-12">
-                    <label asp-for="ServiceDocumentUrl" class="form-label fw-semibold"></label>
-                    <input asp-for="ServiceDocumentUrl" class="form-control" />
+                    <label class="form-label fw-semibold">Medya Dosyaları (Fotoğraf/Video)</label>
+                    <input type="file" name="mediaFiles" class="form-control" accept="image/*,video/*" multiple />
+                    <div class="form-text">Yeni dosya seçerseniz mevcut medya kayıtları güncellenir.</div>
                 </div>
+                @if (!string.IsNullOrWhiteSpace(Model.ServiceDocumentUrl))
+                {
+                    <div class="col-12">
+                        <label class="form-label fw-semibold">Mevcut Medya</label>
+                        <ul class="mb-0 ps-3">
+                            @foreach (var mediaUrl in Model.ServiceDocumentUrl.Split(';', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries))
+                            {
+                                <li><a href="@mediaUrl" target="_blank" rel="noopener">@mediaUrl</a></li>
+                            }
+                        </ul>
+                    </div>
+                }
                 <div class="col-12">
                     <label asp-for="Notes" class="form-label fw-semibold"></label>
                     <textarea asp-for="Notes" class="form-control" rows="3"></textarea>
