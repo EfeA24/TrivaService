@@ -1,375 +1,461 @@
+@model TrivaService.ViewModels.Auth.LoginViewModel
+@{
+    Layout = null;
+    ViewData["Title"] = "Giriş Yap";
+    var returnUrl = ViewData["ReturnUrl"] as string;
+}
 <!DOCTYPE html>
 <html lang="tr">
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Login Page</title>
+    <title>Triva Servis · Giriş</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <style>
-            :root {
-                --primary: #00A19B;
-                --primary-hover: #008F8A;
-                --primary-active: #007A75;
-                --gradient-start: #0E5552;
-                --gradient-mid: #0A4442;
-                --gradient-end: #083738;
-                --page-bg: #E4DDD3;
-                --card-bg: #F2EDE6;
-                --input-bg: #EBE4DA;
-                --border-default: #D6CEC4;
-                --border-light: #E8E3DC;
-                --text-primary: #2F2F2F;
-                --text-secondary: #6B6B6B;
-                --text-muted: #9A9A9A;
-                --white: #FFFFFF;
-                --white-92: rgba(255,255,255,0.92);
-                --white-65: rgba(255,255,255,0.65);
-                --white-50: rgba(255,255,255,0.50);
-                --white-25: rgba(255,255,255,0.25);
-                --white-14: rgba(255,255,255,0.14);
-                --white-07: rgba(255,255,255,0.07);
-                --danger-text: #B02A37;
-                --danger-bg: rgba(220, 53, 69, 0.08);
-                --danger-border: rgba(220, 53, 69, 0.22);
-                --shadow: rgba(47, 47, 47, 0.12);
-            }
+        :root {
+            --primary: #00A19B;
+            --primary-hover: #008F8A;
+            --primary-active: #007A75;
+            --gradient-start: #0E5552;
+            --gradient-mid: #0A4442;
+            --gradient-end: #083738;
+            --page-bg: #E4DDD3;
+            --card-bg: #F2EDE6;
+            --input-bg: #EBE4DA;
+            --input-bg-focus: #FFFFFF;
+            --border-default: #D6CEC4;
+            --border-light: #E8E3DC;
+            --text-primary: #2F2F2F;
+            --text-secondary: #6B6B6B;
+            --text-muted: #9A9A9A;
+            --white: #FFFFFF;
+            --white-92: rgba(255,255,255,0.92);
+            --white-65: rgba(255,255,255,0.65);
+            --white-50: rgba(255,255,255,0.50);
+            --white-25: rgba(255,255,255,0.25);
+            --white-14: rgba(255,255,255,0.14);
+            --white-07: rgba(255,255,255,0.07);
+            --danger-text: #B02A37;
+            --danger-bg: rgba(220, 53, 69, 0.08);
+            --danger-border: rgba(220, 53, 69, 0.22);
+            --shadow: rgba(47, 47, 47, 0.12);
+        }
 
-            * {
-                box-sizing: border-box;
-                margin: 0;
-                padding: 0;
-                font-family: Inter, Segoe UI, Arial, sans-serif;
-            }
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: Inter, "Segoe UI", Arial, sans-serif;
+        }
 
-            body {
-                min-height: 100vh;
-                background: var(--page-bg);
-                color: var(--text-primary);
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                padding: 32px;
-            }
+        html, body {
+            height: 100%;
+        }
 
-            .login-wrapper {
-                width: 100%;
-                max-width: 1040px;
-                min-height: 620px;
-                display: grid;
-                grid-template-columns: 1.05fr 0.95fr;
-                background: var(--card-bg);
-                border: 1px solid var(--border-default);
-                border-radius: 28px;
-                overflow: hidden;
-                box-shadow: 0 24px 70px var(--shadow);
-            }
+        body {
+            min-height: 100vh;
+            background: var(--page-bg);
+            color: var(--text-primary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 32px;
+        }
 
-            .brand-panel {
-                position: relative;
-                padding: 56px;
-                background: radial-gradient(circle at top left, var(--white-14), transparent 36%), radial-gradient(circle at bottom right, var(--white-07), transparent 34%), linear-gradient(145deg, var(--gradient-start), var(--gradient-mid), var(--gradient-end));
-                color: var(--white);
-                display: flex;
-                flex-direction: column;
-                justify-content: space-between;
-            }
+        .login-wrapper {
+            width: 100%;
+            max-width: 1040px;
+            min-height: 620px;
+            display: grid;
+            grid-template-columns: 1.05fr 0.95fr;
+            background: var(--card-bg);
+            border: 1px solid var(--border-default);
+            border-radius: 28px;
+            overflow: hidden;
+            box-shadow: 0 24px 70px var(--shadow);
+        }
 
-                .brand-panel::before,
-                .brand-panel::after {
-                    content: "";
-                    position: absolute;
-                    border-radius: 50%;
-                    border: 1px solid var(--white-14);
-                    pointer-events: none;
-                }
+        .brand-panel {
+            position: relative;
+            padding: 56px;
+            background: radial-gradient(circle at top left, var(--white-14), transparent 36%),
+                        radial-gradient(circle at bottom right, var(--white-07), transparent 34%),
+                        linear-gradient(145deg, var(--gradient-start), var(--gradient-mid), var(--gradient-end));
+            color: var(--white);
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            overflow: hidden;
+        }
 
-                .brand-panel::before {
-                    width: 260px;
-                    height: 260px;
-                    top: -80px;
-                    right: -70px;
-                    background: var(--white-07);
-                }
-
-                .brand-panel::after {
-                    width: 180px;
-                    height: 180px;
-                    bottom: 80px;
-                    left: -70px;
-                    background: var(--white-07);
-                }
-
-            .brand-content {
-                position: relative;
-                z-index: 1;
-            }
-
-            .logo {
-                width: 58px;
-                height: 58px;
-                border-radius: 18px;
-                background: var(--white-14);
-                border: 1px solid var(--white-25);
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                margin-bottom: 42px;
-                box-shadow: inset 0 1px 0 var(--white-25);
-            }
-
-                .logo span {
-                    width: 24px;
-                    height: 24px;
-                    border-radius: 8px;
-                    background: var(--primary);
-                    box-shadow: 0 0 0 8px var(--white-14);
-                }
-
-            .brand-panel h1 {
-                font-size: 42px;
-                line-height: 1.12;
-                letter-spacing: -1.2px;
-                margin-bottom: 18px;
-                color: var(--white-92);
-            }
-
-            .brand-panel p {
-                max-width: 420px;
-                font-size: 16px;
-                line-height: 1.8;
-                color: var(--white-65);
-            }
-
-            .brand-footer {
-                position: relative;
-                z-index: 1;
-                display: flex;
-                gap: 14px;
-                align-items: center;
-                padding: 16px;
+            .brand-panel::before,
+            .brand-panel::after {
+                content: "";
+                position: absolute;
+                border-radius: 50%;
                 border: 1px solid var(--white-14);
+                pointer-events: none;
+            }
+
+            .brand-panel::before {
+                width: 260px;
+                height: 260px;
+                top: -80px;
+                right: -70px;
                 background: var(--white-07);
-                border-radius: 18px;
-                color: var(--white-65);
-                backdrop-filter: blur(10px);
             }
 
-            .brand-footer-icon {
-                width: 38px;
-                height: 38px;
-                border-radius: 14px;
-                background: var(--white-14);
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                color: var(--white-92);
-                font-weight: 700;
+            .brand-panel::after {
+                width: 180px;
+                height: 180px;
+                bottom: 80px;
+                left: -70px;
+                background: var(--white-07);
             }
 
-            .form-panel {
-                padding: 56px 52px;
-                display: flex;
-                align-items: center;
-                justify-content: center;
+        .brand-content {
+            position: relative;
+            z-index: 1;
+        }
+
+        .logo {
+            width: 58px;
+            height: 58px;
+            border-radius: 18px;
+            background: var(--white-14);
+            border: 1px solid var(--white-25);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 42px;
+            box-shadow: inset 0 1px 0 var(--white-25);
+        }
+
+            .logo span {
+                width: 24px;
+                height: 24px;
+                border-radius: 8px;
+                background: var(--primary);
+                box-shadow: 0 0 0 8px var(--white-14);
             }
 
-            .form-card {
-                width: 100%;
-                max-width: 390px;
+        .brand-panel h1 {
+            font-size: 42px;
+            line-height: 1.12;
+            letter-spacing: -1.2px;
+            margin-bottom: 18px;
+            color: var(--white-92);
+        }
+
+        .brand-panel p {
+            max-width: 420px;
+            font-size: 16px;
+            line-height: 1.8;
+            color: var(--white-65);
+        }
+
+        .brand-footer {
+            position: relative;
+            z-index: 1;
+            display: flex;
+            gap: 14px;
+            align-items: center;
+            padding: 16px;
+            border: 1px solid var(--white-14);
+            background: var(--white-07);
+            border-radius: 18px;
+            color: var(--white-65);
+            backdrop-filter: blur(10px);
+        }
+
+        .brand-footer-icon {
+            width: 38px;
+            height: 38px;
+            border-radius: 14px;
+            background: var(--white-14);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--white-92);
+            flex-shrink: 0;
+        }
+
+            .brand-footer-icon svg {
+                width: 18px;
+                height: 18px;
             }
 
-                .form-card h2 {
-                    font-size: 32px;
-                    letter-spacing: -0.7px;
-                    margin-bottom: 10px;
-                    color: var(--text-primary);
-                }
+        .form-panel {
+            padding: 56px 52px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
 
-                .form-card .subtitle {
-                    color: var(--text-secondary);
-                    font-size: 15px;
-                    line-height: 1.6;
-                    margin-bottom: 34px;
-                }
+        .form-card {
+            width: 100%;
+            max-width: 390px;
+        }
 
-            .form-group {
-                margin-bottom: 20px;
-            }
-
-            label {
-                display: block;
-                font-size: 14px;
-                font-weight: 650;
+            .form-card h2 {
+                font-size: 32px;
+                letter-spacing: -0.7px;
+                margin-bottom: 10px;
                 color: var(--text-primary);
-                margin-bottom: 9px;
             }
 
-            .input-box {
-                position: relative;
+            .form-card .subtitle {
+                color: var(--text-secondary);
+                font-size: 15px;
+                line-height: 1.6;
+                margin-bottom: 34px;
             }
 
-            input {
+        .form-group {
+            margin-bottom: 18px;
+        }
+
+        label {
+            display: block;
+            font-size: 14px;
+            font-weight: 650;
+            color: var(--text-primary);
+            margin-bottom: 9px;
+        }
+
+        .input-box {
+            position: relative;
+        }
+
+            .input-box .input-icon {
+                position: absolute;
+                left: 16px;
+                top: 50%;
+                transform: translateY(-50%);
+                width: 18px;
+                height: 18px;
+                color: var(--text-muted);
+                pointer-events: none;
+                transition: color 0.2s ease;
+            }
+
+            .input-box input {
                 width: 100%;
                 height: 52px;
                 border: 1px solid var(--border-default);
                 background: var(--input-bg);
                 color: var(--text-primary);
                 border-radius: 15px;
-                padding: 0 16px;
+                padding: 0 16px 0 46px;
                 font-size: 15px;
                 outline: none;
-                transition: 0.2s ease;
+                transition: border-color 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease;
             }
 
-                input::placeholder {
+                .input-box input::placeholder {
                     color: var(--text-muted);
                 }
 
-                input:focus {
+                .input-box input:focus {
                     border-color: var(--primary);
                     box-shadow: 0 0 0 4px rgba(0, 161, 155, 0.14);
-                    background: #F2EDE6;
+                    background: var(--input-bg-focus);
                 }
 
-            .options {
+                .input-box input:focus ~ .input-icon,
+                .input-box input:focus + .input-icon {
+                    color: var(--primary);
+                }
+
+            .input-box.has-toggle input {
+                padding-right: 50px;
+            }
+
+            .input-box .toggle-password {
+                position: absolute;
+                right: 8px;
+                top: 50%;
+                transform: translateY(-50%);
+                width: 36px;
+                height: 36px;
                 display: flex;
                 align-items: center;
-                justify-content: space-between;
-                margin: 8px 0 26px;
-                gap: 12px;
-                font-size: 14px;
-            }
-
-            .remember {
-                display: flex;
-                align-items: center;
-                gap: 8px;
-                color: var(--text-secondary);
-                cursor: pointer;
-                user-select: none;
-            }
-
-                .remember input {
-                    width: 16px;
-                    height: 16px;
-                    accent-color: var(--primary);
-                }
-
-            .forgot-link {
-                color: var(--primary-active);
-                text-decoration: none;
-                font-weight: 650;
-            }
-
-                .forgot-link:hover {
-                    color: var(--primary-hover);
-                    text-decoration: underline;
-                }
-
-            .login-button {
-                width: 100%;
-                height: 54px;
-                border: none;
-                border-radius: 16px;
-                background: var(--primary);
-                color: var(--white);
-                font-size: 16px;
-                font-weight: 750;
-                cursor: pointer;
-                transition: 0.2s ease;
-                box-shadow: 0 14px 30px rgba(0, 161, 155, 0.24);
-            }
-
-                .login-button:hover {
-                    background: var(--primary-hover);
-                    transform: translateY(-1px);
-                }
-
-                .login-button:active {
-                    background: var(--primary-active);
-                    transform: translateY(0);
-                }
-
-            .danger-box {
-                display: none;
-                margin-top: 18px;
-                padding: 12px 14px;
-                border-radius: 14px;
-                color: var(--danger-text);
-                background: var(--danger-bg);
-                border: 1px solid var(--danger-border);
-                font-size: 14px;
-            }
-
-            .divider {
-                display: flex;
-                align-items: center;
-                gap: 14px;
-                margin: 28px 0;
+                justify-content: center;
+                background: transparent;
+                border: 0;
+                border-radius: 10px;
                 color: var(--text-muted);
-                font-size: 13px;
+                cursor: pointer;
+                transition: background 0.15s ease, color 0.15s ease;
             }
 
-                .divider::before,
-                .divider::after {
-                    content: "";
-                    flex: 1;
-                    height: 1px;
-                    background: var(--border-light);
-                }
-
-            .demo-info {
-                padding: 14px 16px;
-                border: 1px solid var(--border-light);
-                background: var(--input-bg);
-                border-radius: 16px;
-                color: var(--text-secondary);
-                font-size: 14px;
-                line-height: 1.7;
-            }
-
-                .demo-info strong {
+                .input-box .toggle-password:hover {
+                    background: rgba(0, 0, 0, 0.04);
                     color: var(--text-primary);
                 }
 
-            @@media (max-width: 860px) {
-                .login-wrapper {
-                    grid-template-columns: 1fr;
-                    max-width: 520px;
+                .input-box .toggle-password svg {
+                    width: 18px;
+                    height: 18px;
                 }
 
-                .brand-panel {
-                    min-height: 320px;
-                    padding: 38px;
-                }
+        .field-validation-error {
+            display: block;
+            margin-top: 6px;
+            font-size: 13px;
+            color: var(--danger-text);
+        }
 
-                    .brand-panel h1 {
-                        font-size: 32px;
-                    }
+        .input-validation-error {
+            border-color: var(--danger-border) !important;
+            background: var(--danger-bg) !important;
+        }
 
-                .brand-footer {
-                    margin-top: 34px;
-                }
+        .options {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin: 4px 0 24px;
+            gap: 12px;
+            font-size: 14px;
+        }
 
-                .form-panel {
-                    padding: 42px 30px;
-                }
+        .remember {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--text-secondary);
+            cursor: pointer;
+            user-select: none;
+            margin: 0;
+            font-weight: 500;
+        }
+
+            .remember input {
+                width: 16px;
+                height: 16px;
+                accent-color: var(--primary);
             }
 
-            @@media (max-width: 480px) {
-                body {
-                    padding: 18px;
-                }
+        .forgot-link {
+            color: var(--primary-active);
+            text-decoration: none;
+            font-weight: 650;
+            transition: color 0.15s ease;
+        }
 
-                .brand-panel,
-                .form-panel {
-                    padding: 30px 22px;
-                }
-
-                .options {
-                    align-items: flex-start;
-                    flex-direction: column;
-                }
+            .forgot-link:hover {
+                color: var(--primary-hover);
+                text-decoration: underline;
             }
+
+        .login-button {
+            width: 100%;
+            height: 54px;
+            border: none;
+            border-radius: 16px;
+            background: var(--primary);
+            color: var(--white);
+            font-size: 16px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: background 0.2s ease, transform 0.15s ease, box-shadow 0.2s ease;
+            box-shadow: 0 14px 30px rgba(0, 161, 155, 0.24);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+            .login-button:hover {
+                background: var(--primary-hover);
+                transform: translateY(-1px);
+                box-shadow: 0 18px 36px rgba(0, 161, 155, 0.30);
+            }
+
+            .login-button:active {
+                background: var(--primary-active);
+                transform: translateY(0);
+                box-shadow: 0 8px 18px rgba(0, 161, 155, 0.24);
+            }
+
+            .login-button:disabled {
+                opacity: 0.7;
+                cursor: not-allowed;
+                transform: none;
+            }
+
+            .login-button svg {
+                width: 18px;
+                height: 18px;
+            }
+
+        .danger-box {
+            margin-bottom: 18px;
+            padding: 12px 14px;
+            border-radius: 14px;
+            color: var(--danger-text);
+            background: var(--danger-bg);
+            border: 1px solid var(--danger-border);
+            font-size: 14px;
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+        }
+
+            .danger-box svg {
+                width: 18px;
+                height: 18px;
+                flex-shrink: 0;
+                margin-top: 1px;
+            }
+
+            .danger-box ul {
+                margin: 0;
+                padding: 0;
+                list-style: none;
+            }
+
+        @@media (max-width: 860px) {
+            .login-wrapper {
+                grid-template-columns: 1fr;
+                max-width: 520px;
+            }
+
+            .brand-panel {
+                min-height: 280px;
+                padding: 38px;
+            }
+
+                .brand-panel h1 {
+                    font-size: 30px;
+                }
+
+            .brand-footer {
+                margin-top: 28px;
+            }
+
+            .form-panel {
+                padding: 42px 30px;
+            }
+        }
+
+        @@media (max-width: 480px) {
+            body {
+                padding: 16px;
+            }
+
+            .brand-panel,
+            .form-panel {
+                padding: 30px 22px;
+            }
+
+            .options {
+                align-items: flex-start;
+                flex-direction: column;
+                gap: 10px;
+            }
+        }
     </style>
 </head>
 <body>
@@ -388,55 +474,138 @@
             </div>
 
             <div class="brand-footer">
-                <div class="brand-footer-icon">✓</div>
+                <div class="brand-footer-icon" aria-hidden="true">
+                    <svg viewBox="0 0 20 20" fill="currentColor">
+                        <path fill-rule="evenodd" d="M2.166 4.999A11.954 11.954 0 0010 1.944 11.954 11.954 0 0017.834 5c.11.65.166 1.32.166 2.001 0 5.225-3.34 9.67-8 11.317C5.34 16.67 2 12.225 2 7c0-.682.057-1.35.166-2.001zm11.541 3.708a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+                    </svg>
+                </div>
                 <div>
-                    <strong style="color: var(--white-92); display:block; margin-bottom:3px;">Secure Access</strong>
+                    <strong style="color: var(--white-92); display:block; margin-bottom:3px;">Güvenli Erişim</strong>
                     <span>Yetkili kullanıcı girişi</span>
                 </div>
             </div>
         </section>
 
         <section class="form-panel">
-            <form class="form-card">
+            <form class="form-card"
+                  asp-controller="Auth"
+                  asp-action="Login"
+                  asp-route-returnurl="@returnUrl"
+                  method="post"
+                  novalidate>
+                @Html.AntiForgeryToken()
+
                 <h2>Giriş Yap</h2>
-                <p class="subtitle">Hesabınıza erişmek için kullanıcı bilgilerinizi kontrol edin.</p>
+                <p class="subtitle">Hesabınıza erişmek için kullanıcı bilgilerinizi giriniz.</p>
+
+                @if (!ViewData.ModelState.IsValid && ViewData.ModelState[string.Empty]?.Errors.Count > 0)
+                {
+                    <div class="danger-box" role="alert">
+                        <svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                            <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/>
+                        </svg>
+                        <ul>
+                            @foreach (var error in ViewData.ModelState[string.Empty].Errors)
+                            {
+                                <li>@error.ErrorMessage</li>
+                            }
+                        </ul>
+                    </div>
+                }
 
                 <div class="form-group">
-                    <label for="username">Kullanıcı Adı</label>
+                    <label asp-for="UserName">Kullanıcı Adı</label>
                     <div class="input-box">
-                        <input id="username" type="text" value="admin" autocomplete="username" />
+                        <input asp-for="UserName"
+                               type="text"
+                               placeholder="Kullanıcı adınız"
+                               autocomplete="username"
+                               autofocus />
+                        <svg class="input-icon" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                            <path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd"/>
+                        </svg>
                     </div>
+                    <span asp-validation-for="UserName" class="field-validation-error"></span>
                 </div>
 
                 <div class="form-group">
-                    <label for="password">Şifre</label>
-                    <div class="input-box">
-                        <input id="password" type="password" value="12345admin" autocomplete="current-password" />
+                    <label asp-for="Password">Şifre</label>
+                    <div class="input-box has-toggle">
+                        <input asp-for="Password"
+                               type="password"
+                               placeholder="Şifreniz"
+                               autocomplete="current-password" />
+                        <svg class="input-icon" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                            <path fill-rule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clip-rule="evenodd"/>
+                        </svg>
+                        <button type="button" class="toggle-password" id="togglePassword" aria-label="Şifreyi göster" tabindex="-1">
+                            <svg id="eyeOpen" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                                <path d="M10 12a2 2 0 100-4 2 2 0 000 4z"/>
+                                <path fill-rule="evenodd" d="M.458 10C1.732 5.943 5.522 3 10 3s8.268 2.943 9.542 7c-1.274 4.057-5.064 7-9.542 7S1.732 14.057.458 10zM14 10a4 4 0 11-8 0 4 4 0 018 0z" clip-rule="evenodd"/>
+                            </svg>
+                            <svg id="eyeClosed" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" style="display:none;">
+                                <path fill-rule="evenodd" d="M3.707 2.293a1 1 0 00-1.414 1.414l14 14a1 1 0 001.414-1.414l-1.473-1.473A10.014 10.014 0 0019.542 10C18.268 5.943 14.478 3 10 3a9.958 9.958 0 00-4.512 1.074l-1.78-1.781zm4.261 4.26l1.514 1.515a2.003 2.003 0 012.45 2.45l1.514 1.514a4 4 0 00-5.478-5.478z" clip-rule="evenodd"/>
+                                <path d="M12.454 16.697L9.75 13.992a4 4 0 01-3.742-3.741L2.335 6.578A9.98 9.98 0 00.458 10c1.274 4.057 5.065 7 9.542 7 .847 0 1.669-.105 2.454-.303z"/>
+                            </svg>
+                        </button>
                     </div>
+                    <span asp-validation-for="Password" class="field-validation-error"></span>
                 </div>
 
                 <div class="options">
                     <label class="remember">
-                        <input type="checkbox" checked />
+                        <input type="checkbox" name="rememberMe" value="true" />
                         Beni hatırla
                     </label>
                     <a class="forgot-link" href="#">Şifremi unuttum</a>
                 </div>
 
-                <button class="login-button" type="submit">Giriş Yap</button>
-
-                <div class="danger-box" id="errorBox">
-                    Kullanıcı adı veya şifre hatalı.
-                </div>
-
-                <div class="divider">Demo Bilgileri</div>
-
-                <div class="demo-info">
-                    Kullanıcı Adı: <strong>admin</strong><br />
-                    Şifre: <strong>12345admin</strong>
-                </div>
+                <button class="login-button" type="submit" id="submitButton">
+                    <span>Giriş Yap</span>
+                    <svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                        <path fill-rule="evenodd" d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z" clip-rule="evenodd"/>
+                    </svg>
+                </button>
             </form>
         </section>
     </main>
+
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <partial name="_ValidationScriptsPartial" />
+    <script>
+        (function () {
+            var toggleBtn = document.getElementById('togglePassword');
+            var pwdInput  = document.getElementById('Password');
+            var eyeOpen   = document.getElementById('eyeOpen');
+            var eyeClosed = document.getElementById('eyeClosed');
+
+            if (toggleBtn && pwdInput) {
+                toggleBtn.addEventListener('click', function () {
+                    var isHidden = pwdInput.type === 'password';
+                    pwdInput.type = isHidden ? 'text' : 'password';
+                    toggleBtn.setAttribute('aria-label', isHidden ? 'Şifreyi gizle' : 'Şifreyi göster');
+                    if (eyeOpen && eyeClosed) {
+                        eyeOpen.style.display   = isHidden ? 'none' : '';
+                        eyeClosed.style.display = isHidden ? '' : 'none';
+                    }
+                });
+            }
+
+            var form    = document.querySelector('.form-card');
+            var submit  = document.getElementById('submitButton');
+            if (form && submit) {
+                form.addEventListener('submit', function (e) {
+                    // Wait a tick so jQuery-validate can preventDefault on invalid forms
+                    setTimeout(function () {
+                        if (!e.defaultPrevented) {
+                            submit.disabled = true;
+                            var label = submit.querySelector('span');
+                            if (label) label.textContent = 'Giriş yapılıyor…';
+                        }
+                    }, 0);
+                });
+            }
+        })();
+    </script>
 </body>
 </html>
