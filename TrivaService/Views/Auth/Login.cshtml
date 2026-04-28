@@ -1,292 +1,442 @@
-@model TrivaService.ViewModels.Auth.LoginViewModel
-@{
-    ViewData["Title"] = "Giriş";
-    Layout = null;
-    var returnUrl = ViewData["ReturnUrl"]?.ToString();
-}
 <!DOCTYPE html>
 <html lang="tr">
 <head>
-    <meta charset="utf-8" />
+    <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Giriş — Triva Servis</title>
-    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
-    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <title>Login Page</title>
     <style>
-        html, body {
-            height: 100%;
-            margin: 0;
-        }
+            :root {
+                --primary: #00A19B;
+                --primary-hover: #008F8A;
+                --primary-active: #007A75;
+                --gradient-start: #0E5552;
+                --gradient-mid: #0A4442;
+                --gradient-end: #083738;
+                --page-bg: #E4DDD3;
+                --card-bg: #F2EDE6;
+                --input-bg: #EBE4DA;
+                --border-default: #D6CEC4;
+                --border-light: #E8E3DC;
+                --text-primary: #2F2F2F;
+                --text-secondary: #6B6B6B;
+                --text-muted: #9A9A9A;
+                --white: #FFFFFF;
+                --white-92: rgba(255,255,255,0.92);
+                --white-65: rgba(255,255,255,0.65);
+                --white-50: rgba(255,255,255,0.50);
+                --white-25: rgba(255,255,255,0.25);
+                --white-14: rgba(255,255,255,0.14);
+                --white-07: rgba(255,255,255,0.07);
+                --danger-text: #B02A37;
+                --danger-bg: rgba(220, 53, 69, 0.08);
+                --danger-border: rgba(220, 53, 69, 0.22);
+                --shadow: rgba(47, 47, 47, 0.12);
+            }
 
-        .login-wrapper {
-            min-height: 100vh;
-            display: flex;
-        }
+            * {
+                box-sizing: border-box;
+                margin: 0;
+                padding: 0;
+                font-family: Inter, Segoe UI, Arial, sans-serif;
+            }
 
-        /* ── Left panel (dark teal gradient — matches sidebar) ── */
-        .login-panel {
-            width: 420px;
-            flex-shrink: 0;
-            background: linear-gradient(165deg, #0e5552 0%, #0a4442 58%, #083738 100%);
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            padding: 48px 40px;
-            color: #fff;
-        }
+            body {
+                min-height: 100vh;
+                background: var(--page-bg);
+                color: var(--text-primary);
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                padding: 32px;
+            }
 
-        .login-panel .brand-logo {
-            width: 88px;
-            height: 88px;
-            object-fit: contain;
-            margin-bottom: 20px;
-            filter: brightness(0) invert(1);
-            opacity: 0.92;
-        }
-
-        .login-panel .brand-name {
-            font-size: 1.6rem;
-            font-weight: 700;
-            letter-spacing: 0.04em;
-            color: #fff;
-            margin-bottom: 10px;
-        }
-
-        .login-panel .brand-tagline {
-            font-size: 0.9rem;
-            color: rgba(255,255,255,0.65);
-            text-align: center;
-            line-height: 1.6;
-            max-width: 260px;
-        }
-
-        .login-panel .panel-divider {
-            width: 40px;
-            height: 2px;
-            background: rgba(255,255,255,0.25);
-            border-radius: 2px;
-            margin: 28px 0;
-        }
-
-        /* Admin hint box on the left panel */
-        .admin-hint {
-            width: 100%;
-            background: rgba(255,255,255,0.07);
-            border: 1px solid rgba(255,255,255,0.14);
-            border-radius: 10px;
-            padding: 16px 18px;
-            margin-top: 8px;
-        }
-
-        .admin-hint-title {
-            font-size: 0.72rem;
-            font-weight: 600;
-            letter-spacing: 0.08em;
-            text-transform: uppercase;
-            color: rgba(255,255,255,0.5);
-            margin-bottom: 10px;
-        }
-
-        .admin-hint-row {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            margin-bottom: 7px;
-        }
-
-        .admin-hint-row:last-child {
-            margin-bottom: 0;
-        }
-
-        .admin-hint-label {
-            font-size: 0.78rem;
-            color: rgba(255,255,255,0.5);
-            min-width: 80px;
-        }
-
-        .admin-hint-value {
-            font-size: 0.82rem;
-            font-weight: 600;
-            color: rgba(255,255,255,0.88);
-            background: rgba(255,255,255,0.1);
-            border-radius: 5px;
-            padding: 2px 9px;
-            font-family: 'Courier New', monospace;
-            letter-spacing: 0.04em;
-        }
-
-        /* ── Right panel (form area) ── */
-        .login-form-area {
-            flex: 1;
-            background: var(--surface-page, #e4ddd3);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 40px 24px;
-        }
-
-        .login-card {
-            width: 100%;
-            max-width: 420px;
-            background: var(--surface-card, #f2ede6);
-            border-radius: var(--radius-xl, 18px);
-            box-shadow: var(--shadow-modal, 0 12px 32px rgba(47,47,47,0.12));
-            padding: 40px 36px;
-            border: 1px solid var(--border-light, #e8e3dc);
-        }
-
-        .login-card-title {
-            font-size: 1.3rem;
-            font-weight: 700;
-            color: var(--text-main, #2f2f2f);
-            margin-bottom: 6px;
-        }
-
-        .login-card-sub {
-            font-size: 0.87rem;
-            color: var(--text-secondary, #6b6b6b);
-            margin-bottom: 32px;
-        }
-
-        .login-card .form-label {
-            font-size: 0.85rem;
-            font-weight: 600;
-            color: var(--text-main, #2f2f2f);
-            margin-bottom: 6px;
-        }
-
-        .login-card .form-control {
-            background: var(--surface-input, #ebe4da);
-            border: 1.5px solid var(--border, #d6cec4);
-            border-radius: var(--radius-sm, 8px);
-            color: var(--text-main, #2f2f2f);
-            padding: 10px 14px;
-            font-size: 0.92rem;
-            transition: border-color 180ms ease, box-shadow 180ms ease;
-        }
-
-        .login-card .form-control:focus {
-            border-color: var(--primary, #00a19b);
-            box-shadow: 0 0 0 3px rgba(0,161,155,0.14);
-            background: var(--surface-card, #f2ede6);
-            outline: none;
-        }
-
-        .login-card .form-control::placeholder {
-            color: var(--text-muted, #9a9a9a);
-        }
-
-        .btn-login {
-            background: var(--primary, #00a19b);
-            border: none;
-            color: #fff;
-            font-weight: 600;
-            font-size: 0.95rem;
-            padding: 11px;
-            border-radius: var(--radius-sm, 8px);
-            width: 100%;
-            transition: background 180ms ease, transform 120ms ease;
-            letter-spacing: 0.02em;
-        }
-
-        .btn-login:hover {
-            background: var(--primary-hover, #008f8a);
-            color: #fff;
-            transform: translateY(-1px);
-        }
-
-        .btn-login:active {
-            background: var(--primary-active, #007a75);
-            transform: translateY(0);
-        }
-
-        .login-card .alert-danger {
-            background: rgba(220, 53, 69, 0.08);
-            border: 1px solid rgba(220, 53, 69, 0.22);
-            border-radius: var(--radius-sm, 8px);
-            color: #b02a37;
-            font-size: 0.875rem;
-            padding: 10px 14px;
-        }
-
-        /* ── Responsive: stack on small screens ── */
-        @@media (max-width: 768px) {
             .login-wrapper {
-                flex-direction: column;
-            }
-
-            .login-panel {
                 width: 100%;
-                padding: 36px 24px;
+                max-width: 1040px;
+                min-height: 620px;
+                display: grid;
+                grid-template-columns: 1.05fr 0.95fr;
+                background: var(--card-bg);
+                border: 1px solid var(--border-default);
+                border-radius: 28px;
+                overflow: hidden;
+                box-shadow: 0 24px 70px var(--shadow);
             }
 
-            .admin-hint {
-                max-width: 320px;
+            .brand-panel {
+                position: relative;
+                padding: 56px;
+                background: radial-gradient(circle at top left, var(--white-14), transparent 36%), radial-gradient(circle at bottom right, var(--white-07), transparent 34%), linear-gradient(145deg, var(--gradient-start), var(--gradient-mid), var(--gradient-end));
+                color: var(--white);
+                display: flex;
+                flex-direction: column;
+                justify-content: space-between;
             }
 
-            .login-card {
-                padding: 28px 22px;
+                .brand-panel::before,
+                .brand-panel::after {
+                    content: "";
+                    position: absolute;
+                    border-radius: 50%;
+                    border: 1px solid var(--white-14);
+                    pointer-events: none;
+                }
+
+                .brand-panel::before {
+                    width: 260px;
+                    height: 260px;
+                    top: -80px;
+                    right: -70px;
+                    background: var(--white-07);
+                }
+
+                .brand-panel::after {
+                    width: 180px;
+                    height: 180px;
+                    bottom: 80px;
+                    left: -70px;
+                    background: var(--white-07);
+                }
+
+            .brand-content {
+                position: relative;
+                z-index: 1;
             }
-        }
+
+            .logo {
+                width: 58px;
+                height: 58px;
+                border-radius: 18px;
+                background: var(--white-14);
+                border: 1px solid var(--white-25);
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                margin-bottom: 42px;
+                box-shadow: inset 0 1px 0 var(--white-25);
+            }
+
+                .logo span {
+                    width: 24px;
+                    height: 24px;
+                    border-radius: 8px;
+                    background: var(--primary);
+                    box-shadow: 0 0 0 8px var(--white-14);
+                }
+
+            .brand-panel h1 {
+                font-size: 42px;
+                line-height: 1.12;
+                letter-spacing: -1.2px;
+                margin-bottom: 18px;
+                color: var(--white-92);
+            }
+
+            .brand-panel p {
+                max-width: 420px;
+                font-size: 16px;
+                line-height: 1.8;
+                color: var(--white-65);
+            }
+
+            .brand-footer {
+                position: relative;
+                z-index: 1;
+                display: flex;
+                gap: 14px;
+                align-items: center;
+                padding: 16px;
+                border: 1px solid var(--white-14);
+                background: var(--white-07);
+                border-radius: 18px;
+                color: var(--white-65);
+                backdrop-filter: blur(10px);
+            }
+
+            .brand-footer-icon {
+                width: 38px;
+                height: 38px;
+                border-radius: 14px;
+                background: var(--white-14);
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                color: var(--white-92);
+                font-weight: 700;
+            }
+
+            .form-panel {
+                padding: 56px 52px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+            }
+
+            .form-card {
+                width: 100%;
+                max-width: 390px;
+            }
+
+                .form-card h2 {
+                    font-size: 32px;
+                    letter-spacing: -0.7px;
+                    margin-bottom: 10px;
+                    color: var(--text-primary);
+                }
+
+                .form-card .subtitle {
+                    color: var(--text-secondary);
+                    font-size: 15px;
+                    line-height: 1.6;
+                    margin-bottom: 34px;
+                }
+
+            .form-group {
+                margin-bottom: 20px;
+            }
+
+            label {
+                display: block;
+                font-size: 14px;
+                font-weight: 650;
+                color: var(--text-primary);
+                margin-bottom: 9px;
+            }
+
+            .input-box {
+                position: relative;
+            }
+
+            input {
+                width: 100%;
+                height: 52px;
+                border: 1px solid var(--border-default);
+                background: var(--input-bg);
+                color: var(--text-primary);
+                border-radius: 15px;
+                padding: 0 16px;
+                font-size: 15px;
+                outline: none;
+                transition: 0.2s ease;
+            }
+
+                input::placeholder {
+                    color: var(--text-muted);
+                }
+
+                input:focus {
+                    border-color: var(--primary);
+                    box-shadow: 0 0 0 4px rgba(0, 161, 155, 0.14);
+                    background: #F2EDE6;
+                }
+
+            .options {
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                margin: 8px 0 26px;
+                gap: 12px;
+                font-size: 14px;
+            }
+
+            .remember {
+                display: flex;
+                align-items: center;
+                gap: 8px;
+                color: var(--text-secondary);
+                cursor: pointer;
+                user-select: none;
+            }
+
+                .remember input {
+                    width: 16px;
+                    height: 16px;
+                    accent-color: var(--primary);
+                }
+
+            .forgot-link {
+                color: var(--primary-active);
+                text-decoration: none;
+                font-weight: 650;
+            }
+
+                .forgot-link:hover {
+                    color: var(--primary-hover);
+                    text-decoration: underline;
+                }
+
+            .login-button {
+                width: 100%;
+                height: 54px;
+                border: none;
+                border-radius: 16px;
+                background: var(--primary);
+                color: var(--white);
+                font-size: 16px;
+                font-weight: 750;
+                cursor: pointer;
+                transition: 0.2s ease;
+                box-shadow: 0 14px 30px rgba(0, 161, 155, 0.24);
+            }
+
+                .login-button:hover {
+                    background: var(--primary-hover);
+                    transform: translateY(-1px);
+                }
+
+                .login-button:active {
+                    background: var(--primary-active);
+                    transform: translateY(0);
+                }
+
+            .danger-box {
+                display: none;
+                margin-top: 18px;
+                padding: 12px 14px;
+                border-radius: 14px;
+                color: var(--danger-text);
+                background: var(--danger-bg);
+                border: 1px solid var(--danger-border);
+                font-size: 14px;
+            }
+
+            .divider {
+                display: flex;
+                align-items: center;
+                gap: 14px;
+                margin: 28px 0;
+                color: var(--text-muted);
+                font-size: 13px;
+            }
+
+                .divider::before,
+                .divider::after {
+                    content: "";
+                    flex: 1;
+                    height: 1px;
+                    background: var(--border-light);
+                }
+
+            .demo-info {
+                padding: 14px 16px;
+                border: 1px solid var(--border-light);
+                background: var(--input-bg);
+                border-radius: 16px;
+                color: var(--text-secondary);
+                font-size: 14px;
+                line-height: 1.7;
+            }
+
+                .demo-info strong {
+                    color: var(--text-primary);
+                }
+
+            @@media (max-width: 860px) {
+                .login-wrapper {
+                    grid-template-columns: 1fr;
+                    max-width: 520px;
+                }
+
+                .brand-panel {
+                    min-height: 320px;
+                    padding: 38px;
+                }
+
+                    .brand-panel h1 {
+                        font-size: 32px;
+                    }
+
+                .brand-footer {
+                    margin-top: 34px;
+                }
+
+                .form-panel {
+                    padding: 42px 30px;
+                }
+            }
+
+            @@media (max-width: 480px) {
+                body {
+                    padding: 18px;
+                }
+
+                .brand-panel,
+                .form-panel {
+                    padding: 30px 22px;
+                }
+
+                .options {
+                    align-items: flex-start;
+                    flex-direction: column;
+                }
+            }
     </style>
 </head>
 <body>
-    <div class="login-wrapper">
-
-        <!-- Left: Branding + Admin Hint -->
-        <div class="login-panel">
-            <img src="~/images/triva-logo.png" alt="Triva Servis Logo" class="brand-logo" onerror="this.style.display='none'" />
-            <div class="brand-name">Triva Servis</div>
-            <div class="brand-tagline">Servis yönetim sistemine hoş geldiniz.</div>
-
-            <div class="panel-divider"></div>
-
-            <div class="admin-hint">
-                <div class="admin-hint-title">Yönetici Girişi</div>
-                <div class="admin-hint-row">
-                    <span class="admin-hint-label">Kullanıcı Adı</span>
-                    <span class="admin-hint-value">admin</span>
+    <main class="login-wrapper">
+        <section class="brand-panel">
+            <div class="brand-content">
+                <div class="logo" aria-label="Logo">
+                    <span></span>
                 </div>
-                <div class="admin-hint-row">
-                    <span class="admin-hint-label">Parola</span>
-                    <span class="admin-hint-value">12345admin</span>
+
+                <h1>Yönetim paneline hoş geldiniz.</h1>
+                <p>
+                    Güvenli, sade ve modern bir giriş deneyimi. Marka renkleriyle uyumlu,
+                    kurumsal ve temiz bir arayüz.
+                </p>
+            </div>
+
+            <div class="brand-footer">
+                <div class="brand-footer-icon">✓</div>
+                <div>
+                    <strong style="color: var(--white-92); display:block; margin-bottom:3px;">Secure Access</strong>
+                    <span>Yetkili kullanıcı girişi</span>
                 </div>
             </div>
-        </div>
+        </section>
 
-        <!-- Right: Login Form -->
-        <div class="login-form-area">
-            <div class="login-card">
-                <div class="login-card-title">Sisteme Giriş</div>
-                <div class="login-card-sub">Devam etmek için bilgilerinizi girin.</div>
+        <section class="form-panel">
+            <form class="form-card">
+                <h2>Giriş Yap</h2>
+                <p class="subtitle">Hesabınıza erişmek için kullanıcı bilgilerinizi kontrol edin.</p>
 
-                <form asp-action="Login" method="post">
-                    <input type="hidden" name="returnUrl" value="@returnUrl" />
-
-                    <div asp-validation-summary="ModelOnly" class="alert alert-danger mb-3"></div>
-
-                    <div class="mb-3">
-                        <label asp-for="UserName" class="form-label"></label>
-                        <input asp-for="UserName" class="form-control" placeholder="Kullanıcı adınızı girin" autocomplete="username" />
-                        <span asp-validation-for="UserName" class="text-danger small"></span>
+                <div class="form-group">
+                    <label for="username">Kullanıcı Adı</label>
+                    <div class="input-box">
+                        <input id="username" type="text" value="admin" autocomplete="username" />
                     </div>
+                </div>
 
-                    <div class="mb-4">
-                        <label asp-for="Password" class="form-label"></label>
-                        <input asp-for="Password" type="password" class="form-control" placeholder="Parolanızı girin" autocomplete="current-password" />
-                        <span asp-validation-for="Password" class="text-danger small"></span>
+                <div class="form-group">
+                    <label for="password">Şifre</label>
+                    <div class="input-box">
+                        <input id="password" type="password" value="12345admin" autocomplete="current-password" />
                     </div>
+                </div>
 
-                    <button type="submit" class="btn-login">Giriş Yap</button>
-                </form>
-            </div>
-        </div>
+                <div class="options">
+                    <label class="remember">
+                        <input type="checkbox" checked />
+                        Beni hatırla
+                    </label>
+                    <a class="forgot-link" href="#">Şifremi unuttum</a>
+                </div>
 
-    </div>
+                <button class="login-button" type="submit">Giriş Yap</button>
 
-    <script src="~/lib/jquery/dist/jquery.min.js"></script>
-    <script src="~/lib/jquery-validation/dist/jquery.validate.min.js"></script>
-    <script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js"></script>
+                <div class="danger-box" id="errorBox">
+                    Kullanıcı adı veya şifre hatalı.
+                </div>
+
+                <div class="divider">Demo Bilgileri</div>
+
+                <div class="demo-info">
+                    Kullanıcı Adı: <strong>admin</strong><br />
+                    Şifre: <strong>12345admin</strong>
+                </div>
+            </form>
+        </section>
+    </main>
 </body>
 </html>

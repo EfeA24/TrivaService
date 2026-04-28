@@ -253,12 +253,42 @@ a:hover {
 
 /* Footer */
 .sidebar-footer {
-    padding: 0.875rem 1.25rem;
+    padding: 0.75rem 1.25rem;
     font-size: 0.75rem;
     color: rgba(214, 235, 234, 0.56);
     border-top: 1px solid rgba(224, 244, 243, 0.18);
     flex-shrink: 0;
     letter-spacing: 0.02em;
+}
+
+.sidebar-logout-btn {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    width: 100%;
+    background: none;
+    border: none;
+    padding: 0.55rem 0.75rem;
+    border-radius: var(--radius-sm);
+    color: rgba(214, 235, 234, 0.72);
+    font-size: var(--sidebar-font-size);
+    font-family: inherit;
+    cursor: pointer;
+    transition: background var(--transition-fast), color var(--transition-fast);
+    text-align: left;
+    letter-spacing: 0.01em;
+}
+
+.sidebar-logout-btn:hover {
+    background: rgba(255, 255, 255, 0.08);
+    color: #fff;
+}
+
+.sidebar-logout-btn .menu-icon {
+    width: var(--sidebar-icon-size);
+    height: var(--sidebar-icon-size);
+    flex-shrink: 0;
+    opacity: 0.75;
 }
 
 /* ─── Sidebar Overlay (mobile) ───────────────────────────────────────────── */
