@@ -10,6 +10,9 @@ namespace TrivaService.Services.Permissions
 {
     public class PermissionService : IPermissionService
     {
+        private const string AdminRoleName = "Admin";
+        private const string AdminUserName = "admin";
+
         private static readonly HashSet<string> IgnoredEntityNames = new(StringComparer.OrdinalIgnoreCase)
         {
             nameof(RoleEntityPermission),
@@ -154,6 +157,11 @@ namespace TrivaService.Services.Permissions
 
         public async Task<bool> HasEntityPermissionAsync(ClaimsPrincipal user, string entityName, PermissionOperation operation)
         {
+            if (IsAdminUser(user))
+            {
+                return true;
+            }
+
             var roleId = GetRoleId(user);
             if (!roleId.HasValue)
             {
@@ -195,6 +203,11 @@ namespace TrivaService.Services.Permissions
 
         public async Task<HashSet<string>> GetReadablePropertiesAsync(ClaimsPrincipal user, string entityName)
         {
+            if (IsAdminUser(user))
+            {
+                return GetAllEntityProperties(entityName);
+            }
+
             var roleId = GetRoleId(user);
             if (!roleId.HasValue)
             {
@@ -221,6 +234,11 @@ namespace TrivaService.Services.Permissions
 
         public async Task<HashSet<string>> GetWritablePropertiesAsync(ClaimsPrincipal user, string entityName)
         {
+            if (IsAdminUser(user))
+            {
+                return GetAllEntityProperties(entityName);
+            }
+
             var roleId = GetRoleId(user);
             if (!roleId.HasValue)
             {
@@ -269,6 +287,34 @@ namespace TrivaService.Services.Permissions
         {
             var claim = user.FindFirst("RoleId")?.Value;
             return int.TryParse(claim, out var value) ? value : null;
+        }
+
+        private static bool IsAdminUser(ClaimsPrincipal user)
+        {
+            var roleName = user.FindFirst(ClaimTypes.Role)?.Value;
+            if (string.Equals(roleName, AdminRoleName, StringComparison.OrdinalIgnoreCase))
+            {
+                return true;
+            }
+
+            var userName = user.Identity?.Name;
+            return string.Equals(userName, AdminUserName, StringComparison.OrdinalIgnoreCase);
+        }
+
+        private HashSet<string> GetAllEntityProperties(string entityName)
+        {
+            var entityType = _dbContext.Model.GetEntityTypes()
+                .Select(x => x.ClrType)
+                .FirstOrDefault(x => x is not null && string.Equals(x.Name, entityName, StringComparison.OrdinalIgnoreCase));
+
+            if (entityType is null)
+            {
+                return new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+            }
+
+            return GetWritableProperties(entityType)
+                .Select(x => x.Name)
+                .ToHashSet(StringComparer.OrdinalIgnoreCase);
         }
 
         private List<(string EntityName, List<string> Properties)> GetEntityDefinitions()
