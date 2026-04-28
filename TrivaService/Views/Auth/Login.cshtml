@@ -1,41 +1,292 @@
 @model TrivaService.ViewModels.Auth.LoginViewModel
 @{
     ViewData["Title"] = "Giriş";
+    Layout = null;
     var returnUrl = ViewData["ReturnUrl"]?.ToString();
 }
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Giriş — Triva Servis</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <style>
+        html, body {
+            height: 100%;
+            margin: 0;
+        }
 
-<div class="container py-5">
-    <div class="row justify-content-center">
-        <div class="col-md-5">
-            <div class="card shadow-sm">
-                <div class="card-body p-4">
-                    <h1 class="h4 mb-3">Sisteme Giriş</h1>
-                    <p class="text-muted mb-4">Rol bazlı yetkilendirme için kullanıcı bilgilerinizle giriş yapın.</p>
+        .login-wrapper {
+            min-height: 100vh;
+            display: flex;
+        }
 
-                    <form asp-action="Login" method="post">
-                        <input type="hidden" name="returnUrl" value="@returnUrl" />
-                        <div asp-validation-summary="ModelOnly" class="alert alert-danger"></div>
+        /* ── Left panel (dark teal gradient — matches sidebar) ── */
+        .login-panel {
+            width: 420px;
+            flex-shrink: 0;
+            background: linear-gradient(165deg, #0e5552 0%, #0a4442 58%, #083738 100%);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 48px 40px;
+            color: #fff;
+        }
 
-                        <div class="mb-3">
-                            <label asp-for="UserName" class="form-label fw-semibold"></label>
-                            <input asp-for="UserName" class="form-control" autocomplete="username" />
-                            <span asp-validation-for="UserName" class="text-danger small"></span>
-                        </div>
+        .login-panel .brand-logo {
+            width: 88px;
+            height: 88px;
+            object-fit: contain;
+            margin-bottom: 20px;
+            filter: brightness(0) invert(1);
+            opacity: 0.92;
+        }
 
-                        <div class="mb-3">
-                            <label asp-for="Password" class="form-label fw-semibold"></label>
-                            <input asp-for="Password" type="password" class="form-control" autocomplete="current-password" />
-                            <span asp-validation-for="Password" class="text-danger small"></span>
-                        </div>
+        .login-panel .brand-name {
+            font-size: 1.6rem;
+            font-weight: 700;
+            letter-spacing: 0.04em;
+            color: #fff;
+            margin-bottom: 10px;
+        }
 
-                        <button type="submit" class="btn btn-primary w-100">Giriş Yap</button>
-                    </form>
+        .login-panel .brand-tagline {
+            font-size: 0.9rem;
+            color: rgba(255,255,255,0.65);
+            text-align: center;
+            line-height: 1.6;
+            max-width: 260px;
+        }
+
+        .login-panel .panel-divider {
+            width: 40px;
+            height: 2px;
+            background: rgba(255,255,255,0.25);
+            border-radius: 2px;
+            margin: 28px 0;
+        }
+
+        /* Admin hint box on the left panel */
+        .admin-hint {
+            width: 100%;
+            background: rgba(255,255,255,0.07);
+            border: 1px solid rgba(255,255,255,0.14);
+            border-radius: 10px;
+            padding: 16px 18px;
+            margin-top: 8px;
+        }
+
+        .admin-hint-title {
+            font-size: 0.72rem;
+            font-weight: 600;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            color: rgba(255,255,255,0.5);
+            margin-bottom: 10px;
+        }
+
+        .admin-hint-row {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 7px;
+        }
+
+        .admin-hint-row:last-child {
+            margin-bottom: 0;
+        }
+
+        .admin-hint-label {
+            font-size: 0.78rem;
+            color: rgba(255,255,255,0.5);
+            min-width: 80px;
+        }
+
+        .admin-hint-value {
+            font-size: 0.82rem;
+            font-weight: 600;
+            color: rgba(255,255,255,0.88);
+            background: rgba(255,255,255,0.1);
+            border-radius: 5px;
+            padding: 2px 9px;
+            font-family: 'Courier New', monospace;
+            letter-spacing: 0.04em;
+        }
+
+        /* ── Right panel (form area) ── */
+        .login-form-area {
+            flex: 1;
+            background: var(--surface-page, #e4ddd3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 40px 24px;
+        }
+
+        .login-card {
+            width: 100%;
+            max-width: 420px;
+            background: var(--surface-card, #f2ede6);
+            border-radius: var(--radius-xl, 18px);
+            box-shadow: var(--shadow-modal, 0 12px 32px rgba(47,47,47,0.12));
+            padding: 40px 36px;
+            border: 1px solid var(--border-light, #e8e3dc);
+        }
+
+        .login-card-title {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: var(--text-main, #2f2f2f);
+            margin-bottom: 6px;
+        }
+
+        .login-card-sub {
+            font-size: 0.87rem;
+            color: var(--text-secondary, #6b6b6b);
+            margin-bottom: 32px;
+        }
+
+        .login-card .form-label {
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--text-main, #2f2f2f);
+            margin-bottom: 6px;
+        }
+
+        .login-card .form-control {
+            background: var(--surface-input, #ebe4da);
+            border: 1.5px solid var(--border, #d6cec4);
+            border-radius: var(--radius-sm, 8px);
+            color: var(--text-main, #2f2f2f);
+            padding: 10px 14px;
+            font-size: 0.92rem;
+            transition: border-color 180ms ease, box-shadow 180ms ease;
+        }
+
+        .login-card .form-control:focus {
+            border-color: var(--primary, #00a19b);
+            box-shadow: 0 0 0 3px rgba(0,161,155,0.14);
+            background: var(--surface-card, #f2ede6);
+            outline: none;
+        }
+
+        .login-card .form-control::placeholder {
+            color: var(--text-muted, #9a9a9a);
+        }
+
+        .btn-login {
+            background: var(--primary, #00a19b);
+            border: none;
+            color: #fff;
+            font-weight: 600;
+            font-size: 0.95rem;
+            padding: 11px;
+            border-radius: var(--radius-sm, 8px);
+            width: 100%;
+            transition: background 180ms ease, transform 120ms ease;
+            letter-spacing: 0.02em;
+        }
+
+        .btn-login:hover {
+            background: var(--primary-hover, #008f8a);
+            color: #fff;
+            transform: translateY(-1px);
+        }
+
+        .btn-login:active {
+            background: var(--primary-active, #007a75);
+            transform: translateY(0);
+        }
+
+        .login-card .alert-danger {
+            background: rgba(220, 53, 69, 0.08);
+            border: 1px solid rgba(220, 53, 69, 0.22);
+            border-radius: var(--radius-sm, 8px);
+            color: #b02a37;
+            font-size: 0.875rem;
+            padding: 10px 14px;
+        }
+
+        /* ── Responsive: stack on small screens ── */
+        @@media (max-width: 768px) {
+            .login-wrapper {
+                flex-direction: column;
+            }
+
+            .login-panel {
+                width: 100%;
+                padding: 36px 24px;
+            }
+
+            .admin-hint {
+                max-width: 320px;
+            }
+
+            .login-card {
+                padding: 28px 22px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="login-wrapper">
+
+        <!-- Left: Branding + Admin Hint -->
+        <div class="login-panel">
+            <img src="~/images/triva-logo.png" alt="Triva Servis Logo" class="brand-logo" onerror="this.style.display='none'" />
+            <div class="brand-name">Triva Servis</div>
+            <div class="brand-tagline">Servis yönetim sistemine hoş geldiniz.</div>
+
+            <div class="panel-divider"></div>
+
+            <div class="admin-hint">
+                <div class="admin-hint-title">Yönetici Girişi</div>
+                <div class="admin-hint-row">
+                    <span class="admin-hint-label">Kullanıcı Adı</span>
+                    <span class="admin-hint-value">admin</span>
+                </div>
+                <div class="admin-hint-row">
+                    <span class="admin-hint-label">Parola</span>
+                    <span class="admin-hint-value">12345admin</span>
                 </div>
             </div>
         </div>
-    </div>
-</div>
 
-@section Scripts {
-    @{ await Html.RenderPartialAsync("_ValidationScriptsPartial"); }
-}
+        <!-- Right: Login Form -->
+        <div class="login-form-area">
+            <div class="login-card">
+                <div class="login-card-title">Sisteme Giriş</div>
+                <div class="login-card-sub">Devam etmek için bilgilerinizi girin.</div>
+
+                <form asp-action="Login" method="post">
+                    <input type="hidden" name="returnUrl" value="@returnUrl" />
+
+                    <div asp-validation-summary="ModelOnly" class="alert alert-danger mb-3"></div>
+
+                    <div class="mb-3">
+                        <label asp-for="UserName" class="form-label"></label>
+                        <input asp-for="UserName" class="form-control" placeholder="Kullanıcı adınızı girin" autocomplete="username" />
+                        <span asp-validation-for="UserName" class="text-danger small"></span>
+                    </div>
+
+                    <div class="mb-4">
+                        <label asp-for="Password" class="form-label"></label>
+                        <input asp-for="Password" type="password" class="form-control" placeholder="Parolanızı girin" autocomplete="current-password" />
+                        <span asp-validation-for="Password" class="text-danger small"></span>
+                    </div>
+
+                    <button type="submit" class="btn-login">Giriş Yap</button>
+                </form>
+            </div>
+        </div>
+
+    </div>
+
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/jquery-validation/dist/jquery.validate.min.js"></script>
+    <script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js"></script>
+</body>
+</html>
