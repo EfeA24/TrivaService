@@ -1,33 +1,33 @@
 @model Supplier
 @{
-    ViewData["Title"] = "Supplier Details";
+    ViewData["Title"] = "Tedarikçi Detayları";
 }
 
 <div class="page-header">
-    <h1>Supplier Details</h1>
-    <a asp-action="Index" class="btn btn-outline-secondary btn-sm">&#8592; Back</a>
+    <h1>Tedarikçi Detayları</h1>
+    <a asp-action="Index" class="btn btn-outline-secondary btn-sm">&#8592; Geri</a>
 </div>
 
 <div class="card shadow-sm mb-3">
     <div class="card-body p-4">
         <dl class="row detail-dl mb-0">
-            <dt class="col-sm-3">ID</dt><dd class="col-sm-9">@Model.Id</dd>
-            <dt class="col-sm-3">Name</dt><dd class="col-sm-9">@Model.SupplierName</dd>
-            <dt class="col-sm-3">Phone</dt><dd class="col-sm-9">@(Model.SupplierPhone ?? "—")</dd>
-            <dt class="col-sm-3">Contact Person</dt><dd class="col-sm-9">@(Model.SupplierContactPerson ?? "—")</dd>
-            <dt class="col-sm-3">Email</dt><dd class="col-sm-9">@(Model.SupplierEmail ?? "—")</dd>
-            <dt class="col-sm-3">Address</dt><dd class="col-sm-9">@(Model.SupplierAddress ?? "—")</dd>
-            <dt class="col-sm-3">Created</dt><dd class="col-sm-9">@Model.CreateDate.ToString("g")</dd>
-            <dt class="col-sm-3">Updated</dt><dd class="col-sm-9">@Model.UpdateDate.ToString("g")</dd>
-            <dt class="col-sm-3">Active</dt>
+            <dt class="col-sm-3">#</dt><dd class="col-sm-9">@Model.Id</dd>
+            <dt class="col-sm-3">Tedarikçi Adı</dt><dd class="col-sm-9">@Model.SupplierName</dd>
+            <dt class="col-sm-3">Telefon</dt><dd class="col-sm-9">@(Model.SupplierPhone ?? "—")</dd>
+            <dt class="col-sm-3">İletişim Kişisi</dt><dd class="col-sm-9">@(Model.SupplierContactPerson ?? "—")</dd>
+            <dt class="col-sm-3">E-Posta</dt><dd class="col-sm-9">@(Model.SupplierEmail ?? "—")</dd>
+            <dt class="col-sm-3">Adres</dt><dd class="col-sm-9">@(Model.SupplierAddress ?? "—")</dd>
+            <dt class="col-sm-3">Oluşturma Tarihi</dt><dd class="col-sm-9">@Model.CreateDate.ToString("g")</dd>
+            <dt class="col-sm-3">Güncelleme Tarihi</dt><dd class="col-sm-9">@Model.UpdateDate.ToString("g")</dd>
+            <dt class="col-sm-3">Durum</dt>
             <dd class="col-sm-9">
                 @if (Model.IsActive)
                 {
-                    <span class="badge-active">Active</span>
+                    <span class="badge-active">Aktif</span>
                 }
                 else
                 {
-                    <span class="badge-inactive">Inactive</span>
+                    <span class="badge-inactive">Pasif</span>
                 }
             </dd>
         </dl>
@@ -35,6 +35,6 @@
 </div>
 
 <div class="d-flex gap-2">
-    <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-primary btn-sm">Edit</a>
-    <a asp-action="Delete" asp-route-id="@Model.Id" class="btn btn-outline-danger btn-sm">Delete</a>
+    <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-primary btn-sm">Düzenle</a>
+    <a asp-action="Delete" asp-route-id="@Model.Id" class="btn btn-outline-danger btn-sm">Sil</a>
 </div>

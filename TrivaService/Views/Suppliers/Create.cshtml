@@ -1,11 +1,11 @@
 @model Supplier
 @{
-    ViewData["Title"] = "New Supplier";
+    ViewData["Title"] = "Yeni Tedarikçi";
 }
 
 <div class="page-header">
-    <h1>New Supplier</h1>
-    <a asp-action="Index" class="btn btn-outline-secondary btn-sm">&#8592; Back</a>
+    <h1>Yeni Tedarikçi</h1>
+    <a asp-action="Index" class="btn btn-outline-secondary btn-sm">&#8592; Geri</a>
 </div>
 
 <div class="card shadow-sm form-card">
@@ -14,36 +14,36 @@
             <div asp-validation-summary="ModelOnly" class="alert alert-danger py-2"></div>
             <div class="row g-3">
                 <div class="col-12">
-                    <label asp-for="SupplierName" class="form-label fw-semibold"></label>
+                    <label asp-for="SupplierName" class="form-label fw-semibold">Tedarikçi Adı</label>
                     <input asp-for="SupplierName" class="form-control" />
                     <span asp-validation-for="SupplierName" class="text-danger small"></span>
                 </div>
                 <div class="col-sm-6">
-                    <label asp-for="SupplierPhone" class="form-label fw-semibold"></label>
+                    <label asp-for="SupplierPhone" class="form-label fw-semibold">Telefon</label>
                     <input asp-for="SupplierPhone" class="form-control" />
                 </div>
                 <div class="col-sm-6">
-                    <label asp-for="SupplierContactPerson" class="form-label fw-semibold"></label>
+                    <label asp-for="SupplierContactPerson" class="form-label fw-semibold">İletişim Kişisi</label>
                     <input asp-for="SupplierContactPerson" class="form-control" />
                 </div>
                 <div class="col-12">
-                    <label asp-for="SupplierEmail" class="form-label fw-semibold"></label>
+                    <label asp-for="SupplierEmail" class="form-label fw-semibold">E-Posta</label>
                     <input asp-for="SupplierEmail" class="form-control" type="email" />
                 </div>
                 <div class="col-12">
-                    <label asp-for="SupplierAddress" class="form-label fw-semibold"></label>
+                    <label asp-for="SupplierAddress" class="form-label fw-semibold">Adres</label>
                     <textarea asp-for="SupplierAddress" class="form-control" rows="2"></textarea>
                 </div>
                 <div class="col-12">
                     <div class="form-check">
                         <input asp-for="IsActive" class="form-check-input" />
-                        <label asp-for="IsActive" class="form-check-label fw-semibold"></label>
+                        <label asp-for="IsActive" class="form-check-label fw-semibold">Aktif</label>
                     </div>
                 </div>
             </div>
             <div class="mt-4 d-flex gap-2">
-                <button type="submit" class="btn btn-primary">Save Supplier</button>
-                <a asp-action="Index" class="btn btn-outline-secondary">Cancel</a>
+                <button type="submit" class="btn btn-primary">Kaydet</button>
+                <a asp-action="Index" class="btn btn-outline-secondary">İptal</a>
             </div>
         </form>
     </div>

@@ -1,11 +1,11 @@
 @model Item
 @{
-    ViewData["Title"] = "New Item";
+    ViewData["Title"] = "Yeni Ürün";
 }
 
 <div class="page-header">
-    <h1>New Item</h1>
-    <a asp-action="Index" class="btn btn-outline-secondary btn-sm">&#8592; Back</a>
+    <h1>Yeni Ürün</h1>
+    <a asp-action="Index" class="btn btn-outline-secondary btn-sm">&#8592; Geri</a>
 </div>
 
 <div class="card shadow-sm form-card wide">
@@ -13,65 +13,65 @@
         <form asp-action="Create" method="post">
             <div asp-validation-summary="ModelOnly" class="alert alert-danger py-2"></div>
 
-            <p class="form-section-title">Identification</p>
+            <p class="form-section-title">Kimlik Bilgileri</p>
             <div class="row g-3">
                 <div class="col-sm-6">
-                    <label asp-for="ItemName" class="form-label fw-semibold"></label>
+                    <label asp-for="ItemName" class="form-label fw-semibold">Ürün Adı</label>
                     <input asp-for="ItemName" class="form-control" />
                     <span asp-validation-for="ItemName" class="text-danger small"></span>
                 </div>
                 <div class="col-sm-6">
-                    <label asp-for="ItemCode" class="form-label fw-semibold"></label>
+                    <label asp-for="ItemCode" class="form-label fw-semibold">Ürün Kodu</label>
                     <input asp-for="ItemCode" class="form-control" />
                 </div>
                 <div class="col-sm-4">
-                    <label asp-for="ItemBrand" class="form-label fw-semibold"></label>
+                    <label asp-for="ItemBrand" class="form-label fw-semibold">Marka</label>
                     <input asp-for="ItemBrand" class="form-control" />
                 </div>
                 <div class="col-sm-4">
-                    <label asp-for="ItemModel" class="form-label fw-semibold"></label>
+                    <label asp-for="ItemModel" class="form-label fw-semibold">Model</label>
                     <input asp-for="ItemModel" class="form-control" />
                 </div>
                 <div class="col-sm-4">
-                    <label asp-for="ItemType" class="form-label fw-semibold"></label>
+                    <label asp-for="ItemType" class="form-label fw-semibold">Tür</label>
                     <input asp-for="ItemType" class="form-control" />
                 </div>
                 <div class="col-sm-6">
-                    <label asp-for="ItemBarcode" class="form-label fw-semibold"></label>
+                    <label asp-for="ItemBarcode" class="form-label fw-semibold">Barkod</label>
                     <input asp-for="ItemBarcode" class="form-control" />
                 </div>
                 <div class="col-sm-6">
-                    <label asp-for="SupplierId" class="form-label fw-semibold"></label>
+                    <label asp-for="SupplierId" class="form-label fw-semibold">Tedarikçi</label>
                     <input asp-for="SupplierId" class="form-control" />
                     <span asp-validation-for="SupplierId" class="text-danger small"></span>
                 </div>
                 <div class="col-12">
-                    <label asp-for="ItemDescription" class="form-label fw-semibold"></label>
+                    <label asp-for="ItemDescription" class="form-label fw-semibold">Açıklama</label>
                     <textarea asp-for="ItemDescription" class="form-control" rows="2"></textarea>
                 </div>
             </div>
 
-            <p class="form-section-title mt-4">Stock</p>
+            <p class="form-section-title mt-4">Stok</p>
             <div class="row g-3">
                 <div class="col-sm-6">
-                    <label asp-for="ItemQuantity" class="form-label fw-semibold"></label>
+                    <label asp-for="ItemQuantity" class="form-label fw-semibold">Adet</label>
                     <input asp-for="ItemQuantity" class="form-control" />
                 </div>
                 <div class="col-sm-6">
-                    <label asp-for="ItemPrice" class="form-label fw-semibold"></label>
+                    <label asp-for="ItemPrice" class="form-label fw-semibold">Fiyat</label>
                     <input asp-for="ItemPrice" class="form-control" />
                 </div>
                 <div class="col-12">
                     <div class="form-check">
                         <input asp-for="IsActive" class="form-check-input" />
-                        <label asp-for="IsActive" class="form-check-label fw-semibold"></label>
+                        <label asp-for="IsActive" class="form-check-label fw-semibold">Aktif</label>
                     </div>
                 </div>
             </div>
 
             <div class="mt-4 d-flex gap-2">
-                <button type="submit" class="btn btn-primary">Save Item</button>
-                <a asp-action="Index" class="btn btn-outline-secondary">Cancel</a>
+                <button type="submit" class="btn btn-primary">Kaydet</button>
+                <a asp-action="Index" class="btn btn-outline-secondary">İptal</a>
             </div>
         </form>
     </div>

@@ -291,6 +291,11 @@ a:hover {
     opacity: 0.75;
 }
 
+.sidebar-logout-form {
+    margin: 0;
+    padding: 0;
+}
+
 /* ─── Sidebar Overlay (mobile) ───────────────────────────────────────────── */
 .sidebar-overlay {
     display: none;

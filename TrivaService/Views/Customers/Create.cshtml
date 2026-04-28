@@ -14,35 +14,35 @@
             <div asp-validation-summary="ModelOnly" class="alert alert-danger py-2"></div>
             <div class="row g-3">
                 <div class="col-sm-6">
-                    <label asp-for="CustomerName" class="form-label fw-semibold"></label>
+                    <label asp-for="CustomerName" class="form-label fw-semibold">Müşteri Adı</label>
                     <input asp-for="CustomerName" class="form-control" />
                     <span asp-validation-for="CustomerName" class="text-danger small"></span>
                 </div>
                 <div class="col-sm-6">
-                    <label asp-for="CustomerPhone" class="form-label fw-semibold"></label>
+                    <label asp-for="CustomerPhone" class="form-label fw-semibold">Telefon</label>
                     <input asp-for="CustomerPhone" class="form-control" />
                     <span asp-validation-for="CustomerPhone" class="text-danger small"></span>
                 </div>
                 <div class="col-12">
-                    <label asp-for="CustomerAddress" class="form-label fw-semibold"></label>
+                    <label asp-for="CustomerAddress" class="form-label fw-semibold">Adres</label>
                     <input asp-for="CustomerAddress" class="form-control" />
                 </div>
                 <div class="col-12">
-                    <label asp-for="Notes" class="form-label fw-semibold"></label>
+                    <label asp-for="Notes" class="form-label fw-semibold">Notlar</label>
                     <textarea asp-for="Notes" class="form-control" rows="3"></textarea>
                 </div>
                 <div class="col-sm-6">
-                    <label asp-for="LastServiceDate" class="form-label fw-semibold"></label>
+                    <label asp-for="LastServiceDate" class="form-label fw-semibold">Son Servis Tarihi</label>
                     <input asp-for="LastServiceDate" class="form-control" />
                 </div>
                 <div class="col-sm-6">
-                    <label asp-for="TotalServiceCount" class="form-label fw-semibold"></label>
+                    <label asp-for="TotalServiceCount" class="form-label fw-semibold">Toplam Servis Sayısı</label>
                     <input asp-for="TotalServiceCount" class="form-control" />
                 </div>
                 <div class="col-12">
                     <div class="form-check">
                         <input asp-for="IsActive" class="form-check-input" />
-                        <label asp-for="IsActive" class="form-check-label fw-semibold"></label>
+                        <label asp-for="IsActive" class="form-check-label fw-semibold">Aktif</label>
                     </div>
                 </div>
             </div>

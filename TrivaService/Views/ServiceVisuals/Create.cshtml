@@ -1,11 +1,11 @@
 @model ServiceVisuals
 @{
-    ViewData["Title"] = "New Service Visual";
+    ViewData["Title"] = "Yeni Servis Görseli";
 }
 
 <div class="page-header">
-    <h1>New Service Visual</h1>
-    <a asp-action="Index" class="btn btn-outline-secondary btn-sm">&#8592; Back</a>
+    <h1>Yeni Servis Görseli</h1>
+    <a asp-action="Index" class="btn btn-outline-secondary btn-sm">&#8592; Geri</a>
 </div>
 
 <div class="card shadow-sm form-card">
@@ -14,11 +14,11 @@
             <div asp-validation-summary="ModelOnly" class="alert alert-danger py-2"></div>
             <div class="row g-3">
                 <div class="col-sm-6">
-                    <label asp-for="ServiceId" class="form-label fw-semibold"></label>
+                    <label asp-for="ServiceId" class="form-label fw-semibold">Servis</label>
                     <input asp-for="ServiceId" class="form-control" />
                 </div>
                 <div class="col-sm-6">
-                    <label asp-for="ServiceVisualName" class="form-label fw-semibold"></label>
+                    <label asp-for="ServiceVisualName" class="form-label fw-semibold">Görsel Adı</label>
                     <input asp-for="ServiceVisualName" class="form-control" />
                     <span asp-validation-for="ServiceVisualName" class="text-danger small"></span>
                 </div>
@@ -28,19 +28,19 @@
                     <div class="form-text">Birden fazla dosya seçebilirsiniz.</div>
                 </div>
                 <div class="col-12">
-                    <label asp-for="Notes" class="form-label fw-semibold"></label>
+                    <label asp-for="Notes" class="form-label fw-semibold">Notlar</label>
                     <textarea asp-for="Notes" class="form-control" rows="3"></textarea>
                 </div>
                 <div class="col-12">
                     <div class="form-check">
                         <input asp-for="IsActive" class="form-check-input" />
-                        <label asp-for="IsActive" class="form-check-label fw-semibold"></label>
+                        <label asp-for="IsActive" class="form-check-label fw-semibold">Aktif</label>
                     </div>
                 </div>
             </div>
             <div class="mt-4 d-flex gap-2">
-                <button type="submit" class="btn btn-primary">Save</button>
-                <a asp-action="Index" class="btn btn-outline-secondary">Cancel</a>
+                <button type="submit" class="btn btn-primary">Kaydet</button>
+                <a asp-action="Index" class="btn btn-outline-secondary">İptal</a>
             </div>
         </form>
     </div>
