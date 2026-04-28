@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
+using Microsoft.AspNetCore.Mvc.ViewFeatures;
 
 namespace TrivaService.Services.Permissions
 {
@@ -12,10 +13,12 @@ namespace TrivaService.Services.Permissions
         };
 
         private readonly IPermissionService _permissionService;
+        private readonly ITempDataDictionaryFactory _tempDataDictionaryFactory;
 
-        public PermissionActionFilter(IPermissionService permissionService)
+        public PermissionActionFilter(IPermissionService permissionService, ITempDataDictionaryFactory tempDataDictionaryFactory)
         {
             _permissionService = permissionService;
+            _tempDataDictionaryFactory = tempDataDictionaryFactory;
         }
 
         public async Task OnActionExecutionAsync(ActionExecutingContext context, ActionExecutionDelegate next)
@@ -48,7 +51,19 @@ namespace TrivaService.Services.Permissions
             var isAllowed = await _permissionService.HasEntityPermissionAsync(context.HttpContext.User, entityName, operation);
             if (!isAllowed)
             {
-                context.Result = new ForbidResult();
+                var tempData = _tempDataDictionaryFactory.GetTempData(context.HttpContext);
+                tempData["DangerMessage"] = "Bu işleme yetkiniz yoksun.";
+
+                var returnUrl = context.HttpContext.Request.Headers.Referer.ToString();
+                if (!string.IsNullOrWhiteSpace(returnUrl)
+                    && Uri.TryCreate(returnUrl, UriKind.Absolute, out var refererUri)
+                    && string.Equals(refererUri.Host, context.HttpContext.Request.Host.Host, StringComparison.OrdinalIgnoreCase))
+                {
+                    context.Result = new RedirectResult(refererUri.PathAndQuery);
+                    return;
+                }
+
+                context.Result = new RedirectToActionResult("Index", "Home", null);
                 return;
             }
 
