@@ -50,29 +50,15 @@
             <div class="row g-3">
                 <div class="col-sm-4">
                     <label asp-for="ReceivedDate" class="form-label fw-semibold"></label>
-                    <input asp-for="ReceivedDate" class="form-control" />
+                    <input asp-for="ReceivedDate" class="form-control" type="datetime-local" />
                 </div>
                 <div class="col-sm-4">
                     <label asp-for="CompletedDate" class="form-label fw-semibold"></label>
-                    <input asp-for="CompletedDate" class="form-control" />
+                    <input asp-for="CompletedDate" class="form-control" type="datetime-local" />
                 </div>
                 <div class="col-sm-4">
                     <label asp-for="DeliveredDate" class="form-label fw-semibold"></label>
-                    <input asp-for="DeliveredDate" class="form-control" />
-                </div>
-            </div>
-
-            <p class="form-section-title mt-4">Servis Süresi</p>
-            <div class="row g-3">
-                <div class="col-sm-6">
-                    <label asp-for="ServiceDurationDays" class="form-label fw-semibold">Gün</label>
-                    <input asp-for="ServiceDurationDays" class="form-control" type="number" min="0" placeholder="ör. 2" />
-                    <span asp-validation-for="ServiceDurationDays" class="text-danger small"></span>
-                </div>
-                <div class="col-sm-6">
-                    <label asp-for="ServiceDurationHours" class="form-label fw-semibold">Saat <span class="text-muted fw-normal">(opsiyonel)</span></label>
-                    <input asp-for="ServiceDurationHours" class="form-control" type="number" min="0" max="23" placeholder="0-23" />
-                    <span asp-validation-for="ServiceDurationHours" class="text-danger small"></span>
+                    <input asp-for="DeliveredDate" class="form-control" type="datetime-local" />
                 </div>
             </div>
 

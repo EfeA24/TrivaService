@@ -1,4 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations;
 using TrivaService.Models.StockEntities;
 using TrivaService.Models.TechnicalEntities;
 
@@ -16,8 +16,13 @@ namespace TrivaService.Models.ServiceEntites
 
         public string? ServiceAddress { get; set; }
 
+        [DisplayFormat(DataFormatString = "{0:yyyy-MM-ddTHH:mm}", ApplyFormatInEditMode = true)]
         public DateTime ReceivedDate { get; set; }
+
+        [DisplayFormat(DataFormatString = "{0:yyyy-MM-ddTHH:mm}", ApplyFormatInEditMode = true)]
         public DateTime? CompletedDate { get; set; }
+
+        [DisplayFormat(DataFormatString = "{0:yyyy-MM-ddTHH:mm}", ApplyFormatInEditMode = true)]
         public DateTime? DeliveredDate { get; set; }
 
         public string Status { get; set; } = null!;
@@ -27,16 +32,6 @@ namespace TrivaService.Models.ServiceEntites
 
         [Display(Name = "Ödeme tamamlandı")]
         public bool IsPaymentComplete { get; set; }
-
-        /// <summary>Servis süresi – gün bileşeni (opsiyonel).</summary>
-        [Range(0, int.MaxValue, ErrorMessage = "Gün değeri 0 veya daha büyük olmalıdır.")]
-        [Display(Name = "Servis Süresi (Gün)")]
-        public int? ServiceDurationDays { get; set; }
-
-        /// <summary>Servis süresi – saat bileşeni (0-23, opsiyonel).</summary>
-        [Range(0, 23, ErrorMessage = "Saat değeri 0-23 arasında olmalıdır.")]
-        [Display(Name = "Servis Süresi (Saat)")]
-        public int? ServiceDurationHours { get; set; }
 
         public List<ServiceItem> ServiceItems { get; set; } = new();
         public List<ServiceVisuals> ServiceVisuals { get; set; } = new();

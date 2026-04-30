@@ -102,12 +102,6 @@ namespace TrivaService.Migrations
                     b.Property<bool>("IsPaymentComplete")
                         .HasColumnType("bit");
 
-                    b.Property<int?>("ServiceDurationDays")
-                        .HasColumnType("int");
-
-                    b.Property<int?>("ServiceDurationHours")
-                        .HasColumnType("int");
-
                     b.Property<DateTime>("ReceivedDate")
                         .HasColumnType("datetime2");
 

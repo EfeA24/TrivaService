@@ -10,29 +10,13 @@ namespace TrivaService.Migrations
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.AddColumn<int>(
-                name: "ServiceDurationDays",
-                table: "Services",
-                type: "int",
-                nullable: true);
-
-            migrationBuilder.AddColumn<int>(
-                name: "ServiceDurationHours",
-                table: "Services",
-                type: "int",
-                nullable: true);
+            // Reverted — no database changes.
         }
 
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.DropColumn(
-                name: "ServiceDurationDays",
-                table: "Services");
-
-            migrationBuilder.DropColumn(
-                name: "ServiceDurationHours",
-                table: "Services");
+            // Reverted — no database changes.
         }
     }
 }
