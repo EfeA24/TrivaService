@@ -30,6 +30,25 @@
             <dt class="col-sm-3">Alınma Tarihi</dt><dd class="col-sm-9">@Model.ReceivedDate.ToString("g")</dd>
             <dt class="col-sm-3">Tamamlanma Tarihi</dt><dd class="col-sm-9">@(Model.CompletedDate?.ToString("g") ?? "—")</dd>
             <dt class="col-sm-3">Teslim Tarihi</dt><dd class="col-sm-9">@(Model.DeliveredDate?.ToString("g") ?? "—")</dd>
+            <dt class="col-sm-3">Servis Süresi</dt>
+            <dd class="col-sm-9">
+                @{
+                    var hasDuration = Model.ServiceDurationDays.HasValue || Model.ServiceDurationHours.HasValue;
+                    if (hasDuration)
+                    {
+                        var parts = new System.Collections.Generic.List<string>();
+                        if (Model.ServiceDurationDays.HasValue && Model.ServiceDurationDays.Value > 0)
+                            parts.Add($"{Model.ServiceDurationDays.Value} gün");
+                        if (Model.ServiceDurationHours.HasValue && Model.ServiceDurationHours.Value > 0)
+                            parts.Add($"{Model.ServiceDurationHours.Value} saat");
+                        @(parts.Count > 0 ? string.Join(" ", parts) : "0 gün")
+                    }
+                    else
+                    {
+                        @("—")
+                    }
+                }
+            </dd>
             <dt class="col-sm-3">Tahmini Maliyet</dt><dd class="col-sm-9">@(Model.EstimatedCost?.ToString("C") ?? "—")</dd>
             <dt class="col-sm-3">Nihai Maliyet</dt><dd class="col-sm-9">@(Model.FinalCost?.ToString("C") ?? "—")</dd>
             <dt class="col-sm-3">Ödeme</dt>
