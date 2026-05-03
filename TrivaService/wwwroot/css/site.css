@@ -253,12 +253,39 @@ a:hover {
 
 /* Footer */
 .sidebar-footer {
-    padding: 0.75rem 1.25rem;
+    padding: 0.5rem 0.75rem;
     font-size: 0.75rem;
     color: rgba(214, 235, 234, 0.56);
     border-top: 1px solid rgba(224, 244, 243, 0.18);
     flex-shrink: 0;
     letter-spacing: 0.02em;
+}
+
+.sidebar-logout-btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: rgba(214, 235, 234, 0.72);
+    font-size: 0.875rem;
+    font-weight: 500;
+    padding: 0.55rem 0.75rem;
+    border-radius: 0.5rem;
+    transition: background 0.15s, color 0.15s;
+    text-align: left;
+}
+
+.sidebar-logout-btn:hover {
+    background: rgba(255, 80, 80, 0.15);
+    color: #ff8080;
+}
+
+.sidebar-logout-btn .menu-icon {
+    opacity: 0.7;
+    transition: opacity 0.15s;
+}
+
+.sidebar-logout-btn:hover .menu-icon {
+    opacity: 1;
 }
 
 .sidebar-logout-btn {
