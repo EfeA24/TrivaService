@@ -1,10 +1,11 @@
 @model TrivaService.ViewModels.Permissions.RoleEditViewModel
+@using TrivaService.Infrastructure
 @{
-    ViewData["Title"] = "Rol Duzenle";
+    ViewData["Title"] = "Rol Düzenle";
 }
 
 <div class="page-header">
-    <h1>Rol Duzenle</h1>
+    <h1>Rol Düzenle</h1>
     <a asp-action="Index" class="btn btn-outline-secondary btn-sm">&#8592; Geri</a>
 </div>
 
@@ -30,7 +31,7 @@
                 </div>
             </div>
             <hr class="my-4" />
-            <h5 class="mb-3">Entity ve Property Yetkileri</h5>
+            <h5 class="mb-3">Yetkilendirmeler</h5>
             <div class="accordion" id="permissionAccordion">
                 @for (var i = 0; i < Model.Permissions.Count; i++)
                 {
@@ -38,7 +39,7 @@
                     <div class="accordion-item mb-2 border rounded">
                         <h2 class="accordion-header">
                             <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#entity_@i">
-                                @entity.EntityName
+                                @TurkishNameHelper.GetEntityDisplayName(entity.EntityName)
                             </button>
                         </h2>
                         <div id="entity_@i" class="accordion-collapse collapse">
@@ -51,11 +52,11 @@
                                     </div>
                                     <div class="col-md-3 form-check">
                                         <input asp-for="Permissions[i].CanCreate" class="form-check-input" />
-                                        <label asp-for="Permissions[i].CanCreate" class="form-check-label">Olusturabilir</label>
+                                        <label asp-for="Permissions[i].CanCreate" class="form-check-label">Oluşturabilir</label>
                                     </div>
                                     <div class="col-md-3 form-check">
                                         <input asp-for="Permissions[i].CanUpdate" class="form-check-input" />
-                                        <label asp-for="Permissions[i].CanUpdate" class="form-check-label">Guncelleyebilir</label>
+                                        <label asp-for="Permissions[i].CanUpdate" class="form-check-label">Güncelleyebilir</label>
                                     </div>
                                     <div class="col-md-3 form-check">
                                         <input asp-for="Permissions[i].CanDelete" class="form-check-input" />
@@ -67,9 +68,9 @@
                                     <table class="table table-sm align-middle">
                                         <thead>
                                             <tr>
-                                                <th>Property</th>
-                                                <th class="text-center">Goruntule</th>
-                                                <th class="text-center">Duzenle</th>
+                                                <th>Alan</th>
+                                                <th class="text-center">Görüntüle</th>
+                                                <th class="text-center">Düzenle</th>
                                             </tr>
                                         </thead>
                                         <tbody>
@@ -77,7 +78,7 @@
                                             {
                                                 <tr>
                                                     <td>
-                                                        @entity.Properties[j].PropertyName
+                                                        @TurkishNameHelper.GetPropertyDisplayName(entity.Properties[j].PropertyName)
                                                         <input type="hidden" asp-for="Permissions[i].Properties[j].PropertyName" />
                                                     </td>
                                                     <td class="text-center">
@@ -97,8 +98,8 @@
                 }
             </div>
             <div class="mt-4 d-flex gap-2">
-                <button type="submit" class="btn btn-primary">Degisiklikleri Kaydet</button>
-                <a asp-action="Index" class="btn btn-outline-secondary">Vazgec</a>
+                <button type="submit" class="btn btn-primary">Değişiklikleri Kaydet</button>
+                <a asp-action="Index" class="btn btn-outline-secondary">Vazgeç</a>
             </div>
         </form>
     </div>
