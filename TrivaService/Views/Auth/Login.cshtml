@@ -119,25 +119,13 @@
         }
 
         .logo {
-            width: 58px;
-            height: 58px;
-            border-radius: 18px;
-            background: var(--white-14);
-            border: 1px solid var(--white-25);
-            display: flex;
-            align-items: center;
-            justify-content: center;
+            display: block;
+            max-width: 180px;
+            height: auto;
             margin-bottom: 42px;
-            box-shadow: inset 0 1px 0 var(--white-25);
+            border-radius: 10px;
+            mix-blend-mode: screen;
         }
-
-            .logo span {
-                width: 24px;
-                height: 24px;
-                border-radius: 8px;
-                background: var(--primary);
-                box-shadow: 0 0 0 8px var(--white-14);
-            }
 
         .brand-panel h1 {
             font-size: 42px;
@@ -439,6 +427,30 @@
                 padding: 42px 30px;
             }
         }
+            .brand-header {
+                display: flex;
+                align-items: center;
+                gap: 12px;
+                margin-bottom: 42px;
+            }
+
+            .logo {
+                display: block;
+                width: 150px;
+                height: auto;
+                margin-bottom: 0;
+                border-radius: 0;
+                mix-blend-mode: normal;
+            }
+
+            .brand-title {
+                font-size: 36px;
+                font-weight: 800;
+                line-height: 1;
+                color: var(--white-92);
+                letter-spacing: -0.8px;
+                transform: translateY(4px);
+            }
 
         @@media (max-width: 480px) {
             body {
@@ -462,17 +474,19 @@
     <main class="login-wrapper">
         <section class="brand-panel">
             <div class="brand-content">
-                <div class="logo" aria-label="Logo">
-                    <span></span>
+                <div class="brand-header">
+                    <img class="logo"
+                         src="@Url.Content("~/triva-logo.png")"
+                         alt="Triva Service Logo" />
+
+                    <span class="brand-title">Servis</span>
                 </div>
 
                 <h1>Yönetim paneline hoş geldiniz.</h1>
+
                 <p>
-                    Güvenli, sade ve modern bir giriş deneyimi. Marka renkleriyle uyumlu,
-                    kurumsal ve temiz bir arayüz.
                 </p>
             </div>
-
             <div class="brand-footer">
                 <div class="brand-footer-icon" aria-hidden="true">
                     <svg viewBox="0 0 20 20" fill="currentColor">
@@ -552,13 +566,6 @@
                     <span asp-validation-for="Password" class="field-validation-error"></span>
                 </div>
 
-                <div class="options">
-                    <label class="remember">
-                        <input type="checkbox" name="rememberMe" value="true" />
-                        Beni hatırla
-                    </label>
-                    <a class="forgot-link" href="#">Şifremi unuttum</a>
-                </div>
 
                 <button class="login-button" type="submit" id="submitButton">
                     <span>Giriş Yap</span>

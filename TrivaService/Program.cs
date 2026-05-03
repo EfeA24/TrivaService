@@ -62,6 +62,8 @@ builder.Services.AddControllersWithViews(options =>
 
 var app = builder.Build();
 
+app.UseStaticFiles();
+
 using (var scope = app.Services.CreateScope())
 {
     var dbContext = scope.ServiceProvider.GetRequiredService<AppDbContext>();
